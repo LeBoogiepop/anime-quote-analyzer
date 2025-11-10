@@ -153,13 +153,14 @@ def is_proper_noun(token: Dict[str, str]) -> bool:
     """
     Detect if a token is a proper noun (name, place, etc.).
 
+    Returns True for character names like タカギ, ニシカタ, etc.
     Proper nouns should not be added to vocabulary lists since they are
     names, not words to study.
 
     Detection heuristics:
-    1. MeCab part-of-speech tag indicating proper noun (固有名詞)
+    1. MeCab part-of-speech tag indicating proper noun (固有名詞, 人名, 地名)
     2. All-katakana words >= 2 chars (likely foreign names or character names)
-       - Excludes common katakana loanwords
+       - Whitelist excludes common katakana loanwords
 
     Args:
         token: Token dictionary with surface, reading, partOfSpeech
@@ -170,51 +171,45 @@ def is_proper_noun(token: Dict[str, str]) -> bool:
     Example:
         >>> is_proper_noun({"surface": "タカギ", "partOfSpeech": "名詞"})
         True
-        >>> is_proper_noun({"surface": "勉強", "partOfSpeech": "名詞"})
+        >>> is_proper_noun({"surface": "テレビ", "partOfSpeech": "名詞"})
         False
     """
     surface = token.get("surface", "")
     pos = token.get("partOfSpeech", "")
-    base_form = token.get("baseForm", "")
 
-    # ALWAYS log katakana words for debugging
+    # ALWAYS log ALL katakana words for debugging
     if surface and len(surface) >= 2:
         is_all_katakana = all('\u30A0' <= char <= '\u30FF' or char == 'ー' for char in surface)
         if is_all_katakana:
-            logger.warning(f"[KATAKANA WORD] surface='{surface}', pos='{pos}', baseForm='{base_form}'")
+            logger.warning(f"[KATAKANA DETECTED] '{surface}' | POS: {pos}")
 
-    # DEBUG: Log token details for analysis (only for nouns to reduce noise)
-    if "名詞" in pos:
-        logger.info(f"[PROPER NOUN CHECK] surface='{surface}', pos='{pos}', baseForm='{base_form}'")
-
-    # Check for proper noun POS tag from MeCab
-    # MeCab marks proper nouns as 固有名詞 or includes it in the POS details
-    if "固有名詞" in pos:
+    # Check MeCab POS tag for proper nouns
+    if "固有名詞" in pos or "人名" in pos or "地名" in pos:
         logger.warning(f"  → PROPER NOUN (POS tag): {surface}")
         return True
 
-    # Check if all katakana (common for character names like タカギ)
+    # All-katakana heuristic (character names in anime)
     if surface and len(surface) >= 2:
-        # Check if all characters are katakana (including ー prolonged sound mark)
+        # Check if ALL characters are katakana (allowing 'ー')
         is_all_katakana = all('\u30A0' <= char <= '\u30FF' or char == 'ー' for char in surface)
 
         if is_all_katakana:
-            # Whitelist of common katakana loanwords that are actual vocabulary
+            # Whitelist: common katakana loanwords to KEEP as vocabulary
             common_loanwords = {
                 'メッセージ', 'パソコン', 'テレビ', 'アニメ', 'コーヒー',
-                'レストラン', 'ホテル', 'インターネット', 'コンビニ',
-                'メール', 'スマホ', 'アプリ', 'ニュース', 'メモ',
-                'コンピューター', 'データ', 'システム', 'プログラム'
+                'ショック', 'メール', 'データ', 'システム', 'プログラム',
+                'コンピューター', 'スマホ', 'インターネット', 'ホテル', 'レストラン',
+                'コンビニ', 'アプリ', 'ニュース', 'メモ', 'バス', 'タクシー'
             }
 
-            if surface not in common_loanwords:
+            if surface in common_loanwords:
+                logger.debug(f"  → NOT proper noun (katakana but whitelisted): {surface}")
+                return False
+            else:
+                # Everything else that's all-katakana is a proper noun (character name)
                 logger.warning(f"  → PROPER NOUN (all-katakana, not in whitelist): {surface}")
                 return True
-            else:
-                logger.info(f"  → NOT proper noun (katakana but in whitelist): {surface}")
-                return False
 
-    logger.debug(f"  → Not a proper noun: {surface}")
     return False
 
 
@@ -301,6 +296,7 @@ def extract_vocabulary(tokens: List[Dict[str, str]]) -> List[Dict[str, Any]]:
 
         vocabulary.append({
             "word": word,
+            "baseForm": word,  # Base form for dictionary lookups and WaniKani links
             "reading": reading,
             "meaning": meaning,
             "jlptLevel": jlpt_level

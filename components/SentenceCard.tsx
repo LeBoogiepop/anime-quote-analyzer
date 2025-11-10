@@ -164,10 +164,10 @@ export function SentenceCard({ analysis, index = 0 }: SentenceCardProps) {
                     </span>
                   )}
                   <span className="text-sm font-medium">{token.surface}</span>
-                  {/* WaniKani link for kanji */}
+                  {/* WaniKani link for kanji - uses baseForm for dictionary form */}
                   {kanjiChars.length > 0 && (
                     <a
-                      href={`https://www.wanikani.com/vocabulary/${encodeURIComponent(token.surface)}`}
+                      href={`https://www.wanikani.com/vocabulary/${encodeURIComponent((token as any).baseForm || token.surface)}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="opacity-50 hover:opacity-100 transition-opacity ml-1"
@@ -243,10 +243,10 @@ export function SentenceCard({ analysis, index = 0 }: SentenceCardProps) {
                           </>
                         )}
                       </div>
-                      {/* WaniKani link */}
+                      {/* WaniKani link - uses baseForm for dictionary form */}
                       {hasKanji && (
                         <a
-                          href={`https://www.wanikani.com/vocabulary/${encodeURIComponent(vocab.word)}`}
+                          href={`https://www.wanikani.com/vocabulary/${encodeURIComponent((vocab as any).baseForm || vocab.word)}`}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="opacity-50 hover:opacity-100 transition-opacity flex-shrink-0 ml-1"
