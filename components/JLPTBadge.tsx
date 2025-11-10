@@ -6,12 +6,9 @@ interface JLPTBadgeProps {
   className?: string;
 }
 
-/**
- * Badge component to display JLPT level with color coding
- * N5 (Beginner) -> N1 (Advanced)
- */
+// JLPT level badge - color coded from N5 (beginner) to N1 (advanced)
 export function JLPTBadge({ level, className }: JLPTBadgeProps) {
-  // Color mapping based on JLPT level
+  // color scheme for each level
   const levelColors = {
     N5: "bg-green-100 text-green-800 border-green-300 dark:bg-green-900 dark:text-green-200",
     N4: "bg-blue-100 text-blue-800 border-blue-300 dark:bg-blue-900 dark:text-blue-200",

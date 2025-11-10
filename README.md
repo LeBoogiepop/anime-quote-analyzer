@@ -1,181 +1,123 @@
-# 🎌 Anime Quote Analyzer
+# Anime Quote Analyzer
 
-A modern web application that helps Japanese learners analyze anime subtitles, detect JLPT levels, break down grammar patterns, and create custom Anki flashcards for effective language learning.
+A web app for analyzing Japanese text in anime subtitles. Built to help with my own Japanese learning and as a portfolio project for summer internship applications.
+
+⚠️ **Work in progress** - The Python NLP backend integration is coming soon. Currently using mock data for the demo.
 
 [![Next.js](https://img.shields.io/badge/Next.js-14-black)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-blue)](https://www.typescriptlang.org/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind-3-38bdf8)](https://tailwindcss.com/)
-[![License](https://img.shields.io/badge/license-MIT-green)](./LICENSE)
 
-## 🚀 Features
+## Why I Built This
 
-- **📁 Subtitle Parsing**: Upload and parse anime subtitle files (.srt, .ass formats)
-- **📊 JLPT Level Detection**: Automatically detect JLPT levels (N5 to N1) for vocabulary and grammar
-- **📖 Grammar Breakdown**: Detailed analysis of grammar patterns with explanations
-- **📝 Vocabulary Analysis**: Extract and categorize vocabulary with readings and meanings
-- **🎴 Anki Export**: Generate exportable flashcards for spaced repetition learning (coming soon)
-- **📱 Responsive Design**: Mobile-first design with smooth animations
-- **🎨 Modern UI**: Built with Tailwind CSS and shadcn/ui components
+I've been learning Japanese for about a year now, mostly through watching anime. I kept finding myself pausing to look up words and grammar patterns, and thought - why not build something to automate this? Plus, I'm applying for internships in Tokyo next summer, so this project lets me showcase full-stack development skills while solving a real problem I have.
 
-## 🛠️ Tech Stack
+The goal is to upload anime subtitle files (.srt, .ass) and get instant breakdowns of:
+- JLPT level estimates for sentences
+- Grammar pattern explanations
+- Vocabulary with readings and meanings
+- Exportable Anki flashcards (eventually)
 
-### Frontend
-- **Framework**: [Next.js 14](https://nextjs.org/) (App Router)
-- **Language**: [TypeScript](https://www.typescriptlang.org/)
-- **Styling**: [Tailwind CSS](https://tailwindcss.com/)
-- **UI Components**: [shadcn/ui](https://ui.shadcn.com/)
-- **Animations**: [Framer Motion](https://www.framer.com/motion/)
-- **Icons**: [Lucide React](https://lucide.dev/)
+## Current Status
 
-### Backend (Planned)
-- **NLP Processing**: Python with MeCab/fugashi for Japanese tokenization
-- **Database**: Supabase (to be integrated)
+**What works:**
+- Subtitle file parsing (.srt and .ass formats)
+- Basic UI with drag & drop upload
+- Mock analysis data to demonstrate the concept
+- Responsive design
 
-## 📁 Project Structure
+**What's next:**
+- Integrate Python backend with MeCab for real Japanese tokenization
+- Implement actual JLPT level detection using vocabulary databases
+- Grammar pattern matching
+- Anki flashcard export
+- User accounts and progress tracking with Supabase
+
+## Tech Stack
+
+**Frontend:**
+- Next.js 14 (App Router) + TypeScript
+- Tailwind CSS + shadcn/ui for components
+- Framer Motion for animations
+- Lucide React icons
+
+**Backend (planned):**
+- Python with MeCab/fugashi for Japanese NLP
+- Supabase for database
+
+## Project Structure
 
 ```
 anime-quote-analyzer/
-├── app/                    # Next.js app directory
-│   ├── api/               # API routes
-│   │   ├── parse/         # Subtitle parsing endpoint
-│   │   └── analyze/       # Japanese text analysis endpoint
-│   ├── globals.css        # Global styles with Tailwind
-│   ├── layout.tsx         # Root layout
+├── app/                    # Next.js pages and API routes
+│   ├── api/parse/         # Subtitle parsing
+│   ├── api/analyze/       # Text analysis (currently mock)
 │   └── page.tsx           # Landing page
 ├── components/            # React components
-│   ├── FileUploader.tsx   # Drag & drop file upload
-│   ├── SentenceCard.tsx   # Display analyzed sentences
-│   └── JLPTBadge.tsx      # JLPT level indicator
-├── lib/                   # Utilities and helpers
-│   ├── types.ts           # TypeScript type definitions
-│   └── utils.ts           # Utility functions
-├── python/                # Python NLP processing
-│   ├── analyzer.py        # Japanese text analyzer (stub)
-│   └── requirements.txt   # Python dependencies
-└── public/                # Static assets
+│   ├── FileUploader.tsx   # Drag & drop upload
+│   ├── SentenceCard.tsx   # Analysis display
+│   └── JLPTBadge.tsx      # Level indicators
+├── lib/                   # Utils and types
+└── python/                # NLP processing (stub)
 ```
 
-## 🚀 Getting Started
+## Getting Started
 
-### Prerequisites
+Install dependencies:
+```bash
+npm install
+```
 
-- Node.js 18+ and npm/yarn/pnpm
-- Python 3.8+ (for NLP features, coming soon)
+Run the dev server:
+```bash
+npm run dev
+```
 
-### Installation
+Open [http://localhost:3000](http://localhost:3000)
 
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/yourusername/anime-quote-analyzer.git
-   cd anime-quote-analyzer
-   ```
+## Development Notes
 
-2. **Install dependencies**
-   ```bash
-   npm install
-   # or
-   yarn install
-   # or
-   pnpm install
-   ```
+The current implementation uses mock data to demonstrate the UI and parsing logic. The actual Japanese NLP analysis will be handled by a Python backend using MeCab/fugashi, which I'm working on integrating next.
 
-3. **Run the development server**
-   ```bash
-   npm run dev
-   # or
-   yarn dev
-   # or
-   pnpm dev
-   ```
-
-4. **Open your browser**
-   Navigate to [http://localhost:3000](http://localhost:3000)
-
-### Python Backend Setup (Coming Soon)
-
+For the Python backend (when ready):
 ```bash
 cd python
 pip install -r requirements.txt
 ```
 
-## 📖 Usage
+## Roadmap
 
-1. **Upload a subtitle file**: Drag and drop or click to browse for .srt or .ass files
-2. **View analysis**: See parsed sentences with JLPT levels and grammar breakdowns
-3. **Export to Anki**: Generate flashcards for your learning (feature in development)
+**Phase 1: Foundation** ✅
+- [x] Next.js setup
+- [x] Subtitle parsing
+- [x] UI components
+- [x] Landing page
 
-## 🎯 Roadmap
-
-### Phase 1: Foundation ✅
-- [x] Next.js 14 project setup with TypeScript
-- [x] Tailwind CSS + shadcn/ui configuration
-- [x] Core components (FileUploader, SentenceCard, JLPTBadge)
-- [x] API routes for parsing and analysis
-- [x] Landing page with demo
-
-### Phase 2: NLP Integration 🚧
-- [ ] Integrate MeCab/fugashi for accurate tokenization
-- [ ] Implement JLPT level detection algorithm
+**Phase 2: NLP Integration** (current)
+- [ ] Python backend with MeCab
+- [ ] Real JLPT level detection
 - [ ] Grammar pattern recognition
-- [ ] Vocabulary database integration
+- [ ] Vocabulary database
 
-### Phase 3: Enhanced Features 📋
-- [ ] Anki flashcard export (.apkg format)
-- [ ] User authentication and progress tracking
-- [ ] Supabase database integration
-- [ ] Sentence audio playback
-- [ ] Customizable learning preferences
+**Phase 3: Features**
+- [ ] Anki export (.apkg)
+- [ ] User authentication
+- [ ] Learning progress tracking
+- [ ] Audio playback
 
-### Phase 4: Polish & Deploy 🎨
-- [ ] Advanced search and filtering
-- [ ] Dark mode support
+**Phase 4: Polish**
+- [ ] Testing
 - [ ] Performance optimization
-- [ ] Comprehensive testing
-- [ ] Production deployment
+- [ ] Deployment
 
-## 🏗️ Development
+## License
 
-### Build for production
-```bash
-npm run build
-npm start
-```
+MIT
 
-### Linting
-```bash
-npm run lint
-```
+## Contact
 
-### Type checking
-```bash
-npx tsc --noEmit
-```
-
-## 🤝 Contributing
-
-Contributions are welcome! This is a portfolio project, but feel free to:
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
-## 📝 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 🙏 Acknowledgments
-
-- Japanese language processing powered by MeCab/fugashi
-- UI components from [shadcn/ui](https://ui.shadcn.com/)
-- Inspiration from Japanese learning communities
-
-## 📧 Contact
-
-For questions or feedback, please open an issue on GitHub.
+Feel free to open an issue if you have questions or suggestions!
 
 ---
 
-**Note**: This project is currently in active development. The Python NLP backend is planned for Phase 2. Current implementation uses mock data for demonstration purposes.
-
-Made with ❤️ for Japanese learners worldwide
+*This is a personal learning project and portfolio piece. The JLPT level detection and grammar analysis features are still in development.*

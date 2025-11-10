@@ -93,9 +93,11 @@ export async function POST(request: NextRequest) {
 
     const content = await file.text();
     const fileName = file.name.toLowerCase();
+    console.log('Parsing subtitle file:', fileName, 'size:', content.length);
 
     let entries: SubtitleEntry[];
 
+    // TODO maxime: add support for .vtt format
     if (fileName.endsWith(".srt")) {
       entries = parseSRT(content);
     } else if (fileName.endsWith(".ass") || fileName.endsWith(".ssa")) {

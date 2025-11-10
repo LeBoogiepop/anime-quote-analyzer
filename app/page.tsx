@@ -8,12 +8,13 @@ import { Sparkles, BookOpen, Download, Github } from "lucide-react";
 import { type SubtitleEntry, type SentenceAnalysis } from "@/lib/types";
 
 export default function Home() {
-  const [isLoading, setIsLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [subtitles, setSubtitles] = useState<SubtitleEntry[]>([]);
   const [analyses, setAnalyses] = useState<SentenceAnalysis[]>([]);
 
   const handleFileUpload = async (file: File) => {
-    setIsLoading(true);
+    console.log('Starting file upload:', file.name);
+    setLoading(true);
     setSubtitles([]);
     setAnalyses([]);
 
@@ -28,10 +29,11 @@ export default function Home() {
       });
 
       const parseData = await parseResponse.json();
+      console.log('Parsed entries:', parseData.entries?.length);
 
       if (!parseData.success) {
         alert(parseData.error || "Failed to parse subtitle file");
-        setIsLoading(false);
+        setLoading(false);
         return;
       }
 
@@ -57,7 +59,7 @@ export default function Home() {
       console.error("Error processing file:", error);
       alert("Failed to process file. Please try again.");
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
   };
 
@@ -149,7 +151,7 @@ export default function Home() {
           transition={{ duration: 0.5, delay: 0.4 }}
           className="max-w-3xl mx-auto mb-12"
         >
-          <FileUploader onFileUpload={handleFileUpload} isLoading={isLoading} />
+          <FileUploader onFileUpload={handleFileUpload} isLoading={loading} />
         </motion.div>
 
         {/* Analysis Results */}
@@ -177,7 +179,7 @@ export default function Home() {
         )}
 
         {/* Empty State - Demo Data */}
-        {analyses.length === 0 && !isLoading && (
+        {analyses.length === 0 && !loading && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}

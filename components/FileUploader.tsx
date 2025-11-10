@@ -11,10 +11,7 @@ interface FileUploaderProps {
   acceptedFormats?: string[];
 }
 
-/**
- * Drag & drop file uploader component for subtitle files
- * Supports .srt and .ass formats
- */
+// File uploader with drag & drop for subtitle files
 export function FileUploader({
   onFileUpload,
   isLoading = false,
@@ -60,9 +57,12 @@ export function FileUploader({
   };
 
   const handleFile = (file: File) => {
+    console.log('Processing subtitle file:', file.name, file.size);
+
     // Validate file extension
     const fileExtension = file.name.substring(file.name.lastIndexOf("."));
     if (!acceptedFormats.includes(fileExtension.toLowerCase())) {
+      // TODO maxime: replace alert with a proper toast notification
       alert(`Please upload a file with one of these formats: ${acceptedFormats.join(", ")}`);
       return;
     }

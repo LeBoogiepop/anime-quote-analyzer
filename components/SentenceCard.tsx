@@ -10,10 +10,7 @@ interface SentenceCardProps {
   index?: number;
 }
 
-/**
- * Card component to display analyzed Japanese sentence with breakdown
- * Shows original text, tokens, JLPT level, grammar patterns, and vocabulary
- */
+// Displays analyzed Japanese sentence with word breakdown, grammar patterns, vocab
 export function SentenceCard({ analysis, index = 0 }: SentenceCardProps) {
   return (
     <motion.div

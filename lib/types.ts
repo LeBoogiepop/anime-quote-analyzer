@@ -29,7 +29,7 @@ export interface WordToken {
  */
 export interface GrammarPattern {
   pattern: string; // e.g., "てform + います"
-  description: string; // Explanation
+  description: string; // Explaination of the pattern
   jlptLevel: JLPTLevel;
   example?: string;
 }

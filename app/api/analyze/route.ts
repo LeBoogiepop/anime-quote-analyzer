@@ -88,6 +88,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    console.log('Analyzing text:', text.substring(0, 50));
+
     // TODO: Call Python backend for actual NLP processing
     // For now, using mock data to demonstrate the structure
     const analysis = mockAnalyze(text);
