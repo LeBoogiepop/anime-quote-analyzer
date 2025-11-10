@@ -227,6 +227,61 @@ def detect_patterns(text: str, tokens: List[Dict[str, str]]) -> List[Dict[str, A
             "example": "行かなければならない (je dois aller)"
         })
 
+    # ～まで / ～までに (Until/by the time)
+    if "まで" in text:
+        detected.append({
+            "pattern": "～まで / ～までに",
+            "description": "Exprime une limite temporelle. 'Jusqu'à' ou 'd'ici'.",
+            "jlptLevel": "N5",
+            "example": "授業が終わるまでに (d'ici la fin du cours)"
+        })
+
+    # ～て form (Conjunctive/sequence)
+    # Check for て after various verb stems
+    if "て" in text and not ("ています" in text or "てください" in text or "てもいい" in text):
+        detected.append({
+            "pattern": "～て",
+            "description": "Forme conjonctive. Utilisée pour relier des actions ou des états.",
+            "jlptLevel": "N5",
+            "example": "食べて寝る (manger et dormir)"
+        })
+
+    # ～ように (In order to/so that)
+    if "ように" in text:
+        detected.append({
+            "pattern": "～ように",
+            "description": "Exprime le but ou la manière. 'Afin que' ou 'de manière à'.",
+            "jlptLevel": "N3",
+            "example": "忘れないように (afin de ne pas oublier)"
+        })
+
+    # ～ている (Resultant state)
+    if "ている" in text and "ています" not in text:
+        detected.append({
+            "pattern": "～ている",
+            "description": "Exprime un état résultant ou une action en cours (forme informelle).",
+            "jlptLevel": "N5",
+            "example": "知っている (savoir / connaître)"
+        })
+
+    # ～た (Past tense plain form)
+    if "た" in text and not any(p in text for p in ["ました", "たい", "ていた"]):
+        detected.append({
+            "pattern": "～た",
+            "description": "Forme passée informelle des verbes.",
+            "jlptLevel": "N5",
+            "example": "食べた (j'ai mangé)"
+        })
+
+    # ～する (Verbal noun + する)
+    if "する" in text:
+        detected.append({
+            "pattern": "～する",
+            "description": "Verbe 'faire'. Souvent utilisé avec des noms verbaux (勉強する, 提出する).",
+            "jlptLevel": "N5",
+            "example": "勉強する (étudier)"
+        })
+
     # If no patterns detected, add basic default
     if not detected:
         detected.append({

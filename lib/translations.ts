@@ -10,7 +10,7 @@ export const translations = {
     heroDescription: "Upload anime subtitle files to analyze JLPT levels, break down grammar patterns, and create custom Anki flashcards for effective learning.",
 
     // Demo Banner
-    demoBanner: "⚠️ Demo Mode - Using mock JLPT analysis. Python backend coming soon!",
+    demoBanner: "✅ Python MeCab Backend Active - Real Japanese NLP analysis!",
 
     // Features
     jlptDetectionTitle: "JLPT Level Detection",
@@ -66,7 +66,7 @@ export const translations = {
     heroDescription: "Téléchargez des fichiers de sous-titres d'anime pour analyser les niveaux JLPT, décomposer les structures grammaticales et créer des flashcards Anki personnalisées pour un apprentissage efficace.",
 
     // Demo Banner
-    demoBanner: "⚠️ Mode Démo - Utilise une analyse JLPT factice. Backend Python à venir !",
+    demoBanner: "✅ Backend Python MeCab Actif - Analyse NLP japonaise réelle !",
 
     // Features
     jlptDetectionTitle: "Détection du Niveau JLPT",

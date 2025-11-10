@@ -122,15 +122,15 @@ export default function Home() {
           </p>
         </motion.div>
 
-        {/* Demo Mode Banner */}
+        {/* Backend Status Banner */}
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.1 }}
           className="max-w-3xl mx-auto mb-8"
         >
-          <div className="bg-yellow-50 dark:bg-yellow-900/20 border-2 border-yellow-200 dark:border-yellow-800 rounded-lg p-4 text-center">
-            <p className="text-sm font-medium text-yellow-800 dark:text-yellow-200">
+          <div className="bg-green-50 dark:bg-green-900/20 border-2 border-green-200 dark:border-green-800 rounded-lg p-4 text-center">
+            <p className="text-sm font-medium text-green-800 dark:text-green-200">
               {t("demoBanner")}
             </p>
           </div>
