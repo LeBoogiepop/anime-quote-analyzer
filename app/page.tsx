@@ -3,14 +3,18 @@
 import { useState } from "react";
 import { FileUploader } from "@/components/FileUploader";
 import { SentenceCard } from "@/components/SentenceCard";
+import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { motion } from "framer-motion";
 import { Sparkles, BookOpen, Download, Github } from "lucide-react";
 import { type SubtitleEntry, type SentenceAnalysis } from "@/lib/types";
+import { useLanguage } from "@/lib/LanguageContext";
 
 export default function Home() {
+  const { t } = useLanguage();
   const [loading, setLoading] = useState(false);
   const [subtitles, setSubtitles] = useState<SubtitleEntry[]>([]);
   const [analyses, setAnalyses] = useState<SentenceAnalysis[]>([]);
+  const [displayCount, setDisplayCount] = useState(5);
 
   const handleFileUpload = async (file: File) => {
     console.log('Starting file upload:', file.name);
@@ -55,12 +59,17 @@ export default function Home() {
         .map((result) => result.analysis);
 
       setAnalyses(validAnalyses);
+      setDisplayCount(5); // Reset display count when new file is uploaded
     } catch (error) {
       console.error("Error processing file:", error);
       alert("Failed to process file. Please try again.");
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleLoadMore = () => {
+    setDisplayCount(prev => Math.min(prev + 5, analyses.length));
   };
 
   return (
@@ -76,20 +85,23 @@ export default function Home() {
             >
               <Sparkles className="w-6 h-6 text-primary" />
               <h1 className="text-2xl font-bold text-foreground">
-                Anime Quote Analyzer
+                {t("appName")}
               </h1>
             </motion.div>
-            <motion.a
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              href="https://github.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
-            >
-              <Github className="w-5 h-5" />
-              <span className="hidden sm:inline">View on GitHub</span>
-            </motion.a>
+            <div className="flex items-center gap-4">
+              <LanguageSwitcher />
+              <motion.a
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                href="https://github.com/LeBoogiepop/anime-quote-analyzer"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
+              >
+                <Github className="w-5 h-5" />
+                <span className="hidden sm:inline">{t("viewOnGitHub")}</span>
+              </motion.a>
+            </div>
           </div>
         </div>
       </header>
@@ -103,12 +115,25 @@ export default function Home() {
           className="text-center mb-12"
         >
           <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-4">
-            Learn Japanese Through Anime
+            {t("heroTitle")}
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Upload anime subtitle files to analyze JLPT levels, break down grammar
-            patterns, and create custom Anki flashcards for effective learning.
+            {t("heroDescription")}
           </p>
+        </motion.div>
+
+        {/* Demo Mode Banner */}
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.1 }}
+          className="max-w-3xl mx-auto mb-8"
+        >
+          <div className="bg-yellow-50 dark:bg-yellow-900/20 border-2 border-yellow-200 dark:border-yellow-800 rounded-lg p-4 text-center">
+            <p className="text-sm font-medium text-yellow-800 dark:text-yellow-200">
+              {t("demoBanner")}
+            </p>
+          </div>
         </motion.div>
 
         {/* Features Grid */}
@@ -120,26 +145,23 @@ export default function Home() {
         >
           <div className="bg-card border rounded-lg p-6 hover:shadow-lg transition-shadow">
             <BookOpen className="w-10 h-10 text-primary mb-4" />
-            <h3 className="text-lg font-semibold mb-2">JLPT Level Detection</h3>
+            <h3 className="text-lg font-semibold mb-2">{t("jlptDetectionTitle")}</h3>
             <p className="text-sm text-muted-foreground">
-              Automatically detect JLPT levels (N5-N1) for vocabulary and grammar
-              patterns in your anime subtitles.
+              {t("jlptDetectionDesc")}
             </p>
           </div>
           <div className="bg-card border rounded-lg p-6 hover:shadow-lg transition-shadow">
             <Sparkles className="w-10 h-10 text-primary mb-4" />
-            <h3 className="text-lg font-semibold mb-2">Grammar Breakdown</h3>
+            <h3 className="text-lg font-semibold mb-2">{t("grammarBreakdownTitle")}</h3>
             <p className="text-sm text-muted-foreground">
-              Get detailed explanations of grammar patterns with examples and JLPT
-              classifications.
+              {t("grammarBreakdownDesc")}
             </p>
           </div>
           <div className="bg-card border rounded-lg p-6 hover:shadow-lg transition-shadow">
             <Download className="w-10 h-10 text-primary mb-4" />
-            <h3 className="text-lg font-semibold mb-2">Anki Export</h3>
+            <h3 className="text-lg font-semibold mb-2">{t("ankiExportTitle")}</h3>
             <p className="text-sm text-muted-foreground">
-              Create custom flashcards with context from your favorite anime for
-              spaced repetition learning.
+              {t("ankiExportDesc")}
             </p>
           </div>
         </motion.div>
@@ -151,6 +173,12 @@ export default function Home() {
           transition={{ duration: 0.5, delay: 0.4 }}
           className="max-w-3xl mx-auto mb-12"
         >
+          <h3 className="text-xl font-bold text-foreground mb-4 text-center">
+            {t("uploadTitle")}
+          </h3>
+          <p className="text-sm text-muted-foreground text-center mb-4">
+            {t("uploadDescription")} <code className="bg-secondary px-1 py-0.5 rounded">public/test.srt</code>
+          </p>
           <FileUploader onFileUpload={handleFileUpload} isLoading={loading} />
         </motion.div>
 
@@ -163,18 +191,27 @@ export default function Home() {
             className="max-w-4xl mx-auto"
           >
             <h3 className="text-2xl font-bold text-foreground mb-6">
-              Analysis Results
+              {t("analysisResults")}
             </h3>
             <div className="space-y-6">
-              {analyses.map((analysis, index) => (
+              {analyses.slice(0, displayCount).map((analysis, index) => (
                 <SentenceCard key={index} analysis={analysis} index={index} />
               ))}
             </div>
-            {subtitles.length > 5 && (
-              <p className="text-center text-sm text-muted-foreground mt-6">
-                Showing first 5 of {subtitles.length} entries (demo mode)
+            <div className="mt-8 text-center">
+              <p className="text-sm text-muted-foreground mb-4">
+                {t("showing")} {Math.min(displayCount, analyses.length)} {t("of")} {analyses.length} {t("analyzedSentences")}
+                {subtitles.length > analyses.length && ` (${subtitles.length} ${t("totalInFile")})`}
               </p>
-            )}
+              {displayCount < analyses.length && (
+                <button
+                  onClick={handleLoadMore}
+                  className="px-6 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors font-medium"
+                >
+                  {t("loadMoreResults")}
+                </button>
+              )}
+            </div>
           </motion.div>
         )}
 
@@ -187,11 +224,10 @@ export default function Home() {
             className="max-w-4xl mx-auto"
           >
             <h3 className="text-2xl font-bold text-foreground mb-6 text-center">
-              Try it out!
+              {t("tryItOut")}
             </h3>
             <p className="text-center text-muted-foreground mb-6">
-              Upload a subtitle file to see the magic happen, or view this sample
-              analysis:
+              {t("uploadSubtitlePrompt")}
             </p>
             <SentenceCard
               analysis={{
