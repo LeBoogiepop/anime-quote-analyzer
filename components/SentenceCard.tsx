@@ -4,6 +4,7 @@ import { type SentenceAnalysis } from "@/lib/types";
 import { JLPTBadge } from "./JLPTBadge";
 import { motion } from "framer-motion";
 import { BookOpen, GraduationCap, Languages } from "lucide-react";
+import { useLanguage } from "@/lib/LanguageContext";
 
 interface SentenceCardProps {
   analysis: SentenceAnalysis;
@@ -12,6 +13,8 @@ interface SentenceCardProps {
 
 // Displays analyzed Japanese sentence with word breakdown, grammar patterns, vocab
 export function SentenceCard({ analysis, index = 0 }: SentenceCardProps) {
+  const { t } = useLanguage();
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -34,7 +37,7 @@ export function SentenceCard({ analysis, index = 0 }: SentenceCardProps) {
         <div className="mb-4">
           <div className="flex items-center gap-2 mb-2">
             <Languages className="w-4 h-4 text-muted-foreground" />
-            <h3 className="text-sm font-semibold text-foreground">Breakdown</h3>
+            <h3 className="text-sm font-semibold text-foreground">{t("breakdown")}</h3>
           </div>
           <div className="flex flex-wrap gap-2">
             {analysis.tokens.map((token, idx) => (
@@ -58,7 +61,7 @@ export function SentenceCard({ analysis, index = 0 }: SentenceCardProps) {
           <div className="flex items-center gap-2 mb-2">
             <BookOpen className="w-4 h-4 text-muted-foreground" />
             <h3 className="text-sm font-semibold text-foreground">
-              Grammar Patterns
+              {t("grammarPatterns")}
             </h3>
           </div>
           <div className="space-y-2">
@@ -85,7 +88,7 @@ export function SentenceCard({ analysis, index = 0 }: SentenceCardProps) {
         <div>
           <div className="flex items-center gap-2 mb-2">
             <GraduationCap className="w-4 h-4 text-muted-foreground" />
-            <h3 className="text-sm font-semibold text-foreground">Vocabulary</h3>
+            <h3 className="text-sm font-semibold text-foreground">{t("vocabulary")}</h3>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             {analysis.vocabulary.map((vocab, idx) => (

@@ -316,10 +316,10 @@ export default function Home() {
       <footer className="border-t mt-20 py-8">
         <div className="container mx-auto px-4 text-center text-sm text-muted-foreground">
           <p>
-            Built with Next.js 14, TypeScript, Tailwind CSS, and Framer Motion
+            {t("builtWith")}
           </p>
           <p className="mt-2">
-            Python NLP backend integration coming soon (MeCab/fugashi)
+            {t("pythonBackend")}
           </p>
         </div>
       </footer>
