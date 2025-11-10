@@ -1,0 +1,142 @@
+[
+  {
+    "pattern": "～ています",
+    "regex": "ています$",
+    "description": "Forme progressive/continue. Utilisée pour les actions en cours ou les états.",
+    "jlptLevel": "N5",
+    "example": "勉強しています (étudier)"
+  },
+  {
+    "pattern": "～ます",
+    "regex": "ます$",
+    "description": "Forme polie présent/futur des verbes.",
+    "jlptLevel": "N5",
+    "example": "行きます (aller)"
+  },
+  {
+    "pattern": "～です",
+    "regex": "です$",
+    "description": "Copule polie. Utilisée pour exprimer 'être'.",
+    "jlptLevel": "N5",
+    "example": "学生です (être étudiant)"
+  },
+  {
+    "pattern": "～ました",
+    "regex": "ました$",
+    "description": "Forme polie du passé des verbes.",
+    "jlptLevel": "N5",
+    "example": "行きました (suis allé)"
+  },
+  {
+    "pattern": "～でした",
+    "regex": "でした$",
+    "description": "Copule polie au passé.",
+    "jlptLevel": "N5",
+    "example": "学生でした (étais étudiant)"
+  },
+  {
+    "pattern": "～たい",
+    "regex": "たい",
+    "description": "Forme du désir. Exprime 'vouloir faire quelque chose'.",
+    "jlptLevel": "N5",
+    "example": "食べたい (vouloir manger)"
+  },
+  {
+    "pattern": "～ない",
+    "regex": "ない$",
+    "description": "Forme négative des verbes.",
+    "jlptLevel": "N5",
+    "example": "行かない (ne pas aller)"
+  },
+  {
+    "pattern": "～ません",
+    "regex": "ません$",
+    "description": "Forme négative polie des verbes.",
+    "jlptLevel": "N5",
+    "example": "行きません (ne vais pas)"
+  },
+  {
+    "pattern": "～ませんか",
+    "regex": "ませんか$",
+    "description": "Forme interrogative négative. Utilisée pour faire des invitations polies.",
+    "jlptLevel": "N5",
+    "example": "行きませんか (voulez-vous aller?)"
+  },
+  {
+    "pattern": "～てください",
+    "regex": "[て|で]ください",
+    "description": "Forme de requête polie. 'Veuillez faire' ou 's'il vous plaît'.",
+    "jlptLevel": "N5",
+    "example": "見てください (veuillez regarder)"
+  },
+  {
+    "pattern": "～でしょう",
+    "regex": "でしょう$",
+    "description": "Marqueur de probabilité/conjecture. Exprime 'probablement' ou 'je pense'.",
+    "jlptLevel": "N4",
+    "example": "雨でしょう (probablement de la pluie)"
+  },
+  {
+    "pattern": "～そうです",
+    "regex": "そうです$",
+    "description": "Exprime l'ouï-dire ou l'apparence. 'On dit que' ou 'Il semble que'.",
+    "jlptLevel": "N4",
+    "example": "美味しそうです (ça a l'air délicieux)"
+  },
+  {
+    "pattern": "～てもいい",
+    "regex": "[て|で]もいい",
+    "description": "Exprime la permission. 'Peut' ou 'il est permis de'.",
+    "jlptLevel": "N4",
+    "example": "食べてもいい (tu peux manger)"
+  },
+  {
+    "pattern": "～なければならない",
+    "regex": "なければならない",
+    "description": "Exprime l'obligation. 'Doit' ou 'il faut'.",
+    "jlptLevel": "N4",
+    "example": "行かなければならない (je dois aller)"
+  },
+  {
+    "pattern": "～ようです",
+    "regex": "ようです$",
+    "description": "Exprime une supposition basée sur l'observation. 'Il semble que'.",
+    "jlptLevel": "N4",
+    "example": "雨が降るようです (il semble qu'il va pleuvoir)"
+  },
+  {
+    "pattern": "～らしい",
+    "regex": "らしい$",
+    "description": "Exprime une supposition basée sur l'information. 'Apparemment' ou 'il paraît que'.",
+    "jlptLevel": "N4",
+    "example": "彼は学生らしい (il est apparemment étudiant)"
+  },
+  {
+    "pattern": "～ことができる",
+    "regex": "ことができる",
+    "description": "Exprime la capacité ou la possibilité. 'Pouvoir faire'.",
+    "jlptLevel": "N4",
+    "example": "日本語を話すことができる (pouvoir parler japonais)"
+  },
+  {
+    "pattern": "～つもりです",
+    "regex": "つもりです$",
+    "description": "Exprime l'intention. 'Avoir l'intention de'.",
+    "jlptLevel": "N4",
+    "example": "明日行くつもりです (j'ai l'intention d'y aller demain)"
+  },
+  {
+    "pattern": "～はずです",
+    "regex": "はずです$",
+    "description": "Exprime une forte attente ou certitude logique. 'Devrait' ou 'c'est censé'.",
+    "jlptLevel": "N3",
+    "example": "彼は来るはずです (il devrait venir)"
+  },
+  {
+    "pattern": "～ばかりです",
+    "regex": "ばかりです$",
+    "description": "Exprime qu'une action vient juste d'être complétée. 'Venir de'.",
+    "jlptLevel": "N3",
+    "example": "食べたばかりです (je viens de manger)"
+  }
+]

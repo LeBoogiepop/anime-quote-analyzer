@@ -1,0 +1,17 @@
+# FastAPI and web server dependencies
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+pydantic==2.5.0
+
+# CORS middleware
+python-multipart==0.0.6
+
+# Japanese NLP - MeCab tokenizer
+fugashi==1.3.0
+unidic-lite==1.0.8
+
+# Optional: full UniDic dictionary (better accuracy)
+# unidic==1.1.0
+
+# Utilities
+jaconv==0.3.4  # For kana conversion (katakana to hiragana)
