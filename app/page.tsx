@@ -43,8 +43,8 @@ export default function Home() {
 
       setSubtitles(parseData.entries);
 
-      // Analyze first 5 entries (for demo purposes)
-      const entriesToAnalyze = parseData.entries.slice(0, 5);
+      // Analyze first 20 entries for better analysis coverage
+      const entriesToAnalyze = parseData.entries.slice(0, 20);
       const analysisPromises = entriesToAnalyze.map((entry: SubtitleEntry) =>
         fetch("/api/analyze", {
           method: "POST",
@@ -59,7 +59,7 @@ export default function Home() {
         .map((result) => result.analysis);
 
       setAnalyses(validAnalyses);
-      setDisplayCount(5); // Reset display count when new file is uploaded
+      setDisplayCount(10); // Show first 10, allow loading more
     } catch (error) {
       console.error("Error processing file:", error);
       alert("Failed to process file. Please try again.");

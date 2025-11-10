@@ -3,7 +3,7 @@
 import { type SentenceAnalysis } from "@/lib/types";
 import { JLPTBadge } from "./JLPTBadge";
 import { motion } from "framer-motion";
-import { BookOpen, GraduationCap, Languages } from "lucide-react";
+import { BookOpen, GraduationCap, Languages, ExternalLink } from "lucide-react";
 import { useLanguage } from "@/lib/LanguageContext";
 
 interface SentenceCardProps {
@@ -44,10 +44,13 @@ export function SentenceCard({ analysis, index = 0 }: SentenceCardProps) {
               const hasKanji = /[\u4E00-\u9FAF]/.test(token.surface);
               const shouldShowReading = hasKanji && token.reading !== token.surface && token.reading !== 'demo';
 
+              // Extract individual kanji for WaniKani links
+              const kanjiChars = hasKanji ? token.surface.match(/[\u4E00-\u9FAF]/g) || [] : [];
+
               return (
                 <div
                   key={idx}
-                  className="group relative inline-flex items-center bg-secondary/50 rounded px-2 py-1"
+                  className="group relative inline-flex items-center gap-1 bg-secondary/50 rounded px-2 py-1"
                 >
                   {/* Hover tooltip for reading */}
                   {shouldShowReading && (
@@ -56,6 +59,18 @@ export function SentenceCard({ analysis, index = 0 }: SentenceCardProps) {
                     </span>
                   )}
                   <span className="text-sm font-medium">{token.surface}</span>
+                  {/* WaniKani link for kanji */}
+                  {kanjiChars.length > 0 && (
+                    <a
+                      href={`https://www.wanikani.com/vocabulary/${encodeURIComponent(token.surface)}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="opacity-0 group-hover:opacity-70 hover:opacity-100 transition-opacity"
+                      title="View on WaniKani"
+                    >
+                      <ExternalLink className="w-3 h-3 text-muted-foreground" />
+                    </a>
+                  )}
                 </div>
               );
             })}
@@ -106,19 +121,33 @@ export function SentenceCard({ analysis, index = 0 }: SentenceCardProps) {
               return (
                 <div
                   key={idx}
-                  className="flex items-start gap-2 text-sm bg-secondary/30 rounded p-2"
+                  className="group flex items-start gap-2 text-sm bg-secondary/30 rounded p-2"
                 >
                   <JLPTBadge level={vocab.jlptLevel} className="mt-0.5" />
                   <div className="flex-1 min-w-0">
-                    <div className="font-medium truncate">
-                      {vocab.word}
-                      {shouldShowReading && (
-                        <>
-                          {" "}
-                          <span className="text-muted-foreground">
-                            ({vocab.reading})
-                          </span>
-                        </>
+                    <div className="flex items-center gap-1">
+                      <div className="font-medium truncate">
+                        {vocab.word}
+                        {shouldShowReading && (
+                          <>
+                            {" "}
+                            <span className="text-muted-foreground">
+                              ({vocab.reading})
+                            </span>
+                          </>
+                        )}
+                      </div>
+                      {/* WaniKani link */}
+                      {hasKanji && (
+                        <a
+                          href={`https://www.wanikani.com/vocabulary/${encodeURIComponent(vocab.word)}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="opacity-0 group-hover:opacity-70 hover:opacity-100 transition-opacity flex-shrink-0"
+                          title="View on WaniKani"
+                        >
+                          <ExternalLink className="w-3 h-3 text-muted-foreground" />
+                        </a>
                       )}
                     </div>
                     <p className="text-xs text-muted-foreground truncate">
