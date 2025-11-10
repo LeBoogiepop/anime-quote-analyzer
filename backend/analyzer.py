@@ -19,6 +19,7 @@ from pathlib import Path
 
 from jlpt_classifier import classify_word, classify_sentence
 from grammar_detector import detect_patterns
+from translator import translate_to_french
 
 # Initialize logging
 logging.basicConfig(level=logging.INFO)
@@ -209,9 +210,9 @@ def extract_vocabulary(tokens: List[Dict[str, str]]) -> List[Dict[str, Any]]:
         # Get JLPT level for this word
         jlpt_level = classify_word(word)
 
-        # Get French translation from dictionary
-        vocab_dict = load_vocabulary_dictionary()
-        meaning = vocab_dict.get(word, f"[Traduction manquante pour '{word}']")
+        # Get French translation using translator service
+        # This uses fallback strategy: cache → dictionary → Jisho API → fallback
+        meaning = translate_to_french(word, use_jisho=True)
 
         vocabulary.append({
             "word": word,

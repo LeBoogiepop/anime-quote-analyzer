@@ -15,3 +15,4 @@ unidic-lite==1.0.8
 
 # Utilities
 jaconv==0.3.4  # For kana conversion (katakana to hiragana)
+requests==2.31.0  # For Jisho API translation service

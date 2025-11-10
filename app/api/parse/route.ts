@@ -29,6 +29,44 @@ function removeSpeakerLabels(text: string): string {
 }
 
 /**
+ * Comprehensive subtitle text cleaning function.
+ *
+ * Cleaning steps:
+ * 1. Remove speaker labels: （教師）, （タカギ）, (話し声), etc.
+ * 2. Remove standalone music symbols: ♪, ♫, ♬
+ * 3. Remove common subtitle formatting artifacts
+ * 4. Normalize whitespace (multiple spaces/tabs → single space)
+ * 5. Trim leading/trailing whitespace
+ *
+ * @param text - Raw subtitle text
+ * @returns Cleaned text ready for analysis
+ */
+function cleanSubtitleText(text: string): string {
+  let cleaned = text;
+
+  // Step 1: Remove speaker labels at the start
+  cleaned = removeSpeakerLabels(cleaned);
+
+  // Step 2: Remove standalone music symbols (not part of actual dialogue)
+  // Only remove if they're at start/end or surrounded by whitespace
+  cleaned = cleaned.replace(/^\s*[♪♫♬]+\s*/g, '');  // Start
+  cleaned = cleaned.replace(/\s*[♪♫♬]+\s*$/g, '');  // End
+  cleaned = cleaned.replace(/\s+[♪♫♬]+\s+/g, ' '); // Middle (surrounded by spaces)
+
+  // Step 3: Remove common subtitle formatting artifacts
+  cleaned = cleaned.replace(/\\N/g, ' ');           // ASS line breaks
+  cleaned = cleaned.replace(/\{[^}]*\}/g, '');      // ASS formatting tags
+  cleaned = cleaned.replace(/<[^>]*>/g, '');        // HTML-like tags
+
+  // Step 4: Normalize whitespace
+  cleaned = cleaned.replace(/\s+/g, ' ');           // Multiple spaces → single space
+  cleaned = cleaned.replace(/\t+/g, ' ');           // Tabs → space
+
+  // Step 5: Trim and return
+  return cleaned.trim();
+}
+
+/**
  * Parse SRT subtitle file format
  * Format:
  * 1
@@ -53,8 +91,13 @@ function parseSRT(content: string): SubtitleEntry[] {
     );
 
     if (timeMatch) {
-      // Remove speaker labels like （教師）or (話し声)
-      text = removeSpeakerLabels(text);
+      // Clean subtitle text (remove labels, symbols, normalize whitespace)
+      text = cleanSubtitleText(text);
+
+      // Skip empty entries after cleaning
+      if (!text) {
+        continue;
+      }
 
       // Skip entries that are only symbols or don't contain Japanese
       if (isOnlySymbols(text) || !hasJapaneseContent(text)) {
@@ -92,23 +135,26 @@ function parseASS(content: string): SubtitleEntry[] {
         const endTime = parts[2];
         let text = parts.slice(9).join(",").replace(/\{[^}]*\}/g, "").trim();
 
-        if (text) {
-          // Remove speaker labels like （教師）or (話し声)
-          text = removeSpeakerLabels(text);
+        // Clean subtitle text (remove labels, symbols, normalize whitespace)
+        text = cleanSubtitleText(text);
 
-          // Skip entries that are only symbols or don't contain Japanese
-          if (isOnlySymbols(text) || !hasJapaneseContent(text)) {
-            console.log('Skipping non-Japanese entry:', text);
-            continue;
-          }
-
-          entries.push({
-            id: id++,
-            startTime,
-            endTime,
-            text,
-          });
+        // Skip empty entries after cleaning
+        if (!text) {
+          continue;
         }
+
+        // Skip entries that are only symbols or don't contain Japanese
+        if (isOnlySymbols(text) || !hasJapaneseContent(text)) {
+          console.log('Skipping non-Japanese entry:', text);
+          continue;
+        }
+
+        entries.push({
+          id: id++,
+          startTime,
+          endTime,
+          text,
+        });
       }
     }
   }
