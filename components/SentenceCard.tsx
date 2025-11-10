@@ -170,10 +170,11 @@ export function SentenceCard({ analysis, index = 0 }: SentenceCardProps) {
                       href={`https://www.wanikani.com/vocabulary/${encodeURIComponent(token.surface)}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="opacity-0 group-hover:opacity-70 hover:opacity-100 transition-opacity"
+                      className="opacity-50 hover:opacity-100 transition-opacity ml-1"
                       title="View on WaniKani"
+                      onClick={(e) => e.stopPropagation()}
                     >
-                      <ExternalLink className="w-3 h-3 text-muted-foreground" />
+                      <ExternalLink className="w-3 h-3 text-muted-foreground hover:text-primary" />
                     </a>
                   )}
                 </div>
@@ -248,10 +249,11 @@ export function SentenceCard({ analysis, index = 0 }: SentenceCardProps) {
                           href={`https://www.wanikani.com/vocabulary/${encodeURIComponent(vocab.word)}`}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="opacity-0 group-hover:opacity-70 hover:opacity-100 transition-opacity flex-shrink-0"
+                          className="opacity-50 hover:opacity-100 transition-opacity flex-shrink-0 ml-1"
                           title="View on WaniKani"
+                          onClick={(e) => e.stopPropagation()}
                         >
-                          <ExternalLink className="w-3 h-3 text-muted-foreground" />
+                          <ExternalLink className="w-3 h-3 text-muted-foreground hover:text-primary" />
                         </a>
                       )}
                     </div>

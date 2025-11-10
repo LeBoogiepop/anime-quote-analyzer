@@ -146,17 +146,28 @@ def detect_patterns(text: str, tokens: List[Dict[str, str]]) -> List[Dict[str, A
         })
         detected_patterns.add("request")
 
-    # ～ています (Present progressive/continuous) - Check BEFORE ～て and ～ている
+    # ～ています (Present progressive/continuous) - Check FIRST (most specific)
     if re.search(r'ています', text):
         detected.append({
             "pattern": "～ています",
-            "description": "Forme progressive/continue. Utilisée pour les actions en cours ou les états.",
+            "description": "Forme progressive/continue polie. Actions en cours ou états.",
             "jlptLevel": "N5",
             "example": "勉強しています (étudier)"
         })
         detected_patterns.add("ています")
 
-    # ～ている (Resultant state) - Check AFTER ～ています
+    # ～てる (Contracted progressive) - Check BEFORE ～ている
+    # This catches contracted forms like 悩んでる, 食べてる, etc.
+    elif re.search(r'[てで]る', text) and not re.search(r'[てで]ます', text):
+        detected.append({
+            "pattern": "～てる",
+            "description": "Forme progressive contractée (informel). Même sens que ～ている.",
+            "jlptLevel": "N5",
+            "example": "食べてる (en train de manger), 悩んでる (être préoccupé)"
+        })
+        detected_patterns.add("てる")
+
+    # ～ている (Resultant state) - Check AFTER ～ています and ～てる
     elif re.search(r'ている', text):
         detected.append({
             "pattern": "～ている",

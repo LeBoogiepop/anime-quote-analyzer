@@ -177,6 +177,12 @@ def is_proper_noun(token: Dict[str, str]) -> bool:
     pos = token.get("partOfSpeech", "")
     base_form = token.get("baseForm", "")
 
+    # ALWAYS log katakana words for debugging
+    if surface and len(surface) >= 2:
+        is_all_katakana = all('\u30A0' <= char <= '\u30FF' or char == 'ー' for char in surface)
+        if is_all_katakana:
+            logger.warning(f"[KATAKANA WORD] surface='{surface}', pos='{pos}', baseForm='{base_form}'")
+
     # DEBUG: Log token details for analysis (only for nouns to reduce noise)
     if "名詞" in pos:
         logger.info(f"[PROPER NOUN CHECK] surface='{surface}', pos='{pos}', baseForm='{base_form}'")
@@ -184,27 +190,28 @@ def is_proper_noun(token: Dict[str, str]) -> bool:
     # Check for proper noun POS tag from MeCab
     # MeCab marks proper nouns as 固有名詞 or includes it in the POS details
     if "固有名詞" in pos:
-        logger.info(f"  → PROPER NOUN (POS tag): {surface}")
+        logger.warning(f"  → PROPER NOUN (POS tag): {surface}")
         return True
 
     # Check if all katakana (common for character names like タカギ)
     if surface and len(surface) >= 2:
         # Check if all characters are katakana (including ー prolonged sound mark)
-        is_all_katakana = all('\u30A0' <= char <= '\u30FF' for char in surface)
+        is_all_katakana = all('\u30A0' <= char <= '\u30FF' or char == 'ー' for char in surface)
 
         if is_all_katakana:
-            # Exclude common katakana loanwords that are actual vocabulary
+            # Whitelist of common katakana loanwords that are actual vocabulary
             common_loanwords = {
                 'メッセージ', 'パソコン', 'テレビ', 'アニメ', 'コーヒー',
                 'レストラン', 'ホテル', 'インターネット', 'コンビニ',
-                'メール', 'スマホ', 'アプリ', 'ニュース', 'メモ'
+                'メール', 'スマホ', 'アプリ', 'ニュース', 'メモ',
+                'コンピューター', 'データ', 'システム', 'プログラム'
             }
 
             if surface not in common_loanwords:
-                logger.info(f"  → PROPER NOUN (all-katakana): {surface}")
+                logger.warning(f"  → PROPER NOUN (all-katakana, not in whitelist): {surface}")
                 return True
             else:
-                logger.debug(f"  → Common loanword (not proper noun): {surface}")
+                logger.info(f"  → NOT proper noun (katakana but in whitelist): {surface}")
                 return False
 
     logger.debug(f"  → Not a proper noun: {surface}")
@@ -260,13 +267,19 @@ def extract_vocabulary(tokens: List[Dict[str, str]]) -> List[Dict[str, Any]]:
         word = token["baseForm"]       # Use base form for vocabulary
         reading = token["reading"]
 
+        # DEBUG: Log ALL katakana words to see if they reach this point
+        if surface and len(surface) >= 2:
+            is_all_katakana = all('\u30A0' <= char <= '\u30FF' or char == 'ー' for char in surface)
+            if is_all_katakana:
+                logger.warning(f"[VOCAB EXTRACTION] Katakana word: '{surface}', pos='{pos}', in content_pos={pos in content_pos}")
+
         # Skip if not a content word
         if pos not in content_pos:
             continue
 
         # Skip proper nouns (names, places, etc.)
         if is_proper_noun(token):
-            logger.info(f"✓ SKIPPED proper noun: {surface} (not added to vocabulary)")
+            logger.warning(f"✓ SKIPPED proper noun: {surface} (not added to vocabulary)")
             continue
 
         # Skip if already seen
