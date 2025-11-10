@@ -47,10 +47,11 @@ export function SentenceCard({ analysis, index = 0 }: SentenceCardProps) {
               return (
                 <div
                   key={idx}
-                  className="inline-flex flex-col items-center bg-secondary/50 rounded px-2 py-1"
+                  className="group relative inline-flex items-center bg-secondary/50 rounded px-2 py-1"
                 >
+                  {/* Hover tooltip for reading */}
                   {shouldShowReading && (
-                    <span className="text-xs text-muted-foreground">
+                    <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 px-2 py-1 text-xs text-white bg-gray-900 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-10">
                       {token.reading}
                     </span>
                   )}
