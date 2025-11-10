@@ -1,9 +1,10 @@
 "use client";
 
+import { useState } from "react";
 import { type SentenceAnalysis } from "@/lib/types";
 import { JLPTBadge } from "./JLPTBadge";
-import { motion } from "framer-motion";
-import { BookOpen, GraduationCap, Languages, ExternalLink } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { BookOpen, GraduationCap, Languages, ExternalLink, Eye, EyeOff, Loader2 } from "lucide-react";
 import { useLanguage } from "@/lib/LanguageContext";
 
 interface SentenceCardProps {
@@ -14,6 +15,50 @@ interface SentenceCardProps {
 // Displays analyzed Japanese sentence with word breakdown, grammar patterns, vocab
 export function SentenceCard({ analysis, index = 0 }: SentenceCardProps) {
   const { t } = useLanguage();
+  const [showTranslation, setShowTranslation] = useState(false);
+  const [translation, setTranslation] = useState<string>("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string>("");
+
+  const handleToggleTranslation = async () => {
+    // If already showing, just toggle off
+    if (showTranslation) {
+      setShowTranslation(false);
+      return;
+    }
+
+    // If we already have translation, just show it
+    if (translation) {
+      setShowTranslation(true);
+      return;
+    }
+
+    // Otherwise, fetch translation
+    setIsLoading(true);
+    setError("");
+
+    try {
+      const response = await fetch("/api/translate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text: analysis.originalText }),
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        setTranslation(result.translation);
+        setShowTranslation(true);
+      } else {
+        setError(result.error || "Translation failed");
+      }
+    } catch (err) {
+      setError("Failed to connect to translation service");
+      console.error("Translation error:", err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <motion.div
@@ -29,8 +74,68 @@ export function SentenceCard({ analysis, index = 0 }: SentenceCardProps) {
             {analysis.originalText}
           </p>
         </div>
-        <JLPTBadge level={analysis.jlptLevel} />
+        <div className="flex flex-col gap-2">
+          <JLPTBadge level={analysis.jlptLevel} />
+          {/* Translation toggle button */}
+          <button
+            onClick={handleToggleTranslation}
+            disabled={isLoading}
+            className="inline-flex items-center gap-2 px-3 py-1.5 text-xs font-medium rounded-md border border-input bg-background hover:bg-accent hover:text-accent-foreground transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            title={showTranslation ? "Hide translation" : "Show translation"}
+          >
+            {isLoading ? (
+              <>
+                <Loader2 className="w-3 h-3 animate-spin" />
+                <span>Loading...</span>
+              </>
+            ) : showTranslation ? (
+              <>
+                <EyeOff className="w-3 h-3" />
+                <span>Hide</span>
+              </>
+            ) : (
+              <>
+                <Eye className="w-3 h-3" />
+                <span>Translate</span>
+              </>
+            )}
+          </button>
+        </div>
       </div>
+
+      {/* Translation display with animation */}
+      <AnimatePresence>
+        {showTranslation && translation && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.2 }}
+            className="mb-4 overflow-hidden"
+          >
+            <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-3">
+              <p className="text-sm text-blue-900 dark:text-blue-100 italic">
+                {translation}
+              </p>
+            </div>
+          </motion.div>
+        )}
+        {error && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.2 }}
+            className="mb-4 overflow-hidden"
+          >
+            <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-3">
+              <p className="text-sm text-red-900 dark:text-red-100">
+                {error}
+              </p>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Word tokens with readings */}
       {analysis.tokens.length > 0 && (

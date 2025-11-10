@@ -14,6 +14,7 @@ from typing import List, Literal
 import logging
 
 from analyzer import analyze_text
+from translator import translate_sentence
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -44,6 +45,17 @@ app.add_middleware(
 class AnalyzeRequest(BaseModel):
     """Request body for text analysis."""
     text: str
+
+
+class TranslateRequest(BaseModel):
+    """Request body for sentence translation."""
+    text: str
+
+
+class TranslateResponse(BaseModel):
+    """Translation response."""
+    originalText: str
+    translation: str
 
 
 class Token(BaseModel):
@@ -88,6 +100,7 @@ async def root():
         "status": "running",
         "endpoints": {
             "/analyze": "POST - Analyze Japanese text",
+            "/translate-sentence": "POST - Translate Japanese sentence to French",
             "/health": "GET - Health check"
         }
     }
@@ -158,6 +171,63 @@ async def analyze(request: AnalyzeRequest):
         raise HTTPException(
             status_code=500,
             detail=f"Analysis failed: {str(e)}"
+        )
+
+
+@app.post("/translate-sentence", response_model=TranslateResponse)
+async def translate(request: TranslateRequest):
+    """
+    Translate Japanese sentence to French.
+
+    This endpoint translates full Japanese sentences to French.
+    Currently returns a placeholder message indicating DeepL integration is planned.
+
+    Args:
+        request: TranslateRequest containing the Japanese text
+
+    Returns:
+        TranslateResponse with original text and French translation
+
+    Raises:
+        HTTPException: If text is empty or translation fails
+    """
+    text = request.text.strip()
+
+    # Validate input
+    if not text:
+        raise HTTPException(
+            status_code=400,
+            detail="Text cannot be empty"
+        )
+
+    # Check if text contains Japanese characters
+    if not any('\u3040' <= char <= '\u309F' or  # Hiragana
+               '\u30A0' <= char <= '\u30FF' or  # Katakana
+               '\u4E00' <= char <= '\u9FAF'     # Kanji
+               for char in text):
+        raise HTTPException(
+            status_code=400,
+            detail="Text must contain Japanese characters"
+        )
+
+    try:
+        logger.info(f"Translating sentence: {text[:50]}...")
+
+        # Get translation using translator service
+        translation = translate_sentence(text)
+
+        logger.info(f"Translation complete: {translation[:50]}...")
+
+        return {
+            "originalText": text,
+            "translation": translation
+        }
+
+    except Exception as e:
+        logger.error(f"Translation failed: {str(e)}")
+        raise HTTPException(
+            status_code=500,
+            detail=f"Translation failed: {str(e)}"
         )
 
 
