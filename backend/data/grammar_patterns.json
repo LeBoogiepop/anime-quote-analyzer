@@ -392,6 +392,307 @@
     "example": "この漢字は覚えにくい (Ce kanji est difficile à mémoriser) | 読みにくい字 (Une écriture difficile à lire) | 言いにくいことですが... (C'est difficile à dire, mais...)"
   },
   {
+    "pattern": "～じゃん",
+    "regex": "じゃん$",
+    "description": "Particule finale très informelle et populaire, surtout chez les jeunes. Équivalent de ～じゃない ou ～だろう mais en beaucoup plus décontracté. Utilisée pour confirmer quelque chose d'évident ou chercher l'accord. Origines du dialecte de Tokyo/Yokohama, maintenant répandue partout. Très commune dans les anime modernes.",
+    "jlptLevel": "N3",
+    "example": "簡単じゃん (C'est facile, non?) | 知ってるじゃん (Tu le sais bien, non?) | できるじゃん！ (Tu peux le faire, regarde!) | やばいじゃん (C'est dingue, non?)"
+  },
+  {
+    "pattern": "～っけ",
+    "regex": "っけ$",
+    "description": "Particule finale pour exprimer le rappel, la confirmation ou le questionnement sur quelque chose qu'on a oublié. 'Déjà', 'c'était quoi déjà?', 'si je me souviens bien'. Donne une tonalité informelle et réfléchie. Très utilisé dans les conversations quotidiennes et les anime pour montrer qu'un personnage essaie de se rappeler quelque chose.",
+    "jlptLevel": "N3",
+    "example": "何だっけ？ (C'était quoi déjà?) | 明日だったっけ？ (C'était demain, si je me souviens bien?) | 彼の名前、何だっけ (Son nom, c'était quoi déjà?) | 約束したっけ？ (On avait promis, déjà?)"
+  },
+  {
+    "pattern": "～のだ/～んだ",
+    "regex": "(の|ん)だ",
+    "description": "Pattern d'explication/emphase très important. Utilisé pour: (1) donner une explication ou raison, (2) chercher une explication (forme interrogative), (3) insister/souligner, (4) découverte ou réalisation. ～のだ est formel, ～んだ est informel (très courant dans les anime). Les formes: ～のです/～んです (poli), ～の/～ん (très informel). Absolument essentiel pour parler naturellement en japonais.",
+    "jlptLevel": "N4",
+    "example": "疲れたんだ (Je suis fatigué - explication) | どうしたの？ (Qu'est-ce qui se passe? - chercher explication) | 行くんだ！ (J'y vais! - emphase) | そうだったんですか (C'était donc ça - réalisation)"
+  },
+  {
+    "pattern": "～って",
+    "regex": "って",
+    "description": "Particule multi-usage extrêmement courante dans le japonais parlé et les anime: (1) Citation/rapporter ce que quelqu'un a dit: '...que', (2) Définir/présenter un sujet: 'quant à', 'en ce qui concerne', (3) Équivalent informel de ～という, (4) Expression de surprise: 'Tu dis que...?!'. Remplace souvent は ou という dans la conversation informelle.",
+    "jlptLevel": "N4",
+    "example": "彼が来るって言った (Il a dit qu'il viendrait - citation) | 明日って何曜日？ (Demain, c'est quel jour? - sujet) | 日本語って難しい (Le japonais, c'est difficile) | 100万円って！ (100 millions de yens?! - surprise)"
+  },
+  {
+    "pattern": "～なんて",
+    "regex": "なんて",
+    "description": "Exprime la surprise, le dédain, l'incrédulité ou la modestie excessive: 'comme quoi', 'un truc comme', 'comment'. Souvent utilisé avec une connotation négative ou d'étonnement. Peut aussi minimiser quelque chose par modestie. Très émotionnel et expressif, parfait pour les dialogues d'anime.",
+    "jlptLevel": "N3",
+    "example": "そんなことを言うなんて！ (Dire une telle chose, vraiment!) | 天才なんて、とんでもない (Un génie? Pas du tout! - modestie) | 信じられないなんて (Comment peux-tu ne pas croire?) | 私なんて (Quelqu'un comme moi... - auto-dépréciation)"
+  },
+  {
+    "pattern": "～っぽい",
+    "regex": "っぽい",
+    "description": "Suffixe informel signifiant 'avoir l'air de', 'ressembler à', 'typique de', 'genre'. S'attache aux noms, verbes (radical masu), et même adjectifs. Plus informel que ～らしい. Très utilisé par les jeunes et dans les anime pour décrire des apparences, comportements ou caractères. Se conjugue comme un adjectif-い.",
+    "jlptLevel": "N3",
+    "example": "子供っぽい (Puéril, enfantin) | 安っぽい (Qui a l'air bon marché) | 忘れっぽい (Qui oublie facilement) | 彼女っぽい服 (Des vêtements genre fille)"
+  },
+  {
+    "pattern": "～とか",
+    "regex": "とか",
+    "description": "Particule pour donner des exemples non-exhaustifs: 'comme', 'et cetera', 'par exemple'. Plus vague et informel que ～や. Souvent répété (AとかBとか) pour lister plusieurs choses. Peut aussi adoucir une affirmation ou rendre le discours moins direct. Extrêmement courant dans la conversation informelle.",
+    "jlptLevel": "N4",
+    "example": "映画とか音楽とか好き (J'aime les films, la musique, ce genre de choses) | 明日とか来週とか (Demain ou la semaine prochaine, un truc comme ça) | そんなこと言ってないとか (Genre je n'ai pas dit ça)"
+  },
+  {
+    "pattern": "～かい",
+    "regex": "かい$",
+    "description": "Particule interrogative informelle, principalement utilisée par les hommes (surtout les personnes âgées ou dans un contexte autoritaire). Version masculine et un peu rude de ～か ou ～の. Dans les anime, souvent utilisée par les personnages masculins plus âgés, les chefs, ou pour montrer une relation hiérarchique.",
+    "jlptLevel": "N3",
+    "example": "分かったかい？ (Tu as compris? - masculin, un peu autoritaire) | どこに行くんだい？ (Où vas-tu? - paternel) | 大丈夫かい (Ça va? - concerné mais masculin)"
+  },
+  {
+    "pattern": "～だい",
+    "regex": "だい$",
+    "description": "Particule interrogative masculine et informelle, version de ～だ utilisée principalement par les hommes dans les questions. Plus douce que ～かい mais reste masculine. Souvent entendue dans les anime de la bouche de personnages masculins âgés ou paternels.",
+    "jlptLevel": "N3",
+    "example": "何をしているんだい？ (Qu'est-ce que tu fais? - masculin, paternel) | 名前は何だい？ (Comment tu t'appelles? - masculin, amical)"
+  },
+  {
+    "pattern": "～わ (féminin)",
+    "regex": "わ$",
+    "description": "Particule finale traditionnellement féminine pour adoucir une affirmation ou montrer de l'émotion douce. Dans le japonais moderne, son usage diminue chez les jeunes femmes (considéré parfois trop 'girly'), mais reste très présent dans les anime pour caractériser des personnages féminins, surtout élégants ou traditionnels. À ne pas confondre avec わ utilisé par les hommes pour l'emphase (intonation différente).",
+    "jlptLevel": "N4",
+    "example": "そうよ、知っているわ (Oui, je le sais - féminin doux) | きれいだわ (C'est joli - admiration féminine) | 行くわよ (J'y vais! - féminin assertif)"
+  },
+  {
+    "pattern": "～ぞ",
+    "regex": "ぞ$",
+    "description": "Particule finale masculine pour l'emphase forte, l'assertion ou l'avertissement. Très masculine et rugueuse, souvent utilisée dans les anime par des personnages masculins forts, des combattants, ou dans des moments d'intensité. Peut sonner agressive dans le mauvais contexte. Équivalent masculin intense de よ.",
+    "jlptLevel": "N3",
+    "example": "行くぞ！ (On y va! / J'y vais! - masculin, déterminé) | 気をつけろぞ (Fais attention! - avertissement masculin) | やるぞ！ (Je vais le faire! - détermination masculine)"
+  },
+  {
+    "pattern": "～ぜ",
+    "regex": "ぜ$",
+    "description": "Particule finale masculine très informelle pour l'emphase, similaire à ～ぞ mais légèrement moins intense et plus 'cool'. Utilisée par les jeunes hommes ou personnages masculins dans les anime pour sonner décontracté et confiant. Donne une impression de masculinité détendue.",
+    "jlptLevel": "N3",
+    "example": "面白いぜ (C'est intéressant! - masculin cool) | 任せろぜ (Laisse-moi faire - confiant masculin) | 行こうぜ (Allons-y! - invitation masculine décontractée)"
+  },
+  {
+    "pattern": "～な (prohibitif)",
+    "regex": "な$",
+    "description": "Impératif négatif informel: 'ne fais pas'. Forme très courte et directe de ～ないで. Peut sonner brusque ou amical selon le contexte et l'intonation. S'attache directement à la forme dictionnaire du verbe. Très courant dans les anime lors de moments de tension ou entre amis proches. À distinguer de な (particule finale d'émotion).",
+    "jlptLevel": "N4",
+    "example": "行くな！ (N'y va pas! - ordre brusque) | 泣くな (Ne pleure pas - réconfortant mais direct) | 心配するな (Ne t'inquiète pas - rassurant entre hommes) | 触るな (Ne touche pas!)"
+  },
+  {
+    "pattern": "～ちゃう/～じゃう",
+    "regex": "(ちゃう|じゃう)",
+    "description": "Contraction très informelle de ～てしまう. Exprime l'achèvement complet, le regret, ou qu'une action s'est produite complètement/involontairement. ～ちゃう pour les verbes en て, ～じゃう pour les verbes en で. Extrêmement courant dans la conversation quotidienne et les anime. Donne un ton léger et naturel.",
+    "jlptLevel": "N4",
+    "example": "食べちゃった (J'ai tout mangé - oups!) | 忘れちゃった (J'ai oublié - désolé!) | 壊しちゃった (Je l'ai cassé - regret) | 行っちゃう？ (Tu y vas vraiment?)"
+  },
+  {
+    "pattern": "～ちゃえ/～じゃえ",
+    "regex": "(ちゃえ|じゃえ)",
+    "description": "Forme impérative de ～ちゃう/～じゃう, signifiant 'vas-y et fais-le complètement', souvent avec une nuance de 'tant pis' ou 'autant le faire'. Encourage quelqu'un (ou soi-même) à aller jusqu'au bout. Très informel et expressif, courant dans les anime pour montrer la détermination ou l'abandon des hésitations.",
+    "jlptLevel": "N3",
+    "example": "やっちゃえ！ (Vas-y, fais-le! - encouragement) | 言っちゃえば (Si je le dis franchement / Autant le dire) | 全部食べちゃえ (Mange tout! - encouragement)"
+  },
+  {
+    "pattern": "～なさい",
+    "regex": "なさい$",
+    "description": "Forme impérative polie utilisée principalement par les femmes, les parents envers les enfants, ou les professeurs envers les élèves. Plus doux que l'impératif direct mais garde une autorité. Se forme: radical masu + なさい. Dans les anime, souvent utilisé par les mères, grandes sœurs, ou professeures féminines.",
+    "jlptLevel": "N4",
+    "example": "勉強しなさい (Étudie! - maternel/professoral) | 早く食べなさい (Mange vite - parental) | 静かにしなさい (Sois tranquille - autorité douce) | ちゃんと聞きなさい (Écoute bien - instruction)"
+  },
+  {
+    "pattern": "～ろ/～れ (impératif)",
+    "regex": "(ろ|れ)$",
+    "description": "Forme impérative directe des verbes. Pour les verbes ru (一段): radical + ろ. Pour les verbes u (五段): forme え段 + (parfois + ろ/よ). Très direct et peut être brusque, impoli ou amical selon le contexte. Couramment utilisé entre amis proches masculins ou dans les ordres militaires/sportifs dans les anime. Les formes: 見ろ (miro), 食べろ (tabero), 来い (koi), しろ (shiro).",
+    "jlptLevel": "N4",
+    "example": "見ろ！ (Regarde! - ordre direct) | 食べろ (Mange! - direct) | やれ (Fais-le! - ordre) | 来い (Viens! - masculin direct)"
+  },
+  {
+    "pattern": "やばい",
+    "regex": "やばい",
+    "description": "Adjectif argotique ultra-populaire avec double sens: (1) Dangereux, problématique, risqué (sens original), (2) Incroyable, génial, impressionnant (sens moderne). L'usage positif est devenu dominant chez les jeunes. C'est probablement l'expression argotique la plus utilisée dans les anime modernes. Se conjugue comme un adjectif-い: やばかった (c'était dingue), やばくない (pas si fou).",
+    "jlptLevel": "N3",
+    "example": "やばい！遅刻する！ (Merde! Je vais être en retard! - négatif) | これやばいうまい！ (C'est incroyablement bon! - positif) | やばいやばい (Oh non oh non / Trop cool trop cool - selon contexte) | やばすぎる (C'est trop fou)"
+  },
+  {
+    "pattern": "すごい/すげえ",
+    "regex": "(すごい|すげえ|スゴイ)",
+    "description": "Très courant pour exprimer l'admiration, la surprise ou l'intensité: 'incroyable', 'génial', 'impressionnant', 'très'. すごい est standard, すげえ est la version masculine/argotique. Peut être utilisé comme adjectif (すごい人 = personne incroyable) ou adverbe (すごく = très). Dans les anime, すげえ est souvent utilisé par les personnages masculins excités.",
+    "jlptLevel": "N5",
+    "example": "すごい！ (Incroyable! Génial!) | すげえな！ (Trop cool! - masculin) | すごく美味しい (Très délicieux) | すごいことになった (C'est devenu une affaire sérieuse)"
+  },
+  {
+    "pattern": "まじ/マジ",
+    "regex": "(まじ|マジ)",
+    "description": "Argot très populaire signifiant 'sérieux', 'vraiment', 'pour de vrai'. Abréviation de 真面目 (majime = sérieux). Utilisé comme adverbe (マジで = sérieusement) ou interjection (マジ？ = Sérieux?). Extrêmement courant dans les anime modernes, surtout parmi les jeunes personnages. Peut être écrit en hiragana ou katakana.",
+    "jlptLevel": "N3",
+    "example": "マジ？ (Sérieux? Vraiment?) | マジで？ (Pour de vrai?) | マジすごい (Vraiment incroyable) | マジやばい (Vraiment fou/génial) | マジかよ！ (Tu déconnes?! - masculin surpris)"
+  },
+  {
+    "pattern": "うざい",
+    "regex": "うざい",
+    "description": "Argot signifiant 'énervant', 'chiant', 'gonflant', 'agaçant'. Vient de うざったい (uzattai). Très informel et peut être impoli si utilisé directement envers quelqu'un. Couramment utilisé dans les anime par des adolescents ou personnages irrités pour exprimer l'agacement. Se conjugue comme un adjectif-い.",
+    "jlptLevel": "N3",
+    "example": "うざい！ (C'est chiant! / T'es chiant!) | あいつマジうざい (Ce mec est vraiment agaçant) | うざいから黙れ (T'es chiant, tais-toi - rude)"
+  },
+  {
+    "pattern": "むかつく",
+    "regex": "むかつく",
+    "description": "Verbe argotique signifiant 'énerver', 'agacer', 'mettre en colère', littéralement 'donner la nausée'. Plus fort que うざい. Exprime une irritation ou colère profonde. Très courant dans les anime pour montrer qu'un personnage est vraiment énervé par quelque chose ou quelqu'un.",
+    "jlptLevel": "N3",
+    "example": "むかつく！ (Ça m'énerve! / Il/Elle m'énerve!) | あいつマジむかつく (Ce type m'énerve vraiment) | むかつくけど仕方ない (C'est énervant mais tant pis)"
+  },
+  {
+    "pattern": "くそ/クソ",
+    "regex": "(くそ|クソ|糞)",
+    "description": "Juron vulgaire signifiant littéralement 'merde' ou 'merdique'. Utilisé comme: (1) Interjection de frustration: 'Merde!', (2) Préfixe intensificateur négatif: 'putain de...'. Très vulgaire et impoli, mais extrêmement courant dans les anime, surtout dans les moments de frustration ou de colère. Les personnages féminins l'utilisent moins.",
+    "jlptLevel": "N3",
+    "example": "くそ！ (Merde! - frustration) | くそったれ！ (Putain! - plus vulgaire) | クソゲー (Jeu de merde - くそ + game) | くそ暑い (Putain qu'il fait chaud)"
+  },
+  {
+    "pattern": "ちくしょう",
+    "regex": "(ちくしょう|畜生)",
+    "description": "Juron/exclamation de frustration, colère ou défaite: 'Merde!', 'Bordel!', 'Saloperie!'. Littéralement 'bête' ou 'animal'. Moins vulgaire que くそ mais reste fort. Très dramatique et expressif, parfait pour les scènes émotionnelles d'anime. Souvent crié par les personnages qui ont perdu, échoué ou sont frustrés.",
+    "jlptLevel": "N3",
+    "example": "ちくしょう！ (Merde! Bordel! - frustration) | ちくしょう、負けた (Putain, j'ai perdu) | ちくしょうめ (Saloperie - très en colère)"
+  },
+  {
+    "pattern": "やった",
+    "regex": "やった",
+    "description": "Exclamation de victoire, succès ou joie: 'Yes!', 'Génial!', 'J'ai réussi!'. Forme passée de やる (faire) utilisée comme interjection. Extrêmement courant dans les anime lors de moments de victoire, succès ou bonnes nouvelles. Peut être répété (やったやった！) pour plus d'enthousiasme.",
+    "jlptLevel": "N5",
+    "example": "やった！ (Yes! J'ai réussi!) | やったね！ (Bravo! Super!) | やったー！ (Ouais! - prolongé pour plus d'enthousiasme) | やったぞ！ (On a réussi! - masculin triomphant)"
+  },
+  {
+    "pattern": "よし",
+    "regex": "よし",
+    "description": "Interjection pour se donner du courage ou marquer une décision: 'Allez!', 'Bon!', 'OK!', 'C'est parti!'. Utilisée avant de commencer quelque chose ou après avoir pris une décision. Très courante dans les anime lors de moments de détermination. Peut être prolongée (よーし！) pour plus d'emphase.",
+    "jlptLevel": "N4",
+    "example": "よし、行くぞ！ (Allez, on y va!) | よし、やってみよう (Bon, essayons) | よーし！ (OK! C'est parti!) | よしよし (Bien bien - encouragement doux)"
+  },
+  {
+    "pattern": "えっ/え",
+    "regex": "(えっ|え)$",
+    "description": "Interjection de surprise ou incompréhension: 'Hein?', 'Quoi?', 'Euh?'. Une des interjections les plus basiques et courantes en japonais. えっ avec le petit っ montre plus de surprise que え simple. Peut être répété (えっ、えっ？) pour montrer la confusion continue. Absolument essentiel dans tout dialogue naturel.",
+    "jlptLevel": "N5",
+    "example": "えっ？ (Hein? Quoi?) | えっ、本当？ (Euh, vraiment?) | えーっ！ (Quoiii?! - très surpris) | え、何？ (Hein, quoi?)"
+  },
+  {
+    "pattern": "へえ",
+    "regex": "へえ",
+    "description": "Interjection exprimant l'intérêt, la surprise légère ou la découverte: 'Ah bon?', 'Vraiment?', 'Tiens donc'. Peut être prolongée (へええ) pour montrer plus d'intérêt ou de surprise. Plus neutre et curieux que えっ. Utilisée quand on apprend quelque chose de nouveau mais pas choquant.",
+    "jlptLevel": "N5",
+    "example": "へえ (Ah bon) | へええ、そうなんだ (Ahhh, c'est vrai?) | へえ、知らなかった (Tiens, je ne savais pas)"
+  },
+  {
+    "pattern": "ふうん",
+    "regex": "ふうん",
+    "description": "Interjection montrant un intérêt poli mais modéré, parfois du scepticisme: 'Hum', 'Ah bon', 'Mouais'. Peut sonner désintéressé ou dubitatif selon l'intonation. Dans les anime, souvent utilisé par des personnages qui ne sont pas vraiment impressionnés ou qui doutent de ce qu'on leur dit.",
+    "jlptLevel": "N5",
+    "example": "ふうん (Hum... / Ah bon) | ふーん、そう (Mouais, d'accord - pas très convaincu) | ふうん、本当かな (Hum, c'est vrai ça?)"
+  },
+  {
+    "pattern": "はあ/はぁ",
+    "regex": "(はあ|はぁ)",
+    "description": "Soupir ou interjection montrant: (1) Le soulagement, (2) La fatigue/lassitude, (3) La confusion/frustration, (4) L'étonnement exaspéré. Le contexte et l'intonation déterminent le sens exact. Très courant dans les anime pour montrer l'état émotionnel des personnages.",
+    "jlptLevel": "N5",
+    "example": "はぁ... (Soupir de fatigue) | はぁ？ (Hein?! - confus ou énervé) | はぁ、疲れた (Soupir, je suis fatigué) | はあ？何言ってんの (Hein?! Tu dis quoi? - incrédule)"
+  },
+  {
+    "pattern": "あの/あのう",
+    "regex": "(あの|あのう)",
+    "description": "Interjection hésitante pour attirer l'attention poliment ou exprimer l'hésitation: 'Euh...', 'Hum...', 'Excusez-moi...'. Utilisée au début d'une phrase quand on est hésitant ou qu'on veut poliment interrompre. あのう est plus poli. Très courant dans les anime pour montrer la timidité, l'hésitation ou la politesse.",
+    "jlptLevel": "N5",
+    "example": "あの... (Euh...) | あのう、すみません (Euh, excusez-moi) | あの、ちょっと聞きたいんですが (Euh, je voudrais demander quelque chose) | あのね (Dis donc / Écoute)"
+  },
+  {
+    "pattern": "えっと/ええと",
+    "regex": "(えっと|ええと)",
+    "description": "Interjection de réflexion ou hésitation: 'Euh...', 'Voyons...', 'Hmm...'. Utilisée quand on réfléchit, qu'on essaie de se souvenir de quelque chose, ou qu'on hésite sur quoi dire. えっと est plus courant dans le japonais moderne, ええと est légèrement plus formel. Très naturel dans la conversation.",
+    "jlptLevel": "N5",
+    "example": "えっと、何だっけ？ (Euh, c'était quoi déjà?) | ええと、そうですね (Euh, voyons voir) | えっとね (Euh eh bien...) | えっと... (Hmm... - réfléchit)"
+  },
+  {
+    "pattern": "そうか/そっか",
+    "regex": "(そうか|そっか)",
+    "description": "Expression de compréhension ou réalisation: 'Je vois', 'Ah bon', 'D'accord', 'Ah je comprends'. そうか est standard, そっか est plus contracté et informel. Utilisée quand on comprend enfin quelque chose ou qu'on accepte une information. Très fréquent dans les dialogues pour montrer qu'on suit la conversation.",
+    "jlptLevel": "N5",
+    "example": "そうか (Je vois, d'accord) | そっか、分かった (Ah OK, j'ai compris) | そうか、そうだったのか (Je vois, c'était donc ça) | そっかそっか (D'accord d'accord)"
+  },
+  {
+    "pattern": "なるほど",
+    "regex": "なるほど",
+    "description": "Expression de compréhension intellectuelle: 'Je vois', 'Ah d'accord', 'C'est logique'. Implique qu'on comprend le raisonnement ou la logique derrière quelque chose. Plus intellectuel que そうか. Très utilisé dans les anime par des personnages qui réalisent quelque chose ou comprennent une explication.",
+    "jlptLevel": "N4",
+    "example": "なるほど (Je vois, c'est logique) | なるほどね (Ah OK je vois) | なるほど、そういうことか (Ah je vois, c'est donc ça) | なるほどなるほど (Je vois je vois)"
+  },
+  {
+    "pattern": "もちろん",
+    "regex": "もちろん",
+    "description": "Adverbe signifiant 'bien sûr', 'évidemment', 'naturellement'. Utilisé pour confirmer fortement quelque chose qui devrait être évident ou pour accepter avec enthousiasme. Peut sonner confiant ou rassurant. Très courant dans les réponses affirmatives fortes.",
+    "jlptLevel": "N4",
+    "example": "もちろん！ (Bien sûr!) | もちろんだよ (Bien sûr que oui) | もちろん知ってる (Évidemment que je sais) | もちろん行くよ (Bien sûr que j'y vais)"
+  },
+  {
+    "pattern": "ごめん/すまん",
+    "regex": "(ごめん|すまん|スマン)",
+    "description": "Excuses informelles: 'Désolé', 'Pardon'. ごめん est neutre/légèrement féminin, すまん est masculin. Formes complètes: ごめんなさい (poli), すまない (masculin formel). Raccourcis très courants: ごめんね, すまんな. Dans les anime, le choix entre ごめん et すまん aide à caractériser le personnage (genre, personnalité).",
+    "jlptLevel": "N5",
+    "example": "ごめん！ (Désolé!) | すまん (Pardon - masculin) | ごめんね (Désolé hein - doux) | すまんかった (J'étais désolé - masculin passé) | マジごめん (Vraiment désolé - jeune)"
+  },
+  {
+    "pattern": "ありがとう",
+    "regex": "ありがとう",
+    "description": "Remerciement standard: 'Merci'. Formes: ありがとう (informel), ありがとうございます (poli), どうもありがとう (merci beaucoup), ありがとな (masculin informel). Peut être raccourci à あり~ entre très proches. Une des expressions les plus essentielles en japonais.",
+    "jlptLevel": "N5",
+    "example": "ありがとう！ (Merci!) | ありがとうございます (Merci - poli) | どうもありがとう (Merci beaucoup) | ありがとな (Merci - masculin informel) | ありがとね (Merci hein - amical)"
+  },
+  {
+    "pattern": "やれやれ",
+    "regex": "やれやれ",
+    "description": "Interjection exprimant l'exaspération légère, la résignation ou le soulagement après une épreuve: 'Eh bien...', 'Bon sang...', 'Ouf...'. Souvent accompagnée d'un soupir. Dans les anime, très associée à des personnages blasés, fatigués ou exaspérés (archétype du personnage cool et détaché). Rendue célèbre par certains personnages d'anime/manga.",
+    "jlptLevel": "N3",
+    "example": "やれやれ (Eh bien... / Ouf - résigné) | やれやれだぜ (Bon sang... - signature de certains personnages) | やれやれ、困ったな (Eh bien, c'est problématique)"
+  },
+  {
+    "pattern": "めんどくさい/めんどい",
+    "regex": "(めんどくさい|めんどい|面倒)",
+    "description": "Adjectif signifiant 'chiant', 'pénible', 'embêtant', 'la flemme'. めんどくさい est complet, めんどい/めんど est contracté. Exprime qu'on trouve quelque chose trop d'effort ou trop compliqué. Très courant chez les jeunes et dans les anime pour exprimer la flemme ou le refus de faire quelque chose de compliqué.",
+    "jlptLevel": "N3",
+    "example": "めんどくさい (C'est chiant / J'ai la flemme) | めんどい (C'est pénible - contracté) | 面倒だな (C'est embêtant) | めんどくさいからやめる (C'est trop chiant, j'abandonne)"
+  },
+  {
+    "pattern": "しょうがない/仕方ない",
+    "regex": "(しょうがない|仕方ない|しかたない|しゃあない)",
+    "description": "Expression de résignation: 'Tant pis', 'Rien à faire', 'On n'y peut rien', 'C'est comme ça'. Reflète l'acceptation stoïque des circonstances qu'on ne peut changer, concept important dans la culture japonaise. Variations: しょうがない (contracté), 仕方がない (complet), しゃあない (très informel, dialectal).",
+    "jlptLevel": "N3",
+    "example": "しょうがない (Tant pis, on n'y peut rien) | 仕方ないよ (C'est comme ça) | しょうがないね (Bon, tant pis) | まあ、しょうがない (Bon, on n'y peut rien - résigné)"
+  },
+  {
+    "pattern": "本当/ほんと",
+    "regex": "(本当|ほんと|ホント)",
+    "description": "Mot très versatile signifiant 'vraiment', 'vrai', 'sérieusement': (1) Adverbe: 'vraiment', 'réellement', (2) Nom: 'la vérité', (3) Question: 'Vraiment?', 'C'est vrai?'. ほんと/ホント est la forme contractée informelle. Une des expressions les plus fréquentes en japonais parlé.",
+    "jlptLevel": "N5",
+    "example": "本当？ (Vraiment? C'est vrai?) | ほんとに (Vraiment, sérieusement) | ほんと！ (Sérieux! / Pour de vrai!) | ほんとだ (C'est vrai!) | ほんとありがとう (Merci vraiment)"
+  },
+  {
+    "pattern": "嘘/うそ",
+    "regex": "(嘘|うそ|ウソ)",
+    "description": "Signifie 'mensonge' ou utilisé comme interjection de surprise incrédule: 'Pas vrai!', 'Tu mens!', 'C'est pas possible!'. Comme interjection, exprime qu'on ne peut pas croire ce qu'on vient d'entendre. Très courant dans les anime lors de révélations choquantes.",
+    "jlptLevel": "N4",
+    "example": "嘘！ (Pas vrai! Tu déconnes!) | うそでしょ？ (C'est une blague, hein?) | 嘘だ (C'est un mensonge / C'est pas possible) | 嘘つき (Menteur) | マジ嘘 (Sérieux, pas vrai)"
+  },
+  {
+    "pattern": "大丈夫/だいじょうぶ",
+    "regex": "(大丈夫|だいじょうぶ|ダイジョブ)",
+    "description": "Expression versatile signifiant: (1) 'Ça va', 'Tout va bien' (état), (2) 'Pas de problème', 'C'est OK' (permission/assurance), (3) 'Est-ce que ça va?' (question). ダイジョブ est une prononciation contractée informelle. Absolument essentiel dans la communication quotidienne.",
+    "jlptLevel": "N5",
+    "example": "大丈夫？ (Ça va? Tout va bien?) | 大丈夫だよ (Ça va / Pas de problème) | 大丈夫です (C'est bon, merci - poli) | 大丈夫、大丈夫 (C'est bon, c'est bon - rassurant) | ダイジョブ (Pas de souci - très informel)"
+  },
+  {
     "pattern": "Phrase simple",
     "regex": "^[^ていてまでたなばのにがもかをにへとやより]+$",
     "description": "Structure de phrase déclarative simple sans marqueurs grammaticaux complexes. Peut être composée de particules de base (は、が、を、に、で、と、など), de noms, de verbes à la forme simple, ou d'adjectifs. Ce sont des phrases courtes et directes souvent utilisées dans la conversation quotidienne, les exclamations, ou les réponses courtes.",
