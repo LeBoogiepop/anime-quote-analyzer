@@ -14,7 +14,7 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
   const [subtitles, setSubtitles] = useState<SubtitleEntry[]>([]);
   const [analyses, setAnalyses] = useState<SentenceAnalysis[]>([]);
-  const [displayCount, setDisplayCount] = useState(5);
+  const [displayCount, setDisplayCount] = useState(30);
 
   const handleFileUpload = async (file: File) => {
     console.log('Starting file upload:', file.name);
@@ -43,8 +43,8 @@ export default function Home() {
 
       setSubtitles(parseData.entries);
 
-      // Analyze first 20 entries for better analysis coverage
-      const entriesToAnalyze = parseData.entries.slice(0, 20);
+      // Analyze first 50 entries for better analysis coverage
+      const entriesToAnalyze = parseData.entries.slice(0, 50);
       const analysisPromises = entriesToAnalyze.map((entry: SubtitleEntry) =>
         fetch("/api/analyze", {
           method: "POST",
@@ -69,7 +69,7 @@ export default function Home() {
   };
 
   const handleLoadMore = () => {
-    setDisplayCount(prev => Math.min(prev + 5, analyses.length));
+    setDisplayCount(prev => Math.min(prev + 10, analyses.length));
   };
 
   return (

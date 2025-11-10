@@ -73,6 +73,7 @@ COMMON_WORDS_FR = {
     "逆": "inverse, contraire, opposé",
     "気": "esprit, sentiment, humeur, envie, attention",
     "からかう": "taquiner, se moquer gentiment",
+    "却って": "au contraire, plutôt, inversement",
     "挑発": "provocation, défi",
     "反省": "réflexion, introspection, remords",
 
