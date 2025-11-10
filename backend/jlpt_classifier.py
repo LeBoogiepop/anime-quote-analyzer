@@ -98,21 +98,26 @@ def classify_word(word: str, base_form: str = None) -> JLPTLevel:
     """
     vocab_data = load_jlpt_data()
 
+    # DEBUG: Log classification attempts for key words
+    if word in ["そう", "互い", "相手", "求める", "物", "悩む", "決まる", "気", "逆", "言う", "為る"]:
+        logger.info(f"[CLASSIFY] word='{word}', base_form='{base_form}', same={word == base_form}")
+
     # Try base form first (more reliable for conjugated words)
     if base_form and base_form != '*' and base_form != word:
         for level in ["N5", "N4", "N3", "N2", "N1"]:
             if base_form in vocab_data.get(level, []):
-                logger.debug(f"Found '{word}' via base form '{base_form}' at level {level}")
+                logger.info(f"  → Found '{word}' via base form '{base_form}' at level {level}")
                 return level
+        logger.debug(f"  → Base form '{base_form}' not found, trying word '{word}'")
 
-    # Try surface form
+    # Try surface form (or word itself if base_form == word)
     for level in ["N5", "N4", "N3", "N2", "N1"]:
         if word in vocab_data.get(level, []):
-            logger.debug(f"Found '{word}' (surface form) at level {level}")
+            logger.info(f"  → Found '{word}' (word form) at level {level}")
             return level
 
     # Word not found in any JLPT level
-    logger.debug(f"Word '{word}' (base: '{base_form}') not found in JLPT data")
+    logger.warning(f"  → Word '{word}' (base: '{base_form}') NOT FOUND in JLPT data")
     return "Unknown"
 
 

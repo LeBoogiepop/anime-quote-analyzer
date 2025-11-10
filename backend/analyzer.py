@@ -124,6 +124,10 @@ def tokenize(text: str) -> List[Dict[str, str]]:
             else:
                 base_form = surface
 
+            # DEBUG: Log base form extraction for key words
+            if surface in ["そう", "互い", "相手", "求める", "物", "タカギ", "悩む", "決まる"]:
+                logger.info(f"[TOKENIZE] surface='{surface}' → baseForm='{base_form}', pos='{pos}'")
+
             tokens.append({
                 "surface": surface,
                 "reading": reading,
@@ -171,10 +175,15 @@ def is_proper_noun(token: Dict[str, str]) -> bool:
     """
     surface = token.get("surface", "")
     pos = token.get("partOfSpeech", "")
+    base_form = token.get("baseForm", "")
+
+    # DEBUG: Log token details for analysis
+    logger.info(f"[PROPER NOUN CHECK] surface='{surface}', pos='{pos}', baseForm='{base_form}'")
 
     # Check for proper noun POS tag from MeCab
     # MeCab marks proper nouns as 固有名詞 or includes it in the POS details
     if "固有名詞" in pos or pos == "名詞-固有名詞":
+        logger.info(f"  → Detected as proper noun via POS tag: {surface}")
         return True
 
     # Check if all katakana (common for foreign names)
@@ -184,9 +193,10 @@ def is_proper_noun(token: Dict[str, str]) -> bool:
         # Could refine this by checking against common katakana word dictionary
         # For now, consider all-katakana as potential proper nouns to filter
         if len(surface) >= 2:  # At least 2 characters
-            logger.debug(f"Skipping all-katakana word as proper noun: {surface}")
+            logger.info(f"  → Detected as proper noun via all-katakana heuristic: {surface}")
             return True
 
+    logger.debug(f"  → Not a proper noun: {surface}")
     return False
 
 
