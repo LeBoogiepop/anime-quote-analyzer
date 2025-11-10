@@ -148,25 +148,42 @@ function mockAnalyze(text: string): SentenceAnalysis {
     });
   }
 
-  // If no vocabulary detected, extract individual characters as placeholder
+  // If no vocabulary detected, extract multi-character words as placeholder
   if (vocabulary.length === 0) {
-    const chars = text.split('');
-    for (let i = 0; i < Math.min(3, chars.length); i++) {
-      const char = chars[i];
+    const extractedWords = [];
+
+    // Match kanji + okurigana patterns (e.g., 好き, 書く, 食べる)
+    const kanjiOkurigana = text.match(/[\u4E00-\u9FAF]+[\u3040-\u309F]*/g) || [];
+    extractedWords.push(...kanjiOkurigana);
+
+    // Match pure hiragana words (2+ characters)
+    const hiraganaWords = text.match(/[\u3040-\u309F]{2,}/g) || [];
+    extractedWords.push(...hiraganaWords);
+
+    // Match pure katakana words (2+ characters)
+    const katakanaWords = text.match(/[\u30A0-\u30FF]{2,}/g) || [];
+    extractedWords.push(...katakanaWords);
+
+    // Filter out punctuation and keep unique words
+    const uniqueWords = Array.from(new Set(extractedWords)).filter(word => {
+      // Skip if it's only punctuation
+      return !/^[\(\)（）\-—〜～、。！？\s]+$/.test(word);
+    });
+
+    // Limit to 3-5 words max
+    const wordsToAdd = uniqueWords.slice(0, Math.min(5, uniqueWords.length));
+
+    for (const word of wordsToAdd) {
+      const isHiragana = /^[\u3040-\u309F]+$/.test(word);
+      const isKatakana = /^[\u30A0-\u30FF]+$/.test(word);
+
       let reading = 'demo';
-
-      // Check character type
-      const isHiragana = /[\u3040-\u309F]/.test(char);
-      const isKatakana = /[\u30A0-\u30FF]/.test(char);
-
-      // If hiragana or katakana, use the character itself as reading
       if (isHiragana || isKatakana) {
-        reading = char;
+        reading = word; // Use word itself as reading for kana
       }
-      // For kanji, use 'demo' as placeholder
 
       vocabulary.push({
-        word: char,
+        word: word,
         reading: reading,
         meaning: 'Démo - Backend Python NLP nécessaire pour l\'analyse complète',
         jlptLevel: jlptLevel
@@ -174,27 +191,54 @@ function mockAnalyze(text: string): SentenceAnalysis {
     }
   }
 
-  // If no tokens detected, try splitting on common particles
+  // If no tokens detected, extract word-level tokens
   if (tokens.length === 0) {
-    // Split on common particles: は、が、を、に、へ、で、と
-    const parts = text.split(/([はがをにへでと])/);
     const generatedTokens = [];
+    let remainingText = text;
 
-    for (const part of parts) {
-      if (part && part.trim()) {
-        const isHiragana = /[\u3040-\u309F]/.test(part);
-        const isKatakana = /[\u30A0-\u30FF]/.test(part);
-
-        generatedTokens.push({
-          surface: part,
-          reading: (isHiragana || isKatakana) ? part : 'demo',
-          partOfSpeech: /^[はがをにへでと]$/.test(part) ? 'Particle' : 'Word',
-          baseForm: part
-        });
-      }
+    // First extract kanji+okurigana words (e.g., 授業, 好き, 書く)
+    const kanjiWords = text.match(/[\u4E00-\u9FAF]+[\u3040-\u309F]*/g) || [];
+    for (const word of kanjiWords) {
+      generatedTokens.push({
+        surface: word,
+        reading: 'demo',
+        partOfSpeech: 'Word',
+        baseForm: word
+      });
+      remainingText = remainingText.replace(word, ' ');
     }
 
-    tokens.push(...generatedTokens);
+    // Then extract hiragana sequences (2+ chars or single particles)
+    const hiraganaSeqs = remainingText.match(/[\u3040-\u309F]+/g) || [];
+    for (const seq of hiraganaSeqs) {
+      // Check if it's a common particle
+      const isParticle = /^[はがをにへでと]$/.test(seq);
+
+      generatedTokens.push({
+        surface: seq,
+        reading: seq,
+        partOfSpeech: isParticle ? 'Particle' : 'Word',
+        baseForm: seq
+      });
+    }
+
+    // Extract katakana words
+    const katakanaWords = remainingText.match(/[\u30A0-\u30FF]+/g) || [];
+    for (const word of katakanaWords) {
+      generatedTokens.push({
+        surface: word,
+        reading: word,
+        partOfSpeech: 'Word',
+        baseForm: word
+      });
+    }
+
+    // Filter out punctuation-only tokens
+    const filteredTokens = generatedTokens.filter(token => {
+      return !/^[\(\)（）\-—〜～、。！？\s]+$/.test(token.surface);
+    });
+
+    tokens.push(...filteredTokens);
   }
 
   return {

@@ -20,6 +20,15 @@ function isOnlySymbols(text: string): boolean {
 }
 
 /**
+ * Remove speaker labels from subtitle text
+ * Examples: （教師）よ〜し → よ〜し, (話し声) → empty string
+ */
+function removeSpeakerLabels(text: string): string {
+  // Remove speaker labels at the start: （...） or (...)
+  return text.replace(/^[\(（][^\)）]+[\)）]\s*/g, '').trim();
+}
+
+/**
  * Parse SRT subtitle file format
  * Format:
  * 1
@@ -36,7 +45,7 @@ function parseSRT(content: string): SubtitleEntry[] {
 
     const id = parseInt(lines[0]);
     const timeLine = lines[1];
-    const text = lines.slice(2).join("\n").trim();
+    let text = lines.slice(2).join("\n").trim();
 
     // Parse time format: 00:00:01,000 --> 00:00:04,000
     const timeMatch = timeLine.match(
@@ -44,6 +53,9 @@ function parseSRT(content: string): SubtitleEntry[] {
     );
 
     if (timeMatch) {
+      // Remove speaker labels like （教師）or (話し声)
+      text = removeSpeakerLabels(text);
+
       // Skip entries that are only symbols or don't contain Japanese
       if (isOnlySymbols(text) || !hasJapaneseContent(text)) {
         console.log('Skipping non-Japanese entry:', text);
@@ -78,9 +90,12 @@ function parseASS(content: string): SubtitleEntry[] {
       if (parts.length >= 10) {
         const startTime = parts[1];
         const endTime = parts[2];
-        const text = parts.slice(9).join(",").replace(/\{[^}]*\}/g, "").trim();
+        let text = parts.slice(9).join(",").replace(/\{[^}]*\}/g, "").trim();
 
         if (text) {
+          // Remove speaker labels like （教師）or (話し声)
+          text = removeSpeakerLabels(text);
+
           // Skip entries that are only symbols or don't contain Japanese
           if (isOnlySymbols(text) || !hasJapaneseContent(text)) {
             console.log('Skipping non-Japanese entry:', text);
