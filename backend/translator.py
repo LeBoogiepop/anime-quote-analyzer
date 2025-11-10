@@ -29,6 +29,113 @@ _cache_modified = False
 # Cache file path
 CACHE_FILE = Path(__file__).parent / "data" / "translation_cache.json"
 
+# Common Japanese words with proper French translations
+# These take priority over Jisho API to ensure quality
+COMMON_WORDS_FR = {
+    # Common expressions and particles
+    "そう": "ainsi, comme ça, de cette manière",
+    "もう": "déjà, maintenant, encore",
+    "よし": "bien, d'accord, allez",
+    "いや": "non, eh bien",
+    "ええ": "oui, eh bien",
+    "はい": "oui",
+    "いいえ": "non",
+    "ううん": "non (familier)",
+    "うん": "oui (familier)",
+    "ああ": "ah, oh",
+    "えっ": "hein, quoi",
+    "へえ": "oh, vraiment",
+
+    # Common verbs and adjectives
+    "いい": "bon, bien",
+    "良い": "bon, bien",
+    "言う": "dire, parler",
+    "為る": "faire",
+    "する": "faire",
+    "やる": "faire",
+    "なる": "devenir",
+    "ある": "être, avoir, exister",
+    "いる": "être (animé)",
+    "見る": "voir, regarder",
+    "聞く": "écouter, entendre, demander",
+    "話す": "parler",
+    "書く": "écrire",
+    "読む": "lire",
+
+    # Relational and contextual words
+    "互い": "mutuellement, l'un l'autre, réciproquement",
+    "相手": "partenaire, adversaire, l'autre personne",
+    "求める": "demander, chercher, désirer, exiger",
+    "物": "chose, objet, article",
+    "事": "chose, affaire, fait",
+    "決まる": "être décidé, être fixé, être réglé",
+    "全然": "pas du tout, complètement (avec négation)",
+    "逆": "inverse, contraire, opposé",
+    "気": "esprit, sentiment, humeur, envie, attention",
+    "からかう": "taquiner, se moquer gentiment",
+    "挑発": "provocation, défi",
+    "反省": "réflexion, introspection, remords",
+
+    # Pronouns
+    "私": "je, moi",
+    "僕": "je (masculin, poli)",
+    "俺": "je (masculin, familier)",
+    "あなた": "tu, vous",
+    "君": "tu (familier)",
+    "彼": "il, lui",
+    "彼女": "elle",
+    "これ": "ceci, ça",
+    "それ": "cela, ça",
+    "あれ": "ça là-bas",
+
+    # Question words
+    "何": "quoi, que",
+    "誰": "qui",
+    "どこ": "où",
+    "いつ": "quand",
+    "なぜ": "pourquoi",
+    "どう": "comment",
+    "どの": "quel, lequel",
+    "どれ": "lequel",
+
+    # Common adjectives and adverbs
+    "大きい": "grand",
+    "小さい": "petit",
+    "新しい": "nouveau",
+    "古い": "vieux, ancien",
+    "高い": "haut, cher",
+    "安い": "bon marché, pas cher",
+    "早い": "tôt, rapide",
+    "遅い": "tard, lent",
+    "多い": "nombreux, beaucoup",
+    "少ない": "peu, peu nombreux",
+
+    # Time expressions
+    "今": "maintenant, présent",
+    "昨日": "hier",
+    "明日": "demain",
+    "今日": "aujourd'hui",
+    "毎日": "chaque jour, tous les jours",
+    "いつも": "toujours, constamment",
+    "時々": "parfois, quelquefois",
+    "たまに": "de temps en temps, rarement",
+
+    # Common nouns
+    "人": "personne, gens",
+    "時": "temps, moment, heure",
+    "日": "jour, soleil",
+    "年": "année",
+    "月": "mois, lune",
+    "週": "semaine",
+    "朝": "matin",
+    "昼": "midi, journée",
+    "夜": "nuit, soir",
+    "家": "maison, famille",
+    "学校": "école",
+    "先生": "professeur, enseignant",
+    "友達": "ami",
+}
+
 
 def load_cache() -> Dict[str, str]:
     """
@@ -149,10 +256,11 @@ def translate_to_french(word: str, use_jisho: bool = True) -> str:
     Translate Japanese word to French using fallback strategy.
 
     Translation priority:
-    1. Check local cache (fastest)
-    2. Check static vocabulary dictionary
-    3. Query Jisho API for English translation (if enabled)
-    4. Return helpful fallback message
+    1. Check common words dictionary (highest quality)
+    2. Check local cache (fastest)
+    3. Check static vocabulary dictionary
+    4. Query Jisho API for English translation (if enabled)
+    5. Return helpful fallback message
 
     Args:
         word: Japanese word to translate
@@ -164,20 +272,25 @@ def translate_to_french(word: str, use_jisho: bool = True) -> str:
     Example:
         >>> translate_to_french("勉強")
         "étude, étudier"
-        >>> translate_to_french("不明な単語")
-        "[Traduction non disponible]"
+        >>> translate_to_french("そう")
+        "ainsi, comme ça, de cette manière"
     """
     global _cache_modified
+
+    # Strategy 1: Check common words first (highest priority for quality)
+    if word in COMMON_WORDS_FR:
+        logger.debug(f"Common word hit for '{word}'")
+        return COMMON_WORDS_FR[word]
 
     # Load cache and dictionary
     cache = load_cache()
 
-    # Strategy 1: Check cache
+    # Strategy 2: Check cache
     if word in cache:
         logger.debug(f"Cache hit for '{word}'")
         return cache[word]
 
-    # Strategy 2: Check static dictionary
+    # Strategy 3: Check static dictionary
     try:
         from analyzer import load_vocabulary_dictionary
         vocab_dict = load_vocabulary_dictionary()
@@ -195,7 +308,7 @@ def translate_to_french(word: str, use_jisho: bool = True) -> str:
     except Exception as e:
         logger.error(f"Failed to load vocabulary dictionary: {e}")
 
-    # Strategy 3: Query Jisho API (if enabled)
+    # Strategy 4: Query Jisho API (if enabled)
     if use_jisho:
         jisho_result = get_jisho_translation(word)
 
@@ -211,7 +324,7 @@ def translate_to_french(word: str, use_jisho: bool = True) -> str:
 
             return translation
 
-    # Strategy 4: Helpful fallback
+    # Strategy 5: Helpful fallback
     fallback = "[Traduction non disponible]"
     logger.warning(f"No translation found for '{word}', using fallback")
 

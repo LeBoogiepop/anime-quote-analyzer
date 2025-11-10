@@ -20,19 +20,10 @@ function isOnlySymbols(text: string): boolean {
 }
 
 /**
- * Remove speaker labels from subtitle text
- * Examples: （教師）よ〜し → よ〜し, (話し声) → empty string
- */
-function removeSpeakerLabels(text: string): string {
-  // Remove speaker labels at the start: （...） or (...)
-  return text.replace(/^[\(（][^\)）]+[\)）]\s*/g, '').trim();
-}
-
-/**
  * Comprehensive subtitle text cleaning function.
  *
  * Cleaning steps:
- * 1. Remove speaker labels: （教師）, （タカギ）, (話し声), etc.
+ * 1. Remove ALL forms of speaker labels and stray parentheses
  * 2. Remove standalone music symbols: ♪, ♫, ♬
  * 3. Remove common subtitle formatting artifacts
  * 4. Normalize whitespace (multiple spaces/tabs → single space)
@@ -44,19 +35,34 @@ function removeSpeakerLabels(text: string): string {
 function cleanSubtitleText(text: string): string {
   let cleaned = text;
 
-  // Step 1: Remove speaker labels at the start
-  cleaned = removeSpeakerLabels(cleaned);
+  // Step 1: Remove ALL forms of speaker labels (more aggressive)
+  // Remove complete speaker labels: （教師）or (話し声)
+  cleaned = cleaned.replace(/[（(][^）)]*[）)]/g, '');
+
+  // Remove leading closing parens that might be leftover: ）う〜ん → う〜ん
+  cleaned = cleaned.replace(/^[）)\s]+/g, '');
+
+  // Remove trailing opening parens that might be leftover
+  cleaned = cleaned.replace(/[（(\s]+$/g, '');
+
+  // Remove speaker labels followed by newlines
+  cleaned = cleaned.replace(/[（(][^）)]*[）)]\s*\n/g, '');
+
+  // Remove any standalone closing parens in the middle
+  cleaned = cleaned.replace(/\s+[）)]+\s+/g, ' ');
 
   // Step 2: Remove standalone music symbols (not part of actual dialogue)
-  // Only remove if they're at start/end or surrounded by whitespace
-  cleaned = cleaned.replace(/^\s*[♪♫♬]+\s*/g, '');  // Start
-  cleaned = cleaned.replace(/\s*[♪♫♬]+\s*$/g, '');  // End
-  cleaned = cleaned.replace(/\s+[♪♫♬]+\s+/g, ' '); // Middle (surrounded by spaces)
+  // Remove at start
+  cleaned = cleaned.replace(/^[♪♫♬〜～]+\s*/g, '');
+  // Remove at end
+  cleaned = cleaned.replace(/\s*[♪♫♬〜～]+$/g, '');
+  // Remove in middle when surrounded by spaces
+  cleaned = cleaned.replace(/\s+[♪♫♬〜～]+\s+/g, ' ');
 
   // Step 3: Remove common subtitle formatting artifacts
   cleaned = cleaned.replace(/\\N/g, ' ');           // ASS line breaks
-  cleaned = cleaned.replace(/\{[^}]*\}/g, '');      // ASS formatting tags
-  cleaned = cleaned.replace(/<[^>]*>/g, '');        // HTML-like tags
+  cleaned = cleaned.replace(/\{[^}]+\}/g, '');      // ASS formatting tags (more strict)
+  cleaned = cleaned.replace(/<[^>]+>/g, '');        // HTML-like tags (more strict)
 
   // Step 4: Normalize whitespace
   cleaned = cleaned.replace(/\s+/g, ' ');           // Multiple spaces → single space

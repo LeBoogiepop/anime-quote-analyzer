@@ -71,15 +71,19 @@ def load_jlpt_data() -> Dict[str, List[str]]:
         return {"N5": [], "N4": [], "N3": [], "N2": [], "N1": []}
 
 
-def classify_word(word: str) -> JLPTLevel:
+def classify_word(word: str, base_form: str = None) -> JLPTLevel:
     """
     Classify a single word by JLPT level.
 
     Searches through JLPT vocabulary lists from N5 (easiest) to N1 (hardest).
     Returns the lowest (easiest) level where the word is found.
 
+    Tries base_form first (dictionary form) since JLPT lists use dictionary forms.
+    Falls back to surface form if base_form isn't found.
+
     Args:
-        word: Japanese word to classify
+        word: Japanese word to classify (surface form)
+        base_form: Dictionary/base form from MeCab (optional, but recommended)
 
     Returns:
         JLPT level string: "N5", "N4", "N3", "N2", "N1", or "Unknown"
@@ -87,20 +91,28 @@ def classify_word(word: str) -> JLPTLevel:
     Example:
         >>> classify_word("私")
         "N5"
-        >>> classify_word("授業")
+        >>> classify_word("なやん", "悩む")  # conjugated form → base form
         "N4"
         >>> classify_word("未知の言葉")
         "Unknown"
     """
     vocab_data = load_jlpt_data()
 
-    # Check levels in order from easiest to hardest
-    # If a word appears in multiple levels, we want the lowest (easiest) one
+    # Try base form first (more reliable for conjugated words)
+    if base_form and base_form != '*' and base_form != word:
+        for level in ["N5", "N4", "N3", "N2", "N1"]:
+            if base_form in vocab_data.get(level, []):
+                logger.debug(f"Found '{word}' via base form '{base_form}' at level {level}")
+                return level
+
+    # Try surface form
     for level in ["N5", "N4", "N3", "N2", "N1"]:
         if word in vocab_data.get(level, []):
+            logger.debug(f"Found '{word}' (surface form) at level {level}")
             return level
 
     # Word not found in any JLPT level
+    logger.debug(f"Word '{word}' (base: '{base_form}') not found in JLPT data")
     return "Unknown"
 
 

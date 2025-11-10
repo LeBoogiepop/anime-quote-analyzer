@@ -47,7 +47,7 @@ export const translations = {
 
     // Footer
     builtWith: "Built with Next.js 14, TypeScript, Tailwind CSS, and Framer Motion",
-    pythonBackend: "Python NLP backend integration coming soon (MeCab/fugashi)",
+    pythonBackend: "Python NLP backend (MeCab/fugashi) • Automatic translations via Jisho/DeepL",
 
     // JLPT Levels
     beginner: "Beginner",
@@ -103,7 +103,7 @@ export const translations = {
 
     // Footer
     builtWith: "Construit avec Next.js 14, TypeScript, Tailwind CSS et Framer Motion",
-    pythonBackend: "Intégration du backend Python NLP à venir (MeCab/fugashi)",
+    pythonBackend: "Backend Python NLP (MeCab/fugashi) • Traductions automatiques via Jisho/DeepL",
 
     // JLPT Levels
     beginner: "Débutant",

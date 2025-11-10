@@ -9,6 +9,7 @@ Patterns are detected using regex matching and token analysis.
 Author: Maxime
 """
 
+import re
 import json
 import logging
 from pathlib import Path
@@ -99,191 +100,215 @@ def detect_patterns(text: str, tokens: List[Dict[str, str]]) -> List[Dict[str, A
     detected = []
 
     # Pattern matching rules
-    # Each rule checks for specific patterns in the text
+    # Check patterns from MOST specific to LEAST specific to avoid double-counting
+    # Use regex for flexible matching
 
-    # ～ています (Present progressive/continuous)
-    if "ています" in text:
-        detected.append({
-            "pattern": "～ています",
-            "description": "Forme progressive/continue. Utilisée pour les actions en cours ou les états.",
-            "jlptLevel": "N5",
-            "example": "勉強しています (étudier)"
-        })
+    # Track which patterns we've already detected to avoid overlaps
+    detected_patterns = set()
 
-    # ～ます (Polite present/future)
-    elif "ます" in text and "ています" not in text:  # Avoid double-counting
-        detected.append({
-            "pattern": "～ます",
-            "description": "Forme polie présent/futur des verbes.",
-            "jlptLevel": "N5",
-            "example": "行きます (aller)"
-        })
-
-    # ～です (Copula - "to be")
-    if "です" in text:
-        detected.append({
-            "pattern": "～です",
-            "description": "Copule polie. Utilisée pour exprimer 'être'.",
-            "jlptLevel": "N5",
-            "example": "学生です (être étudiant)"
-        })
-
-    # ～ました (Past polite)
-    if "ました" in text:
-        detected.append({
-            "pattern": "～ました",
-            "description": "Forme polie du passé des verbes.",
-            "jlptLevel": "N5",
-            "example": "行きました (suis allé)"
-        })
-
-    # ～でした (Past copula)
-    if "でした" in text:
-        detected.append({
-            "pattern": "～でした",
-            "description": "Copule polie au passé.",
-            "jlptLevel": "N5",
-            "example": "学生でした (étais étudiant)"
-        })
-
-    # ～たい (Want to do)
-    if "たい" in text:
-        detected.append({
-            "pattern": "～たい",
-            "description": "Forme du désir. Exprime 'vouloir faire quelque chose'.",
-            "jlptLevel": "N5",
-            "example": "食べたい (vouloir manger)"
-        })
-
-    # ～ない (Negative)
-    if "ない" in text:
-        detected.append({
-            "pattern": "～ない",
-            "description": "Forme négative des verbes.",
-            "jlptLevel": "N5",
-            "example": "行かない (ne pas aller)"
-        })
-
-    # ～ません (Polite negative)
-    if "ません" in text:
-        detected.append({
-            "pattern": "～ません",
-            "description": "Forme négative polie des verbes.",
-            "jlptLevel": "N5",
-            "example": "行きません (ne vais pas)"
-        })
-
-    # ～ませんか (Polite invitation)
-    if "ませんか" in text:
+    # ～ませんか (Polite invitation) - Check BEFORE ～ません
+    if re.search(r'ませんか', text):
         detected.append({
             "pattern": "～ませんか",
             "description": "Forme interrogative négative. Utilisée pour faire des invitations polies.",
             "jlptLevel": "N5",
             "example": "行きませんか (voulez-vous aller?)"
         })
+        detected_patterns.add("ませんか")
 
-    # ～でしょう (Probably/conjecture)
-    if "でしょう" in text:
-        detected.append({
-            "pattern": "～でしょう",
-            "description": "Marqueur de probabilité/conjecture. Exprime 'probablement' ou 'je pense'.",
-            "jlptLevel": "N4",
-            "example": "雨でしょう (probablement de la pluie)"
-        })
-
-    # ～そうです (Hearsay/It seems)
-    if "そうです" in text:
-        detected.append({
-            "pattern": "～そうです",
-            "description": "Exprime l'ouï-dire ou l'apparence. 'On dit que' ou 'Il semble que'.",
-            "jlptLevel": "N4",
-            "example": "美味しそうです (ça a l'air délicieux)"
-        })
-
-    # ～てください (Please do)
-    if "てください" in text or "でください" in text:
-        detected.append({
-            "pattern": "～てください",
-            "description": "Forme de requête polie. 'Veuillez faire' ou 's'il vous plaît'.",
-            "jlptLevel": "N5",
-            "example": "見てください (veuillez regarder)"
-        })
-
-    # ～てもいい (Permission - may/can)
-    if "てもいい" in text or "でもいい" in text:
-        detected.append({
-            "pattern": "～てもいい",
-            "description": "Exprime la permission. 'Peut' ou 'il est permis de'.",
-            "jlptLevel": "N4",
-            "example": "食べてもいい (tu peux manger)"
-        })
-
-    # ～なければならない (Must/have to)
-    if "なければならない" in text or "なきゃ" in text:
+    # ～なければならない (Must/have to) - Check BEFORE ～ない
+    if re.search(r'なければならない|なきゃ', text):
         detected.append({
             "pattern": "～なければならない",
             "description": "Exprime l'obligation. 'Doit' ou 'il faut'.",
             "jlptLevel": "N4",
             "example": "行かなければならない (je dois aller)"
         })
+        detected_patterns.add("obligation")
 
-    # ～まで / ～までに (Until/by the time)
-    if "まで" in text:
+    # ～てもいい (Permission) - Check BEFORE ～て
+    if re.search(r'[てで]もいい', text):
         detected.append({
-            "pattern": "～まで / ～までに",
-            "description": "Exprime une limite temporelle. 'Jusqu'à' ou 'd'ici'.",
+            "pattern": "～てもいい",
+            "description": "Exprime la permission. 'Peut' ou 'il est permis de'.",
+            "jlptLevel": "N4",
+            "example": "食べてもいい (tu peux manger)"
+        })
+        detected_patterns.add("permission")
+
+    # ～てください (Please do) - Check BEFORE ～て
+    if re.search(r'[てで]ください', text):
+        detected.append({
+            "pattern": "～てください",
+            "description": "Forme de requête polie. 'Veuillez faire' ou 's'il vous plaît'.",
             "jlptLevel": "N5",
-            "example": "授業が終わるまでに (d'ici la fin du cours)"
+            "example": "見てください (veuillez regarder)"
         })
+        detected_patterns.add("request")
 
-    # ～て form (Conjunctive/sequence)
-    # Check for て after various verb stems
-    if "て" in text and not ("ています" in text or "てください" in text or "てもいい" in text):
+    # ～ています (Present progressive/continuous) - Check BEFORE ～て and ～ている
+    if re.search(r'ています', text):
         detected.append({
-            "pattern": "～て",
-            "description": "Forme conjonctive. Utilisée pour relier des actions ou des états.",
+            "pattern": "～ています",
+            "description": "Forme progressive/continue. Utilisée pour les actions en cours ou les états.",
             "jlptLevel": "N5",
-            "example": "食べて寝る (manger et dormir)"
+            "example": "勉強しています (étudier)"
         })
+        detected_patterns.add("ています")
 
-    # ～ように (In order to/so that)
-    if "ように" in text:
-        detected.append({
-            "pattern": "～ように",
-            "description": "Exprime le but ou la manière. 'Afin que' ou 'de manière à'.",
-            "jlptLevel": "N3",
-            "example": "忘れないように (afin de ne pas oublier)"
-        })
-
-    # ～ている (Resultant state)
-    if "ている" in text and "ています" not in text:
+    # ～ている (Resultant state) - Check AFTER ～ています
+    elif re.search(r'ている', text):
         detected.append({
             "pattern": "～ている",
             "description": "Exprime un état résultant ou une action en cours (forme informelle).",
             "jlptLevel": "N5",
             "example": "知っている (savoir / connaître)"
         })
+        detected_patterns.add("ている")
 
-    # ～た (Past tense plain form)
-    if "た" in text and not any(p in text for p in ["ました", "たい", "ていた"]):
+    # ～ました (Past polite) - Check BEFORE ～ます
+    if re.search(r'ました', text):
+        detected.append({
+            "pattern": "～ました",
+            "description": "Forme polie du passé des verbes.",
+            "jlptLevel": "N5",
+            "example": "行きました (suis allé)"
+        })
+        detected_patterns.add("ました")
+
+    # ～ません (Polite negative) - Check BEFORE ～ます (but AFTER ～ませんか)
+    elif re.search(r'ません', text) and "ませんか" not in detected_patterns:
+        detected.append({
+            "pattern": "～ません",
+            "description": "Forme négative polie des verbes.",
+            "jlptLevel": "N5",
+            "example": "行きません (ne vais pas)"
+        })
+        detected_patterns.add("ません")
+
+    # ～ます (Polite present/future) - Check AFTER more specific ～ます patterns
+    elif re.search(r'ます', text) and "ました" not in detected_patterns and "ません" not in detected_patterns:
+        detected.append({
+            "pattern": "～ます",
+            "description": "Forme polie présent/futur des verbes.",
+            "jlptLevel": "N5",
+            "example": "行きます (aller)"
+        })
+        detected_patterns.add("ます")
+
+    # ～でした (Past copula) - Check BEFORE ～です
+    if re.search(r'でした', text):
+        detected.append({
+            "pattern": "～でした",
+            "description": "Copule polie au passé.",
+            "jlptLevel": "N5",
+            "example": "学生でした (étais étudiant)"
+        })
+        detected_patterns.add("でした")
+
+    # ～です (Copula - "to be") - Check AFTER ～でした
+    elif re.search(r'です', text):
+        detected.append({
+            "pattern": "～です",
+            "description": "Copule polie. Utilisée pour exprimer 'être'.",
+            "jlptLevel": "N5",
+            "example": "学生です (être étudiant)"
+        })
+        detected_patterns.add("です")
+
+    # ～たい (Want to do) - Check BEFORE ～た
+    if re.search(r'たい', text):
+        detected.append({
+            "pattern": "～たい",
+            "description": "Forme du désir. Exprime 'vouloir faire quelque chose'.",
+            "jlptLevel": "N5",
+            "example": "食べたい (vouloir manger)"
+        })
+        detected_patterns.add("たい")
+
+    # ～た (Past tense plain form) - Check AFTER ～たい and other た-patterns
+    elif re.search(r'た', text) and "ました" not in detected_patterns and "たい" not in detected_patterns:
         detected.append({
             "pattern": "～た",
             "description": "Forme passée informelle des verbes.",
             "jlptLevel": "N5",
             "example": "食べた (j'ai mangé)"
         })
+        detected_patterns.add("た")
 
-    # ～する (Verbal noun + する)
-    if "する" in text:
+    # ～ない (Negative) - Check AFTER obligation pattern
+    if re.search(r'ない', text) and "obligation" not in detected_patterns:
+        detected.append({
+            "pattern": "～ない",
+            "description": "Forme négative des verbes.",
+            "jlptLevel": "N5",
+            "example": "行かない (ne pas aller)"
+        })
+        detected_patterns.add("ない")
+
+    # ～でしょう (Probably/conjecture)
+    if re.search(r'でしょう', text):
+        detected.append({
+            "pattern": "～でしょう",
+            "description": "Marqueur de probabilité/conjecture. Exprime 'probablement' ou 'je pense'.",
+            "jlptLevel": "N4",
+            "example": "雨でしょう (probablement de la pluie)"
+        })
+        detected_patterns.add("でしょう")
+
+    # ～そうです (Hearsay/It seems)
+    if re.search(r'そうです', text):
+        detected.append({
+            "pattern": "～そうです",
+            "description": "Exprime l'ouï-dire ou l'apparence. 'On dit que' ou 'Il semble que'.",
+            "jlptLevel": "N4",
+            "example": "美味しそうです (ça a l'air délicieux)"
+        })
+        detected_patterns.add("そうです")
+
+    # ～まで / ～までに (Until/by the time)
+    if re.search(r'まで', text):
+        detected.append({
+            "pattern": "～まで / ～までに",
+            "description": "Exprime une limite temporelle. 'Jusqu'à' ou 'd'ici'.",
+            "jlptLevel": "N5",
+            "example": "授業が終わるまでに (d'ici la fin du cours)"
+        })
+        detected_patterns.add("まで")
+
+    # ～ように (In order to/so that)
+    if re.search(r'ように', text):
+        detected.append({
+            "pattern": "～ように",
+            "description": "Exprime le but ou la manière. 'Afin que' ou 'de manière à'.",
+            "jlptLevel": "N3",
+            "example": "忘れないように (afin de ne pas oublier)"
+        })
+        detected_patterns.add("ように")
+
+    # ～て form (Conjunctive/sequence) - Check AFTER more specific て patterns
+    if re.search(r'て', text) and "request" not in detected_patterns and "permission" not in detected_patterns and "ています" not in detected_patterns and "ている" not in detected_patterns:
+        detected.append({
+            "pattern": "～て",
+            "description": "Forme conjonctive. Utilisée pour relier des actions ou des états.",
+            "jlptLevel": "N5",
+            "example": "食べて寝る (manger et dormir)"
+        })
+        detected_patterns.add("て")
+
+    # ～する (Verbal noun + する) - Common pattern
+    if re.search(r'する', text):
         detected.append({
             "pattern": "～する",
             "description": "Verbe 'faire'. Souvent utilisé avec des noms verbaux (勉強する, 提出する).",
             "jlptLevel": "N5",
             "example": "勉強する (étudier)"
         })
+        detected_patterns.add("する")
 
-    # If no patterns detected, add basic default
-    if not detected:
+    # If no substantial patterns detected, add basic default
+    # Only add if we haven't found any verb/copula patterns
+    if not detected or len(detected) == 0:
         detected.append({
             "pattern": "Phrase simple",
             "description": "Structure de phrase déclarative simple.",

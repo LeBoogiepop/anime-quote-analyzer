@@ -145,12 +145,57 @@ def tokenize(text: str) -> List[Dict[str, str]]:
         }]
 
 
+def is_proper_noun(token: Dict[str, str]) -> bool:
+    """
+    Detect if a token is a proper noun (name, place, etc.).
+
+    Proper nouns should not be added to vocabulary lists since they are
+    names, not words to study.
+
+    Detection heuristics:
+    1. All-katakana words (likely foreign names or loanwords)
+    2. MeCab part-of-speech tag indicating proper noun
+    3. Capitalized single words
+
+    Args:
+        token: Token dictionary with surface, reading, partOfSpeech
+
+    Returns:
+        True if token is likely a proper noun, False otherwise
+
+    Example:
+        >>> is_proper_noun({"surface": "タカギ", "partOfSpeech": "名詞"})
+        True
+        >>> is_proper_noun({"surface": "勉強", "partOfSpeech": "名詞"})
+        False
+    """
+    surface = token.get("surface", "")
+    pos = token.get("partOfSpeech", "")
+
+    # Check for proper noun POS tag from MeCab
+    # MeCab marks proper nouns as 固有名詞 or includes it in the POS details
+    if "固有名詞" in pos or pos == "名詞-固有名詞":
+        return True
+
+    # Check if all katakana (common for foreign names)
+    # Allow some exceptions for common katakana words
+    if surface and all('\u30A0' <= char <= '\u30FF' for char in surface):
+        # All katakana - likely a proper noun or loanword
+        # Could refine this by checking against common katakana word dictionary
+        # For now, consider all-katakana as potential proper nouns to filter
+        if len(surface) >= 2:  # At least 2 characters
+            logger.debug(f"Skipping all-katakana word as proper noun: {surface}")
+            return True
+
+    return False
+
+
 def extract_vocabulary(tokens: List[Dict[str, str]]) -> List[Dict[str, Any]]:
     """
     Extract important vocabulary words from tokens.
 
     Filters for content words (nouns, verbs, adjectives) and excludes
-    grammatical particles, auxiliaries, and common function words.
+    grammatical particles, auxiliaries, common function words, and proper nouns.
 
     Args:
         tokens: List of token dictionaries from tokenize()
@@ -190,11 +235,17 @@ def extract_vocabulary(tokens: List[Dict[str, str]]) -> List[Dict[str, Any]]:
 
     for token in tokens:
         pos = token["partOfSpeech"]
-        word = token["baseForm"]  # Use base form for vocabulary
+        surface = token["surface"]    # Surface form (as appears in text)
+        word = token["baseForm"]       # Use base form for vocabulary
         reading = token["reading"]
 
         # Skip if not a content word
         if pos not in content_pos:
+            continue
+
+        # Skip proper nouns (names, places, etc.)
+        if is_proper_noun(token):
+            logger.debug(f"Skipping proper noun: {surface}")
             continue
 
         # Skip if already seen
@@ -207,8 +258,8 @@ def extract_vocabulary(tokens: List[Dict[str, str]]) -> List[Dict[str, Any]]:
 
         seen_words.add(word)
 
-        # Get JLPT level for this word
-        jlpt_level = classify_word(word)
+        # Get JLPT level for this word (pass base_form for better matching)
+        jlpt_level = classify_word(word, base_form=word)
 
         # Get French translation using translator service
         # This uses fallback strategy: cache → dictionary → Jisho API → fallback
