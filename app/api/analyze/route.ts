@@ -69,41 +69,41 @@ function mockAnalyze(text: string): SentenceAnalysis {
   if (text.includes('ています')) {
     grammarPatterns.push({
       pattern: '～ています',
-      description: 'Present progressive/continuous form. Used for ongoing actions or states.',
+      description: 'Forme progressive/continue. Utilisée pour les actions en cours ou les états.',
       jlptLevel: 'N5' as const,
-      example: '勉強しています (studying)'
+      example: '勉強しています (étudier)'
     });
   }
   if (text.includes('ます')) {
     grammarPatterns.push({
       pattern: '～ます',
-      description: 'Polite present/future form of verbs.',
+      description: 'Forme polie présent/futur des verbes.',
       jlptLevel: 'N5' as const,
-      example: '行きます (will go)'
+      example: '行きます (aller)'
     });
   }
   if (text.includes('です')) {
     grammarPatterns.push({
       pattern: '～です',
-      description: 'Polite copula. Used to state "is/am/are".',
+      description: 'Copule polie. Utilisée pour exprimer "être".',
       jlptLevel: 'N5' as const,
-      example: '学生です (am a student)'
+      example: '学生です (être étudiant)'
     });
   }
   if (text.includes('ませんか')) {
     grammarPatterns.push({
       pattern: '～ませんか',
-      description: 'Negative question form. Used to make polite invitations.',
+      description: 'Forme interrogative négative. Utilisée pour faire des invitations polies.',
       jlptLevel: 'N5' as const,
-      example: '行きませんか (won\'t you go?)'
+      example: '行きませんか (voulez-vous aller?)'
     });
   }
   if (text.includes('でしょう')) {
     grammarPatterns.push({
       pattern: '～でしょう',
-      description: 'Probability/conjecture marker. "probably/I think".',
+      description: 'Marqueur de probabilité/conjecture. "probablement/je pense".',
       jlptLevel: 'N4' as const,
-      example: '雨でしょう (probably rain)'
+      example: '雨でしょう (probablement de la pluie)'
     });
   }
 
@@ -141,104 +141,63 @@ function mockAnalyze(text: string): SentenceAnalysis {
   // If no patterns detected, add default
   if (grammarPatterns.length === 0) {
     grammarPatterns.push({
-      pattern: 'Basic sentence',
-      description: 'Simple declarative sentence structure.',
+      pattern: 'Phrase simple',
+      description: 'Structure de phrase déclarative simple.',
       jlptLevel: 'N5' as const,
-      example: 'これは本です (This is a book)'
+      example: 'これは本です (Ceci est un livre)'
     });
   }
 
-  // If no vocabulary detected, extract multi-character words as placeholder
+  // If no vocabulary detected, extract words (not characters or substrings)
   if (vocabulary.length === 0) {
-    const extractedWords = [];
-
-    // Match kanji + okurigana patterns (e.g., 好き, 書く, 食べる)
-    const kanjiOkurigana = text.match(/[\u4E00-\u9FAF]+[\u3040-\u309F]*/g) || [];
-    extractedWords.push(...kanjiOkurigana);
-
-    // Match pure hiragana words (2+ characters)
+    // Extract words using proper patterns
+    const kanjiWords = text.match(/[\u4E00-\u9FAF]+[\u3040-\u309F]*/g) || [];
     const hiraganaWords = text.match(/[\u3040-\u309F]{2,}/g) || [];
-    extractedWords.push(...hiraganaWords);
-
-    // Match pure katakana words (2+ characters)
     const katakanaWords = text.match(/[\u30A0-\u30FF]{2,}/g) || [];
-    extractedWords.push(...katakanaWords);
 
-    // Filter out punctuation and keep unique words
-    const uniqueWords = Array.from(new Set(extractedWords)).filter(word => {
-      // Skip if it's only punctuation
-      return !/^[\(\)（）\-—〜～、。！？\s]+$/.test(word);
-    });
+    // Combine and deduplicate
+    const allWords = Array.from(new Set([...kanjiWords, ...hiraganaWords, ...katakanaWords]));
 
-    // Limit to 3-5 words max
-    const wordsToAdd = uniqueWords.slice(0, Math.min(5, uniqueWords.length));
+    // Filter out particles and take first 3-4 words
+    const particles = ['は', 'が', 'を', 'に', 'へ', 'で', 'と'];
+    const filtered = allWords.filter(w => !particles.includes(w)).slice(0, 4);
 
-    for (const word of wordsToAdd) {
+    filtered.forEach(word => {
       const isHiragana = /^[\u3040-\u309F]+$/.test(word);
       const isKatakana = /^[\u30A0-\u30FF]+$/.test(word);
 
-      let reading = 'demo';
-      if (isHiragana || isKatakana) {
-        reading = word; // Use word itself as reading for kana
-      }
-
       vocabulary.push({
         word: word,
-        reading: reading,
+        reading: (isHiragana || isKatakana) ? word : 'demo',
         meaning: 'Démo - Backend Python NLP nécessaire pour l\'analyse complète',
         jlptLevel: jlptLevel
       });
-    }
+    });
   }
 
   // If no tokens detected, extract word-level tokens
   if (tokens.length === 0) {
-    const generatedTokens = [];
-    let remainingText = text;
-
-    // First extract kanji+okurigana words (e.g., 授業, 好き, 書く)
+    // Extract words using proper patterns
     const kanjiWords = text.match(/[\u4E00-\u9FAF]+[\u3040-\u309F]*/g) || [];
-    for (const word of kanjiWords) {
-      generatedTokens.push({
+    const hiraganaWords = text.match(/[\u3040-\u309F]{2,}/g) || [];
+    const katakanaWords = text.match(/[\u30A0-\u30FF]{2,}/g) || [];
+    const particles = text.match(/[はがをにへでと]/g) || [];
+
+    // Combine all matches
+    const allMatches = [...kanjiWords, ...hiraganaWords, ...katakanaWords, ...particles];
+
+    allMatches.forEach(word => {
+      const isHiragana = /^[\u3040-\u309F]+$/.test(word);
+      const isKatakana = /^[\u30A0-\u30FF]+$/.test(word);
+      const isParticle = /^[はがをにへでと]$/.test(word);
+
+      tokens.push({
         surface: word,
-        reading: 'demo',
-        partOfSpeech: 'Word',
-        baseForm: word
-      });
-      remainingText = remainingText.replace(word, ' ');
-    }
-
-    // Then extract hiragana sequences (2+ chars or single particles)
-    const hiraganaSeqs = remainingText.match(/[\u3040-\u309F]+/g) || [];
-    for (const seq of hiraganaSeqs) {
-      // Check if it's a common particle
-      const isParticle = /^[はがをにへでと]$/.test(seq);
-
-      generatedTokens.push({
-        surface: seq,
-        reading: seq,
+        reading: (isHiragana || isKatakana) ? word : 'demo',
         partOfSpeech: isParticle ? 'Particle' : 'Word',
-        baseForm: seq
-      });
-    }
-
-    // Extract katakana words
-    const katakanaWords = remainingText.match(/[\u30A0-\u30FF]+/g) || [];
-    for (const word of katakanaWords) {
-      generatedTokens.push({
-        surface: word,
-        reading: word,
-        partOfSpeech: 'Word',
         baseForm: word
       });
-    }
-
-    // Filter out punctuation-only tokens
-    const filteredTokens = generatedTokens.filter(token => {
-      return !/^[\(\)（）\-—〜～、。！？\s]+$/.test(token.surface);
     });
-
-    tokens.push(...filteredTokens);
   }
 
   return {
