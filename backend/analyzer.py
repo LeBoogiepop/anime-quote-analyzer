@@ -14,6 +14,8 @@ from typing import List, Dict, Any
 import fugashi
 import jaconv
 import logging
+import json
+from pathlib import Path
 
 from jlpt_classifier import classify_word, classify_sentence
 from grammar_detector import detect_patterns
@@ -21,6 +23,45 @@ from grammar_detector import detect_patterns
 # Initialize logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+# Global vocabulary dictionary
+_vocab_dictionary: Dict[str, str] = {}
+
+
+def load_vocabulary_dictionary() -> Dict[str, str]:
+    """
+    Load French translations for Japanese words from JSON file.
+
+    Returns:
+        Dictionary mapping Japanese words to French translations
+
+    Raises:
+        FileNotFoundError: If dictionary file doesn't exist
+        json.JSONDecodeError: If dictionary file is malformed
+    """
+    global _vocab_dictionary
+
+    # Return cached data if already loaded
+    if _vocab_dictionary:
+        return _vocab_dictionary
+
+    data_path = Path(__file__).parent / "data" / "vocab_dictionary.json"
+
+    try:
+        with open(data_path, 'r', encoding='utf-8') as f:
+            _vocab_dictionary = json.load(f)
+
+        logger.info(f"Loaded vocabulary dictionary with {len(_vocab_dictionary)} entries")
+        return _vocab_dictionary
+
+    except FileNotFoundError:
+        logger.warning(f"Vocabulary dictionary not found at {data_path}")
+        return {}
+
+    except json.JSONDecodeError as e:
+        logger.error(f"Failed to parse vocabulary dictionary: {e}")
+        return {}
+
 
 # Initialize MeCab tagger
 # Using unidic-lite by default (smaller, faster)
@@ -168,10 +209,14 @@ def extract_vocabulary(tokens: List[Dict[str, str]]) -> List[Dict[str, Any]]:
         # Get JLPT level for this word
         jlpt_level = classify_word(word)
 
+        # Get French translation from dictionary
+        vocab_dict = load_vocabulary_dictionary()
+        meaning = vocab_dict.get(word, f"[Traduction manquante pour '{word}']")
+
         vocabulary.append({
             "word": word,
             "reading": reading,
-            "meaning": "Vocab demo - Traduction nécessaire",  # TODO: Add dictionary lookup
+            "meaning": meaning,
             "jlptLevel": jlpt_level
         })
 
