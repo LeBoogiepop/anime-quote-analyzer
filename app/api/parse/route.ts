@@ -2,6 +2,24 @@ import { NextRequest, NextResponse } from "next/server";
 import { type SubtitleEntry, type ParseResponse } from "@/lib/types";
 
 /**
+ * Check if text contains Japanese characters (hiragana, katakana, or kanji)
+ */
+function hasJapaneseContent(text: string): boolean {
+  // Unicode ranges: Hiragana (3040-309F), Katakana (30A0-30FF), Kanji (4E00-9FAF)
+  return /[\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FAF]/.test(text);
+}
+
+/**
+ * Check if text only contains music symbols and common punctuation
+ */
+function isOnlySymbols(text: string): boolean {
+  // Remove music symbols, tildes, whitespace, and common punctuation
+  const cleaned = text.replace(/[♪♫♬〜～\s.,!?。、]/g, '');
+  // If nothing left after removing symbols, it's only symbols
+  return cleaned.length === 0;
+}
+
+/**
  * Parse SRT subtitle file format
  * Format:
  * 1
@@ -18,7 +36,7 @@ function parseSRT(content: string): SubtitleEntry[] {
 
     const id = parseInt(lines[0]);
     const timeLine = lines[1];
-    const text = lines.slice(2).join("\n");
+    const text = lines.slice(2).join("\n").trim();
 
     // Parse time format: 00:00:01,000 --> 00:00:04,000
     const timeMatch = timeLine.match(
@@ -26,11 +44,17 @@ function parseSRT(content: string): SubtitleEntry[] {
     );
 
     if (timeMatch) {
+      // Skip entries that are only symbols or don't contain Japanese
+      if (isOnlySymbols(text) || !hasJapaneseContent(text)) {
+        console.log('Skipping non-Japanese entry:', text);
+        continue;
+      }
+
       entries.push({
         id,
         startTime: timeMatch[1],
         endTime: timeMatch[2],
-        text: text.trim(),
+        text,
       });
     }
   }
@@ -57,6 +81,12 @@ function parseASS(content: string): SubtitleEntry[] {
         const text = parts.slice(9).join(",").replace(/\{[^}]*\}/g, "").trim();
 
         if (text) {
+          // Skip entries that are only symbols or don't contain Japanese
+          if (isOnlySymbols(text) || !hasJapaneseContent(text)) {
+            console.log('Skipping non-Japanese entry:', text);
+            continue;
+          }
+
           entries.push({
             id: id++,
             startTime,

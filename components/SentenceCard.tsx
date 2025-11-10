@@ -40,17 +40,24 @@ export function SentenceCard({ analysis, index = 0 }: SentenceCardProps) {
             <h3 className="text-sm font-semibold text-foreground">{t("breakdown")}</h3>
           </div>
           <div className="flex flex-wrap gap-2">
-            {analysis.tokens.map((token, idx) => (
-              <div
-                key={idx}
-                className="inline-flex flex-col items-center bg-secondary/50 rounded px-2 py-1"
-              >
-                <span className="text-xs text-muted-foreground">
-                  {token.reading}
-                </span>
-                <span className="text-sm font-medium">{token.surface}</span>
-              </div>
-            ))}
+            {analysis.tokens.map((token, idx) => {
+              const hasKanji = /[\u4E00-\u9FAF]/.test(token.surface);
+              const shouldShowReading = hasKanji && token.reading !== token.surface && token.reading !== 'demo';
+
+              return (
+                <div
+                  key={idx}
+                  className="inline-flex flex-col items-center bg-secondary/50 rounded px-2 py-1"
+                >
+                  {shouldShowReading && (
+                    <span className="text-xs text-muted-foreground">
+                      {token.reading}
+                    </span>
+                  )}
+                  <span className="text-sm font-medium">{token.surface}</span>
+                </div>
+              );
+            })}
           </div>
         </div>
       )}
@@ -91,25 +98,35 @@ export function SentenceCard({ analysis, index = 0 }: SentenceCardProps) {
             <h3 className="text-sm font-semibold text-foreground">{t("vocabulary")}</h3>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-            {analysis.vocabulary.map((vocab, idx) => (
-              <div
-                key={idx}
-                className="flex items-start gap-2 text-sm bg-secondary/30 rounded p-2"
-              >
-                <JLPTBadge level={vocab.jlptLevel} className="mt-0.5" />
-                <div className="flex-1 min-w-0">
-                  <div className="font-medium truncate">
-                    {vocab.word}{" "}
-                    <span className="text-muted-foreground">
-                      ({vocab.reading})
-                    </span>
+            {analysis.vocabulary.map((vocab, idx) => {
+              const hasKanji = /[\u4E00-\u9FAF]/.test(vocab.word);
+              const shouldShowReading = hasKanji && vocab.reading !== vocab.word && vocab.reading !== 'demo';
+
+              return (
+                <div
+                  key={idx}
+                  className="flex items-start gap-2 text-sm bg-secondary/30 rounded p-2"
+                >
+                  <JLPTBadge level={vocab.jlptLevel} className="mt-0.5" />
+                  <div className="flex-1 min-w-0">
+                    <div className="font-medium truncate">
+                      {vocab.word}
+                      {shouldShowReading && (
+                        <>
+                          {" "}
+                          <span className="text-muted-foreground">
+                            ({vocab.reading})
+                          </span>
+                        </>
+                      )}
+                    </div>
+                    <p className="text-xs text-muted-foreground truncate">
+                      {vocab.meaning}
+                    </p>
                   </div>
-                  <p className="text-xs text-muted-foreground truncate">
-                    {vocab.meaning}
-                  </p>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       )}

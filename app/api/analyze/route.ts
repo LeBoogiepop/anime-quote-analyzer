@@ -148,19 +148,58 @@ function mockAnalyze(text: string): SentenceAnalysis {
     });
   }
 
-  // If no vocabulary detected, add placeholder
+  // If no vocabulary detected, extract individual characters as placeholder
   if (vocabulary.length === 0) {
-    vocabulary.push({
-      word: text.substring(0, Math.min(3, text.length)),
-      reading: 'unknown',
-      meaning: 'Demo - Python NLP backend needed for complete analysis',
-      jlptLevel: jlptLevel
-    });
+    const chars = text.split('');
+    for (let i = 0; i < Math.min(3, chars.length); i++) {
+      const char = chars[i];
+      let reading = 'demo';
+
+      // Check character type
+      const isHiragana = /[\u3040-\u309F]/.test(char);
+      const isKatakana = /[\u30A0-\u30FF]/.test(char);
+
+      // If hiragana or katakana, use the character itself as reading
+      if (isHiragana || isKatakana) {
+        reading = char;
+      }
+      // For kanji, use 'demo' as placeholder
+
+      vocabulary.push({
+        word: char,
+        reading: reading,
+        meaning: 'Démo - Backend Python NLP nécessaire pour l\'analyse complète',
+        jlptLevel: jlptLevel
+      });
+    }
+  }
+
+  // If no tokens detected, try splitting on common particles
+  if (tokens.length === 0) {
+    // Split on common particles: は、が、を、に、へ、で、と
+    const parts = text.split(/([はがをにへでと])/);
+    const generatedTokens = [];
+
+    for (const part of parts) {
+      if (part && part.trim()) {
+        const isHiragana = /[\u3040-\u309F]/.test(part);
+        const isKatakana = /[\u30A0-\u30FF]/.test(part);
+
+        generatedTokens.push({
+          surface: part,
+          reading: (isHiragana || isKatakana) ? part : 'demo',
+          partOfSpeech: /^[はがをにへでと]$/.test(part) ? 'Particle' : 'Word',
+          baseForm: part
+        });
+      }
+    }
+
+    tokens.push(...generatedTokens);
   }
 
   return {
     originalText: text,
-    tokens: tokens.length > 0 ? tokens : [{ surface: text, reading: 'unknown', partOfSpeech: 'Unknown', baseForm: text }],
+    tokens: tokens.length > 0 ? tokens : [{ surface: text, reading: 'demo', partOfSpeech: 'Unknown', baseForm: text }],
     jlptLevel,
     grammarPatterns,
     vocabulary,
