@@ -1,0 +1,5 @@
+# Python dependencies for Japanese NLP processing
+# Install with: pip install -r requirements.txt
+
+fugashi>=1.3.0
+unidic-lite>=1.0.8
