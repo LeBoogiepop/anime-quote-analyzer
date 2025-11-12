@@ -410,18 +410,27 @@ export function SentenceCard({ analysis, index = 0 }: SentenceCardProps) {
               return (
                 <div
                   key={idx}
-                  className="group flex items-start gap-2 text-sm bg-secondary/30 rounded p-2"
+                  className="group flex items-start gap-2 text-sm bg-secondary/30 rounded p-2 cursor-help"
                 >
                   <JLPTBadge level={vocab.jlptLevel} className="mt-0.5" />
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-1">
                       <div className="font-medium truncate relative inline-block">
-                        {/* Hover tooltip for reading (consistent with Breakdown section) */}
-                        {shouldShowReading && (
-                          <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 px-2 py-1 text-xs text-white bg-gray-900 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-10">
-                            {vocab.reading}
-                          </span>
-                        )}
+                        {/* Hover tooltip with reading and translation */}
+                        <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-2 text-xs text-white bg-gray-900 dark:bg-gray-800 rounded-lg shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-10 max-w-xs">
+                          <div className="flex flex-col gap-1">
+                            {shouldShowReading && (
+                              <div className="text-gray-300 dark:text-gray-400 font-mono">
+                                {vocab.reading}
+                              </div>
+                            )}
+                            <div className="text-white font-normal">
+                              {vocab.meaning}
+                            </div>
+                          </div>
+                          {/* Tooltip arrow */}
+                          <div className="absolute top-full left-1/2 -translate-x-1/2 -mt-1 border-4 border-transparent border-t-gray-900 dark:border-t-gray-800"></div>
+                        </span>
                         {vocab.word}
                       </div>
                       {/* WaniKani link - uses baseForm for dictionary form */}
