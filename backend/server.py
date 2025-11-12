@@ -72,29 +72,17 @@ class GrammarPattern(BaseModel):
     description: str
     jlptLevel: Literal["N5", "N4", "N3", "N2", "N1"]
     example: str
+    exampleInSentence: Optional[str] = None
+    pedagogicalNote: Optional[str] = None
 
 
 class Vocabulary(BaseModel):
     """Vocabulary entry with JLPT level."""
     word: str
+    baseForm: str  # Dictionary form for WaniKani links
     reading: str
     meaning: str
     jlptLevel: Literal["N5", "N4", "N3", "N2", "N1", "Unknown"]
-
-
-class VocabFocusItem(BaseModel):
-    """Individual vocabulary item in explanation."""
-    term: str
-    detail: str
-
-
-class Explanation(BaseModel):
-    """Structured pedagogical explanation."""
-    summary: str
-    grammar_focus: str
-    vocab_focus: List[VocabFocusItem]
-    culture_note: Optional[str] = None
-    translation_hint: str
 
 
 class AnalyzeResponse(BaseModel):
@@ -104,7 +92,6 @@ class AnalyzeResponse(BaseModel):
     grammarPatterns: List[GrammarPattern]
     vocabulary: List[Vocabulary]
     jlptLevel: Literal["N5", "N4", "N3", "N2", "N1"]
-    explanation: Explanation
 
 
 @app.get("/")

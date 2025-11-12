@@ -44,12 +44,6 @@ export const translations = {
     breakdown: "Breakdown",
     grammarPatterns: "Grammar Patterns",
     vocabulary: "Vocabulary",
-    explanation: "Explanation",
-    summary: "Summary",
-    grammarFocus: "Grammar Focus",
-    vocabFocus: "Key Vocabulary",
-    cultureNote: "Cultural Note",
-    translationHint: "Translation",
 
     // Footer
     builtWith: "Built with Next.js 14, TypeScript, Tailwind CSS, and Framer Motion",
@@ -106,12 +100,6 @@ export const translations = {
     breakdown: "Décomposition",
     grammarPatterns: "Structures Grammaticales",
     vocabulary: "Vocabulaire",
-    explanation: "Explication",
-    summary: "Résumé",
-    grammarFocus: "Point Grammatical",
-    vocabFocus: "Vocabulaire Clé",
-    cultureNote: "Note Culturelle",
-    translationHint: "Traduction",
 
     // Footer
     builtWith: "Construit avec Next.js 14, TypeScript, Tailwind CSS et Framer Motion",

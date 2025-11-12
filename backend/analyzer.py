@@ -356,124 +356,6 @@ def extract_vocabulary(tokens: List[Dict[str, str]]) -> List[Dict[str, Any]]:
     return vocabulary
 
 
-def generate_explanation(
-    original_text: str,
-    tokens: List[Dict[str, str]],
-    vocabulary: List[Dict[str, Any]],
-    patterns: List[Dict[str, Any]]
-) -> Dict[str, Any]:
-    """
-    Generate a pedagogical explanation for a Japanese sentence.
-
-    Creates a structured, educational explanation with:
-    - summary: Concise French explanation of what the sentence means/does
-    - grammar_focus: One main grammatical point with usage notes
-    - vocab_focus: 1-3 key vocabulary items with short explanations
-    - culture_note: Optional sociolinguistic/cultural context
-    - translation_hint: Message if DeepL unavailable (empty string otherwise)
-
-    Args:
-        original_text: The original Japanese sentence
-        tokens: List of token dictionaries from tokenize()
-        vocabulary: List of vocabulary entries
-        patterns: List of detected grammar patterns
-
-    Returns:
-        Dictionary with pedagogical explanation structure
-
-    Example:
-        >>> generate_explanation("コーヒー飲める？", tokens, vocab, patterns)
-        {
-            "summary": "Proposition informelle de boire du café ensemble",
-            "grammar_focus": "Forme potentielle 飲める exprime la capacité ou possibilité",
-            "vocab_focus": [
-                {"term": "コーヒー", "detail": "café, boisson amère populaire"},
-                {"term": "飲める", "detail": "pouvoir boire (forme potentielle)"}
-            ],
-            "culture_note": "Le café est souvent associé au monde adulte au Japon",
-            "translation_hint": ""
-        }
-    """
-    from translator import translate_sentence
-
-    # Cultural context keywords mapping
-    CULTURE_NOTES = {
-        "コーヒー": "Le café est souvent perçu comme une boisson sophistiquée, associée au monde adulte et au travail au Japon.",
-        "お茶": "Le thé joue un rôle central dans la culture japonaise, symbolisant l'hospitalité et la convivialité.",
-        "さん": "Suffixe honorifique poli, utilisé pour marquer le respect envers l'interlocuteur.",
-        "ちゃん": "Suffixe affectueux utilisé pour les enfants, proches amis, ou membres de la famille.",
-        "君": "Suffixe familier utilisé principalement entre garçons ou envers des subordonnés.",
-        "先輩": "Désigne une personne plus âgée ou avec plus d'ancienneté, reflet de la hiérarchie sociale japonaise.",
-        "後輩": "Personne plus jeune ou avec moins d'ancienneté, complément du système senpai-kōhai.",
-    }
-
-    # Get translation for summary construction
-    translation = translate_sentence(original_text)
-    has_deepl = translation and not translation.startswith("[Traduction")
-
-    # Build summary
-    summary = ""
-    if has_deepl:
-        # Use translation to create a pedagogical summary
-        summary = f"Cette phrase exprime : {translation}"
-    else:
-        # Construct fallback summary from vocabulary
-        if vocabulary:
-            key_words = [v.get("meaning", v.get("word", "")) for v in vocabulary[:2]]
-            summary = f"Phrase utilisant : {', '.join(key_words)}"
-        else:
-            summary = "Phrase en japonais nécessitant une traduction."
-
-    # Build grammar focus (select most important pattern)
-    grammar_focus = ""
-    if patterns:
-        main_pattern = patterns[0]
-        pattern_name = main_pattern.get("pattern", "")
-        pattern_desc = main_pattern.get("description", "")
-
-        # Create pedagogical grammar explanation
-        if pattern_name:
-            grammar_focus = f"Structure {pattern_name} : {pattern_desc}"
-
-    # Build vocab focus (1-3 key items)
-    vocab_focus = []
-    if vocabulary:
-        for v in vocabulary[:3]:  # Top 3 vocabulary items
-            word = v.get("word", "")
-            meaning = v.get("meaning", "")
-
-            # Only include French translations
-            if meaning and not meaning.endswith("(EN)") and not meaning.startswith("[Traduction"):
-                # Create short pedagogical explanation
-                jlpt = v.get("jlptLevel", "")
-                jlpt_note = f" ({jlpt})" if jlpt and jlpt != "Unknown" else ""
-                vocab_focus.append({
-                    "term": word,
-                    "detail": f"{meaning}{jlpt_note}"
-                })
-
-    # Build culture note (check for cultural keywords)
-    culture_note = None
-    for word_obj in vocabulary:
-        word = word_obj.get("word", "")
-        if word in CULTURE_NOTES:
-            culture_note = CULTURE_NOTES[word]
-            break
-
-    # Build translation hint
-    translation_hint = ""
-    if not has_deepl:
-        translation_hint = "Configurez DeepL API pour obtenir des traductions automatiques de phrases complètes."
-
-    return {
-        "summary": summary,
-        "grammar_focus": grammar_focus,
-        "vocab_focus": vocab_focus,
-        "culture_note": culture_note,
-        "translation_hint": translation_hint
-    }
-
-
 def analyze_text(text: str) -> Dict[str, Any]:
     """
     Perform complete linguistic analysis of Japanese text.
@@ -520,17 +402,13 @@ def analyze_text(text: str) -> Dict[str, Any]:
         # Step 4: Classify overall JLPT level
         jlpt_level = classify_sentence(tokens, vocabulary)
 
-        # Step 5: Generate automatic explanation
-        explanation = generate_explanation(text, tokens, vocabulary, grammar_patterns)
-
         # Construct response
         result = {
             "originalText": text,
             "tokens": tokens,
             "grammarPatterns": grammar_patterns,
             "vocabulary": vocabulary,
-            "jlptLevel": jlpt_level,
-            "explanation": explanation
+            "jlptLevel": jlpt_level
         }
 
         return result

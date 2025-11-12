@@ -220,6 +220,7 @@ COMMON_WORDS_FR = {
     "さんざん": "terriblement, complètement",
     "返る": "retourner, revenir",
     "かえる": "retourner, revenir",
+    "帰る": "rentrer (chez soi), retourner",
     "やつ": "type, personne (familier)",
     "奴": "type, personne (familier)",
     "チャリ": "vélo (argot)",

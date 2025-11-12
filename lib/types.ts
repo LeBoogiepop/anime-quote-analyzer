@@ -29,28 +29,11 @@ export interface WordToken {
  */
 export interface GrammarPattern {
   pattern: string; // e.g., "てform + います"
-  description: string; // Explaination of the pattern
+  description: string; // Explanation of the pattern
   jlptLevel: JLPTLevel;
-  example?: string;
-}
-
-/**
- * Vocabulary focus item in pedagogical explanation
- */
-export interface VocabFocusItem {
-  term: string;
-  detail: string;
-}
-
-/**
- * Structured pedagogical explanation
- */
-export interface Explanation {
-  summary: string;
-  grammarFocus: string;
-  vocabFocus: VocabFocusItem[];
-  cultureNote?: string;
-  translationHint: string;
+  example?: string; // Generic example
+  exampleInSentence?: string; // Actual example extracted from analyzed sentence
+  pedagogicalNote?: string; // Practical usage advice
 }
 
 /**
@@ -68,7 +51,6 @@ export interface SentenceAnalysis {
     meaning: string;
     jlptLevel: JLPTLevel;
   }[];
-  explanation: Explanation; // Structured pedagogical explanation
 }
 
 /**

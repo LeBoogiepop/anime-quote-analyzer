@@ -72,10 +72,10 @@ def load_grammar_patterns() -> List[Dict[str, Any]]:
 
 def detect_patterns(text: str, tokens: List[Dict[str, str]]) -> List[Dict[str, Any]]:
     """
-    Detect grammar patterns in Japanese text.
+    Detect grammar patterns in Japanese text with contextual examples.
 
-    Searches for common grammatical constructions and returns explanations
-    in French for language learners.
+    Searches for common grammatical constructions and returns enriched explanations
+    with real examples extracted from the sentence and pedagogical notes.
 
     Args:
         text: Original Japanese text
@@ -88,16 +88,30 @@ def detect_patterns(text: str, tokens: List[Dict[str, str]]) -> List[Dict[str, A
                 "pattern": "～ています",
                 "description": "Forme progressive/continue. Utilisée pour les actions en cours.",
                 "jlptLevel": "N5",
-                "example": "勉強しています (étudier)"
+                "example": "勉強しています (étudier)",
+                "exampleInSentence": "勉強しています",
+                "pedagogicalNote": "Forme polie. Pour l'informel, utilisez ～ている ou ～てる."
             },
             ...
         ]
 
     Example:
         >>> detect_patterns("勉強しています", tokens)
-        [{"pattern": "～ています", "description": "...", ...}]
+        [{"pattern": "～ています", "description": "...", "exampleInSentence": "勉強しています", ...}]
     """
     detected = []
+
+    # Helper function to extract example from sentence
+    def extract_example(regex_pattern: str, text: str) -> str:
+        """Extract the actual match from the text."""
+        match = re.search(regex_pattern, text)
+        if match:
+            # Try to get a bit of context (up to 10 chars before the match)
+            start = max(0, match.start() - 10)
+            end = min(len(text), match.end() + 2)
+            excerpt = text[start:end].strip()
+            return excerpt if len(excerpt) <= 20 else match.group(0)
+        return ""
 
     # Pattern matching rules
     # Check patterns from MOST specific to LEAST specific to avoid double-counting
@@ -152,7 +166,9 @@ def detect_patterns(text: str, tokens: List[Dict[str, str]]) -> List[Dict[str, A
             "pattern": "～ています",
             "description": "Forme progressive/continue polie. Actions en cours ou états.",
             "jlptLevel": "N5",
-            "example": "勉強しています (étudier)"
+            "example": "勉強しています (étudier)",
+            "exampleInSentence": extract_example(r'[\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FAF]+ています', text),
+            "pedagogicalNote": "Forme polie. Pour l'informel, utilisez ～ている ou la contraction ～てる."
         })
         detected_patterns.add("ています")
 
@@ -163,7 +179,9 @@ def detect_patterns(text: str, tokens: List[Dict[str, str]]) -> List[Dict[str, A
             "pattern": "～てる",
             "description": "Forme progressive contractée (informel). Même sens que ～ている.",
             "jlptLevel": "N5",
-            "example": "食べてる (en train de manger), 悩んでる (être préoccupé)"
+            "example": "食べてる (en train de manger), 悩んでる (être préoccupé)",
+            "exampleInSentence": extract_example(r'[\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FAF]+[てで]る', text),
+            "pedagogicalNote": "Contraction orale de ～ている. Utilisée entre amis/famille. Ton décontracté."
         })
         detected_patterns.add("てる")
 
@@ -243,7 +261,9 @@ def detect_patterns(text: str, tokens: List[Dict[str, str]]) -> List[Dict[str, A
             "pattern": "～た",
             "description": "Forme passée informelle des verbes.",
             "jlptLevel": "N5",
-            "example": "食べた (j'ai mangé)"
+            "example": "食べた (j'ai mangé)",
+            "exampleInSentence": extract_example(r'[\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FAF]+た', text),
+            "pedagogicalNote": "Marque le passé ou un état accompli. Ton neutre/informel. Pour la politesse, utilisez ～ました."
         })
         detected_patterns.add("た")
 
@@ -253,7 +273,9 @@ def detect_patterns(text: str, tokens: List[Dict[str, str]]) -> List[Dict[str, A
             "pattern": "～ない",
             "description": "Forme négative des verbes.",
             "jlptLevel": "N5",
-            "example": "行かない (ne pas aller)"
+            "example": "行かない (ne pas aller)",
+            "exampleInSentence": extract_example(r'[\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FAF]+ない', text),
+            "pedagogicalNote": "Négation informelle. Pour la politesse, utilisez ～ません. Souvent en fin de phrase."
         })
         detected_patterns.add("ない")
 
@@ -293,17 +315,22 @@ def detect_patterns(text: str, tokens: List[Dict[str, str]]) -> List[Dict[str, A
             "pattern": "～ように",
             "description": "Exprime le but ou la manière. 'Afin que' ou 'de manière à'.",
             "jlptLevel": "N3",
-            "example": "忘れないように (afin de ne pas oublier)"
+            "example": "忘れないように (afin de ne pas oublier)",
+            "exampleInSentence": extract_example(r'[\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FAF]+ように', text),
+            "pedagogicalNote": "Exprime le but ('pour que') ou la manière ('de manière à'). Souvent suivi d'un verbe."
         })
         detected_patterns.add("ように")
 
     # ～て form (Conjunctive/sequence) - Check AFTER more specific て patterns
-    if re.search(r'て', text) and "request" not in detected_patterns and "permission" not in detected_patterns and "ています" not in detected_patterns and "ている" not in detected_patterns:
+    # Also skip if てる was detected (it's a contraction containing て)
+    if re.search(r'て', text) and "request" not in detected_patterns and "permission" not in detected_patterns and "ています" not in detected_patterns and "ている" not in detected_patterns and "てる" not in detected_patterns:
         detected.append({
             "pattern": "～て",
             "description": "Forme conjonctive. Utilisée pour relier des actions ou des états.",
             "jlptLevel": "N5",
-            "example": "食べて寝る (manger et dormir)"
+            "example": "食べて寝る (manger et dormir)",
+            "exampleInSentence": extract_example(r'[\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FAF]+て', text),
+            "pedagogicalNote": "Forme de liaison. Connecte des phrases, exprime la succession d'actions, ou précède des auxiliaires."
         })
         detected_patterns.add("て")
 
