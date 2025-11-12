@@ -9,12 +9,16 @@ NEW_VOCAB = {
     "N5": [
         "コーヒー",  # café
         "ジュース",  # jus
+        "ミルク",    # lait
+        "パン",      # pain
         "苦い",      # amer
         "にがい",    # amer
         "やつ",      # type/personne
         "奴",        # type/personne
         "返る",      # retourner
         "かえる",    # retourner (already might exist, check)
+        "見せる",    # montrer
+        "みせる",    # montrer
     ],
     "N4": [
         "ブラック",  # noir (café)
@@ -25,6 +29,14 @@ NEW_VOCAB = {
         "散々",      # terriblement
         "さんざん",  # terriblement
         "チャリ",    # vélo (argot)
+        "テスト",    # test
+        "レベル",    # niveau
+        "スタイル",  # style
+        "サンド",    # sandwich
+        "ハンバーガー", # hamburger
+        "ケーキ",    # gâteau
+        "見せ合う",  # se montrer mutuellement
+        "みせあう",  # se montrer mutuellement
     ]
 }
 

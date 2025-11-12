@@ -206,6 +206,14 @@ COMMON_WORDS_FR = {
     "コーヒー": "café (boisson amère)",
     "ジュース": "jus (boisson sucrée)",
     "ブラック": "noir, sans sucre ni lait",
+    "ミルク": "lait",
+    "テスト": "test, examen",
+    "レベル": "niveau",
+    "スタイル": "style",
+    "サンド": "sandwich (abréviation)",
+    "ハンバーガー": "hamburger",
+    "パン": "pain",
+    "ケーキ": "gâteau",
 
     # Adjectives for taste and preferences
     "苦い": "amer (goût)",
@@ -224,6 +232,10 @@ COMMON_WORDS_FR = {
     "やつ": "type, personne (familier)",
     "奴": "type, personne (familier)",
     "チャリ": "vélo (argot)",
+    "見せ合う": "se montrer l'un à l'autre, se montrer mutuellement",
+    "みせあう": "se montrer l'un à l'autre",
+    "見せる": "montrer, faire voir",
+    "みせる": "montrer",
 
     # Particules courantes
     "ね": "n'est-ce pas",

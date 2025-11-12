@@ -70,6 +70,206 @@ def load_grammar_patterns() -> List[Dict[str, Any]]:
         return []
 
 
+def detect_particles(tokens: List[Dict[str, Any]], text: str) -> List[Dict[str, Any]]:
+    """
+    Detect Japanese particles (助詞) from tokens and return pedagogical explanations.
+
+    Args:
+        tokens: List of token dictionaries with 'surface' and 'partOfSpeech' keys
+        text: Original Japanese text for context extraction
+
+    Returns:
+        List of particle pattern dictionaries with descriptions and pedagogical notes
+    """
+    particles_found = []
+    seen_particles = set()
+
+    # Particle definitions with French explanations
+    particle_info = {
+        "は": {
+            "description": "Marqueur de thème. Introduit le sujet principal dont on parle.",
+            "jlptLevel": "N5",
+            "example": "私は学生です (Quant à moi, je suis étudiant)",
+            "pedagogicalNote": "Indique le thème général de la phrase. Différent de が qui marque le sujet grammatical."
+        },
+        "が": {
+            "description": "Marqueur de sujet grammatical. Identifie qui/quoi fait l'action.",
+            "jlptLevel": "N5",
+            "example": "雨が降る (La pluie tombe)",
+            "pedagogicalNote": "Insiste sur le sujet spécifique. Utilisé pour contraster ou répondre à 'qui/quoi?'"
+        },
+        "を": {
+            "description": "Marqueur d'objet direct. Indique ce qui subit l'action du verbe.",
+            "jlptLevel": "N5",
+            "example": "本を読む (Lire un livre)",
+            "pedagogicalNote": "Toujours placé après l'objet direct et avant le verbe."
+        },
+        "に": {
+            "description": "Marqueur de destination, temps, cible ou existence.",
+            "jlptLevel": "N5",
+            "example": "学校に行く (Aller à l'école), 3時に (À 3h)",
+            "pedagogicalNote": "Usages multiples: direction (vers), temps (à), cible (à/pour), existence (se trouver à)."
+        },
+        "で": {
+            "description": "Marqueur de moyen, lieu d'action, cause ou limite.",
+            "jlptLevel": "N5",
+            "example": "車で行く (Y aller en voiture), 図書館で (À la bibliothèque)",
+            "pedagogicalNote": "Indique le moyen (avec/en), le lieu de l'action (à/dans), ou la cause (à cause de)."
+        },
+        "も": {
+            "description": "Particule d'inclusion. Signifie 'aussi' ou 'même'.",
+            "jlptLevel": "N5",
+            "example": "私も学生です (Moi aussi je suis étudiant)",
+            "pedagogicalNote": "Remplace は, が, を pour ajouter la nuance 'aussi'. Peut marquer l'emphase avec des nombres."
+        },
+        "の": {
+            "description": "Marqueur de possession, appartenance ou nominalisation.",
+            "jlptLevel": "N5",
+            "example": "私の本 (Mon livre), 食べるの (Le fait de manger)",
+            "pedagogicalNote": "Relie deux noms (possession) ou transforme une proposition en nom (nominalisation)."
+        },
+        "から": {
+            "description": "Indique le point de départ (spatial/temporel) ou la cause.",
+            "jlptLevel": "N5",
+            "example": "東京から (Depuis Tokyo), 忙しいから (Parce que je suis occupé)",
+            "pedagogicalNote": "Origine dans l'espace/temps ('depuis'), ou raison/cause ('parce que', 'car')."
+        },
+        "まで": {
+            "description": "Indique la limite ou le point d'arrivée (spatial/temporel).",
+            "jlptLevel": "N5",
+            "example": "駅まで (Jusqu'à la gare), 5時まで (Jusqu'à 5h)",
+            "pedagogicalNote": "Souvent combiné avec から pour exprimer 'de...à'. Marque la fin d'une période/distance."
+        },
+        "と": {
+            "description": "Conjonction de coordination ('et') ou citation ('que').",
+            "jlptLevel": "N5",
+            "example": "猫と犬 (Chats et chiens), 彼は行くと言った (Il a dit qu'il irait)",
+            "pedagogicalNote": "Relie des noms ('et'), introduit une citation directe, ou marque l'accompagnement ('avec')."
+        },
+        "や": {
+            "description": "Conjonction d'énumération partielle. 'Et', 'ou' (liste non exhaustive).",
+            "jlptLevel": "N4",
+            "example": "りんごやバナナ (Pommes, bananes, etc.)",
+            "pedagogicalNote": "Énumération ouverte (implique qu'il y a d'autres éléments). Moins formel que と."
+        },
+        "か": {
+            "description": "Marqueur interrogatif ou de choix.",
+            "jlptLevel": "N5",
+            "example": "行きますか (Allez-vous?), コーヒーかお茶 (Café ou thé)",
+            "pedagogicalNote": "En fin de phrase: question. Entre noms: choix ('ou'). Ton monte à l'oral."
+        },
+        "ね": {
+            "description": "Particule finale de confirmation ou accord.",
+            "jlptLevel": "N5",
+            "example": "いい天気ですね (Beau temps, n'est-ce pas?)",
+            "pedagogicalNote": "Cherche l'accord de l'interlocuteur. Adoucit la phrase. Ton chaleureux."
+        },
+        "よ": {
+            "description": "Particule finale d'affirmation ou nouvelle information.",
+            "jlptLevel": "N5",
+            "example": "雨が降るよ (Il va pleuvoir, tu sais)",
+            "pedagogicalNote": "Insiste sur l'information donnée. Ton assertif. Informe l'interlocuteur de quelque chose."
+        },
+        "よね": {
+            "description": "Combinaison de よ + ね. Confirmation avec attente d'accord.",
+            "jlptLevel": "N4",
+            "example": "美味しいよね (C'est bon, hein?)",
+            "pedagogicalNote": "Affirme tout en cherchant la confirmation. Plus doux que よ seul. Très courant à l'oral."
+        },
+        "って": {
+            "description": "Particule de citation informelle ou de reformulation.",
+            "jlptLevel": "N4",
+            "example": "田中さんって誰? (Tanaka, c'est qui?), 行くって言った (J'ai dit que j'irais)",
+            "pedagogicalNote": "Contraction informelle de という. Citation indirecte, définition, ou reformulation. Ton décontracté."
+        },
+        "だけ": {
+            "description": "Particule restrictive. Signifie 'seulement', 'uniquement'.",
+            "jlptLevel": "N4",
+            "example": "これだけ (Seulement ça)",
+            "pedagogicalNote": "Limite à un élément spécifique. Peut exprimer une limite minimale ou un sentiment d'insuffisance."
+        },
+        "しか": {
+            "description": "Particule restrictive négative. 'Seulement' (avec négation obligatoire).",
+            "jlptLevel": "N4",
+            "example": "100円しかない (Je n'ai que 100 yens)",
+            "pedagogicalNote": "Toujours suivi d'une forme négative. Nuance de regret ou d'insuffisance. Plus fort que だけ."
+        },
+        "など": {
+            "description": "Particule d'énumération exemplative. 'Etc.', 'et cetera', 'par exemple'.",
+            "jlptLevel": "N4",
+            "example": "本など (Des livres et autres choses)",
+            "pedagogicalNote": "Suggère que les éléments mentionnés sont des exemples. Liste non exhaustive. Ton modeste."
+        },
+        "さ": {
+            "description": "Particule finale de remplissage ou d'affirmation décontractée.",
+            "jlptLevel": "N3",
+            "example": "そうだよさ (C'est comme ça, tu vois)",
+            "pedagogicalNote": "Marque un ton décontracté, familier. Remplissage conversationnel. Surtout utilisé par les hommes."
+        },
+        "ねえ": {
+            "description": "Particule d'interpellation ou d'insistance.",
+            "jlptLevel": "N4",
+            "example": "ねえ、聞いて (Hé, écoute)",
+            "pedagogicalNote": "Attire l'attention de l'interlocuteur. Ton amical ou insistant selon le contexte."
+        },
+        "わ": {
+            "description": "Particule finale d'affirmation douce (surtout féminin).",
+            "jlptLevel": "N3",
+            "example": "行くわ (J'y vais)",
+            "pedagogicalNote": "Marque un ton doux, souvent associé au langage féminin (Kansai ou Tokyo ancien). Affirmation légère."
+        },
+        "ぞ": {
+            "description": "Particule finale d'affirmation forte (masculin).",
+            "jlptLevel": "N3",
+            "example": "行くぞ (On y va!)",
+            "pedagogicalNote": "Ton viril, assertif. Utilisé principalement par les hommes. Marque détermination ou avertissement."
+        },
+        "ぜ": {
+            "description": "Particule finale d'affirmation informelle (masculin).",
+            "jlptLevel": "N3",
+            "example": "いいぜ (C'est bon)",
+            "pedagogicalNote": "Ton décontracté, masculin. Affirmation avec confiance. Plus doux que ぞ."
+        }
+    }
+
+    # Extract particles from tokens
+    for token in tokens:
+        surface = token.get("surface", "")
+        pos = token.get("partOfSpeech", "")
+
+        # Check if this is a particle (助詞)
+        if "助詞" in pos or "particle" in pos.lower():
+            # Check if we have info for this particle
+            if surface in particle_info and surface not in seen_particles:
+                info = particle_info[surface]
+                particles_found.append({
+                    "pattern": surface,
+                    "description": info["description"],
+                    "jlptLevel": info["jlptLevel"],
+                    "example": info["example"],
+                    "exampleInSentence": f"...{surface}..." if surface in text else "",
+                    "pedagogicalNote": info["pedagogicalNote"]
+                })
+                seen_particles.add(surface)
+
+    # Special handling for combined particles like よね
+    if "よね" in text and "よね" not in seen_particles:
+        info = particle_info["よね"]
+        particles_found.append({
+            "pattern": "よね",
+            "description": info["description"],
+            "jlptLevel": info["jlptLevel"],
+            "example": info["example"],
+            "exampleInSentence": "よね",
+            "pedagogicalNote": info["pedagogicalNote"]
+        })
+        seen_particles.add("よね")
+        # Remove individual よ and ね if they were added
+        particles_found = [p for p in particles_found if p["pattern"] not in ["よ", "ね"]]
+
+    return particles_found
+
+
 def detect_patterns(text: str, tokens: List[Dict[str, str]]) -> List[Dict[str, Any]]:
     """
     Detect grammar patterns in Japanese text with contextual examples.
@@ -343,6 +543,14 @@ def detect_patterns(text: str, tokens: List[Dict[str, str]]) -> List[Dict[str, A
             "example": "勉強する (étudier)"
         })
         detected_patterns.add("する")
+
+    # Detect particles (助詞) from tokens
+    particle_patterns = detect_particles(tokens, text)
+    for particle in particle_patterns:
+        # Avoid duplicates
+        if particle["pattern"] not in detected_patterns:
+            detected.append(particle)
+            detected_patterns.add(particle["pattern"])
 
     # If no substantial patterns detected, add basic default
     # Only add if we haven't found any verb/copula patterns

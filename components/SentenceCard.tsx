@@ -269,9 +269,6 @@ export function SentenceCard({ analysis, index = 0 }: SentenceCardProps) {
                         </a>
                       )}
                     </div>
-                    <p className="text-xs text-muted-foreground truncate">
-                      {vocab.meaning}
-                    </p>
                   </div>
                 </div>
               );
