@@ -1,12 +1,13 @@
 """
-AI-powered explanation generator using Google Gemini.
+AI-powered explanation generator using OpenRouter (Perplexity Sonar) or Google Gemini.
 
 This module provides intelligent, contextualized explanations for Japanese sentences
-using the Gemini 1.5 Flash model. Features include:
+using OpenRouter/Perplexity Sonar Small or Gemini 1.5 Flash. Features include:
 - LRU cache with 24h TTL to save API quota
 - Robust error handling with retry logic
 - Graceful degradation if API unavailable
 - JSON response validation
+- Support for multiple AI providers (OpenRouter, Gemini)
 
 Author: Maxime
 """
@@ -21,6 +22,7 @@ from functools import lru_cache
 from datetime import datetime, timedelta
 from pathlib import Path
 
+import httpx
 import google.generativeai as genai
 from dotenv import load_dotenv
 
@@ -33,14 +35,15 @@ logger = logging.getLogger(__name__)
 
 # Configuration
 AI_PROVIDER = os.getenv("AI_PROVIDER", "none")
+OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY", "")
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")
-AI_MODEL = os.getenv("AI_MODEL", "gemini-1.5-flash-latest")
+AI_MODEL = os.getenv("AI_MODEL", "perplexity/sonar-small-chat")
 CACHE_MAX_SIZE = 500
 CACHE_TTL_HOURS = 24
 API_TIMEOUT_SECONDS = 15  # 15s timeout for AI generation
 MAX_RETRIES = 2  # 2 retries with exponential backoff
 
-# Initialize Gemini
+# Initialize Gemini (only if provider is gemini)
 _gemini_model = None
 _cache_data: Dict[str, Dict[str, Any]] = {}
 
@@ -227,6 +230,92 @@ def _validate_response(response_data: Dict[str, Any]) -> bool:
     return True
 
 
+def _call_openrouter_api(prompt: str) -> Optional[Dict[str, Any]]:
+    """Call OpenRouter API (Perplexity Sonar Small) with error handling."""
+    if not OPENROUTER_API_KEY or OPENROUTER_API_KEY == "your-openrouter-api-key-here":
+        logger.warning("OPENROUTER_API_KEY not configured, AI explanations disabled")
+        return None
+
+    try:
+        logger.info("Calling OpenRouter API (Perplexity Sonar Small)...")
+        start_time = time.time()
+
+        # Prepare headers required by OpenRouter
+        headers = {
+            "Authorization": f"Bearer {OPENROUTER_API_KEY}",
+            "Content-Type": "application/json",
+            "HTTP-Referer": "https://github.com/LeBoogiepop/anime-quote-analyzer",
+            "X-Title": "Anime Quote Analyzer"
+        }
+
+        # Prepare payload
+        payload = {
+            "model": AI_MODEL,
+            "messages": [
+                {
+                    "role": "user",
+                    "content": prompt
+                }
+            ],
+            "temperature": 0.6,
+            "max_tokens": 800
+        }
+
+        # Make request with httpx
+        with httpx.Client(timeout=API_TIMEOUT_SECONDS) as client:
+            response = client.post(
+                "https://openrouter.ai/api/v1/chat/completions",
+                headers=headers,
+                json=payload
+            )
+            response.raise_for_status()
+
+        duration = time.time() - start_time
+        logger.info(f"✓ OpenRouter API responded in {duration:.2f}s")
+
+        # Extract response
+        result = response.json()
+
+        if "choices" not in result or len(result["choices"]) == 0:
+            logger.error("Invalid response from OpenRouter: no choices")
+            return None
+
+        content = result["choices"][0]["message"]["content"]
+
+        # Clean response text (remove markdown code blocks if present)
+        content = content.strip()
+        if content.startswith("```json"):
+            content = content[7:]  # Remove ```json
+        if content.startswith("```"):
+            content = content[3:]  # Remove ```
+        if content.endswith("```"):
+            content = content[:-3]  # Remove ```
+        content = content.strip()
+
+        # Parse JSON
+        try:
+            response_data = json.loads(content)
+
+            # Validate structure
+            if not _validate_response(response_data):
+                logger.error("Invalid response structure from OpenRouter")
+                return None
+
+            return response_data
+
+        except json.JSONDecodeError as e:
+            logger.error(f"Failed to parse OpenRouter response as JSON: {e}")
+            logger.debug(f"Response content: {content[:200]}...")
+            return None
+
+    except httpx.HTTPError as e:
+        logger.error(f"OpenRouter API HTTP error: {e}")
+        return None
+    except Exception as e:
+        logger.error(f"OpenRouter API call failed: {e}")
+        return None
+
+
 def _call_gemini_api(prompt: str, retry_count: int = 0) -> Optional[Dict[str, Any]]:
     """Call Gemini API with timeout and retry logic."""
     global _gemini_model
@@ -327,7 +416,7 @@ def generate_ai_explanation(
         {"summary": "Cette phrase exprime...", ...}
     """
     # Check if AI is enabled
-    if AI_PROVIDER != "gemini":
+    if AI_PROVIDER not in ["gemini", "openrouter"]:
         logger.debug("AI provider not enabled")
         return None
 
@@ -342,8 +431,14 @@ def generate_ai_explanation(
     # Build prompt
     prompt = _build_prompt(sentence, tokens, grammar_patterns, vocab_items)
 
-    # Call Gemini API
-    result = _call_gemini_api(prompt)
+    # Call appropriate AI provider
+    result = None
+    if AI_PROVIDER == "openrouter":
+        logger.info("Using OpenRouter/Perplexity for AI explanation")
+        result = _call_openrouter_api(prompt)
+    elif AI_PROVIDER == "gemini":
+        logger.info("Using Gemini for AI explanation")
+        result = _call_gemini_api(prompt)
 
     if result:
         # Save to cache
