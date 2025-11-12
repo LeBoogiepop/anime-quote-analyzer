@@ -89,6 +89,7 @@ class AnalyzeResponse(BaseModel):
     grammarPatterns: List[GrammarPattern]
     vocabulary: List[Vocabulary]
     jlptLevel: Literal["N5", "N4", "N3", "N2", "N1"]
+    explanation: str
 
 
 @app.get("/")

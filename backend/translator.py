@@ -14,13 +14,22 @@ Author: Maxime
 
 import json
 import logging
+import os
 from pathlib import Path
 from typing import Dict, Optional
 import requests
+from dotenv import load_dotenv
+
+# Load environment variables
+load_dotenv()
 
 # Initialize logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+# DeepL API configuration
+DEEPL_API_KEY = os.getenv("DEEPL_API_KEY", "")
+DEEPL_API_URL = os.getenv("DEEPL_API_URL", "https://api-free.deepl.com/v2/translate")
 
 # Global cache for translations
 _translation_cache: Dict[str, str] = {}
@@ -541,6 +550,88 @@ def save_cache() -> bool:
         return False
 
 
+def translate_with_deepl(text: str, source: str = "JA", target: str = "FR", timeout: int = 10) -> Optional[str]:
+    """
+    Translate text using DeepL API.
+
+    DeepL provides high-quality machine translation. This function handles both
+    word-level and sentence-level translations with robust error handling.
+
+    Args:
+        text: Japanese text to translate
+        source: Source language code (default: "JA" for Japanese)
+        target: Target language code (default: "FR" for French)
+        timeout: Request timeout in seconds
+
+    Returns:
+        Translated French text, or None if translation fails
+
+    Example:
+        >>> translate_with_deepl("勉強")
+        "étude"
+        >>> translate_with_deepl("私は日本語を勉強しています")
+        "J'étudie le japonais"
+    """
+    # Check if API key is configured
+    if not DEEPL_API_KEY or DEEPL_API_KEY == "your-deepl-api-key-here":
+        logger.debug("DeepL API key not configured, skipping DeepL translation")
+        return None
+
+    try:
+        # DeepL API request
+        headers = {
+            "Authorization": f"DeepL-Auth-Key {DEEPL_API_KEY}",
+            "Content-Type": "application/json"
+        }
+
+        data = {
+            "text": [text],
+            "source_lang": source,
+            "target_lang": target
+        }
+
+        response = requests.post(
+            DEEPL_API_URL,
+            headers=headers,
+            json=data,
+            timeout=timeout
+        )
+
+        # Handle specific error codes
+        if response.status_code == 403:
+            logger.error("DeepL API authentication failed (403) - check your API key")
+            return None
+        elif response.status_code == 456:
+            logger.error("DeepL API quota exceeded (456) - upgrade your plan or wait")
+            return None
+        elif response.status_code == 429:
+            logger.warning("DeepL API rate limit hit (429) - too many requests")
+            return None
+
+        response.raise_for_status()
+
+        result = response.json()
+
+        # Extract translation from response
+        if result.get("translations") and len(result["translations"]) > 0:
+            translation = result["translations"][0]["text"]
+            logger.info(f"DeepL translation for '{text[:30]}...': {translation[:50]}...")
+            return translation
+
+        logger.warning(f"No DeepL translation found for '{text[:30]}...'")
+        return None
+
+    except requests.Timeout:
+        logger.error(f"DeepL API timeout for text '{text[:30]}...'")
+        return None
+    except requests.RequestException as e:
+        logger.error(f"DeepL API request failed for '{text[:30]}...': {e}")
+        return None
+    except Exception as e:
+        logger.error(f"Unexpected error in DeepL translation for '{text[:30]}...': {e}")
+        return None
+
+
 def get_jisho_translation(word: str, timeout: int = 5) -> Optional[Dict[str, str]]:
     """
     Fetch translation from Jisho.org API.
@@ -654,13 +745,25 @@ def translate_to_french(word: str, use_jisho: bool = True) -> str:
     except Exception as e:
         logger.error(f"Failed to load vocabulary dictionary: {e}")
 
-    # Strategy 4: Query Jisho API (if enabled)
+    # Strategy 4: Try DeepL translation (if API key is configured)
+    if DEEPL_API_KEY and DEEPL_API_KEY != "your-deepl-api-key-here":
+        deepl_translation = translate_with_deepl(word)
+
+        if deepl_translation:
+            # Add to cache for future use
+            cache[word] = deepl_translation
+            _translation_cache[word] = deepl_translation
+            _cache_modified = True
+
+            logger.info(f"DeepL word translation for '{word}': {deepl_translation}")
+            return deepl_translation
+
+    # Strategy 5: Query Jisho API (if enabled) - now returns English only as last resort
     if use_jisho:
         jisho_result = get_jisho_translation(word)
 
         if jisho_result and 'english' in jisho_result:
-            # For now, return English with a note
-            # In future, integrate DeepL or manual French translations
+            # Return English with a note (last resort when DeepL unavailable)
             translation = f"{jisho_result['english']} (EN)"
 
             # Add to cache
@@ -670,8 +773,8 @@ def translate_to_french(word: str, use_jisho: bool = True) -> str:
 
             return translation
 
-    # Strategy 5: Helpful fallback
-    fallback = "[Traduction non disponible]"
+    # Strategy 6: Helpful fallback
+    fallback = "[Traduction manquante]"
     logger.warning(f"No translation found for '{word}', using fallback")
 
     return fallback
@@ -679,10 +782,10 @@ def translate_to_french(word: str, use_jisho: bool = True) -> str:
 
 def translate_sentence(sentence: str) -> str:
     """
-    Translate full Japanese sentence to French.
+    Translate full Japanese sentence to French using DeepL.
 
-    NOTE: This is a placeholder for future integration with DeepL or Google Translate.
-    For now, it returns a helpful message.
+    Uses DeepL API for professional-quality sentence translation.
+    Falls back to a helpful message if DeepL is unavailable.
 
     Args:
         sentence: Japanese sentence to translate
@@ -692,13 +795,23 @@ def translate_sentence(sentence: str) -> str:
 
     Example:
         >>> translate_sentence("私は日本語を勉強しています")
-        "[Traduction de phrase complète - DeepL intégration à venir]"
+        "J'étudie le japonais"
     """
-    # TODO: Integrate DeepL API for professional sentence translation
-    # For now, return placeholder
     logger.info(f"Sentence translation requested for: {sentence[:50]}...")
 
-    return "[Traduction de phrase complète - DeepL intégration à venir]"
+    # Try DeepL translation first
+    if DEEPL_API_KEY and DEEPL_API_KEY != "your-deepl-api-key-here":
+        deepl_translation = translate_with_deepl(sentence)
+
+        if deepl_translation:
+            logger.info(f"DeepL sentence translation successful")
+            return deepl_translation
+
+    # Fallback if DeepL unavailable or failed
+    fallback = "[Traduction de phrase complète indisponible - configurez DeepL API]"
+    logger.warning("DeepL API not configured or failed, using fallback message")
+
+    return fallback
 
 
 def batch_translate(words: list[str], use_jisho: bool = True) -> Dict[str, str]:

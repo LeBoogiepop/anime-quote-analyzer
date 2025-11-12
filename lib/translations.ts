@@ -44,6 +44,7 @@ export const translations = {
     breakdown: "Breakdown",
     grammarPatterns: "Grammar Patterns",
     vocabulary: "Vocabulary",
+    explanation: "Explanation",
 
     // Footer
     builtWith: "Built with Next.js 14, TypeScript, Tailwind CSS, and Framer Motion",
@@ -100,6 +101,7 @@ export const translations = {
     breakdown: "Décomposition",
     grammarPatterns: "Structures Grammaticales",
     vocabulary: "Vocabulaire",
+    explanation: "Explication",
 
     // Footer
     builtWith: "Construit avec Next.js 14, TypeScript, Tailwind CSS et Framer Motion",

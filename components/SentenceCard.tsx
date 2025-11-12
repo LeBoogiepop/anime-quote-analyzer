@@ -137,6 +137,21 @@ export function SentenceCard({ analysis, index = 0 }: SentenceCardProps) {
         )}
       </AnimatePresence>
 
+      {/* Auto-generated explanation */}
+      {analysis.explanation && (
+        <div className="mb-4">
+          <div className="flex items-center gap-2 mb-2">
+            <BookOpen className="w-4 h-4 text-muted-foreground" />
+            <h3 className="text-sm font-semibold text-foreground">{t("explanation")}</h3>
+          </div>
+          <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg p-3">
+            <p className="text-sm text-amber-900 dark:text-amber-100 leading-relaxed">
+              {analysis.explanation}
+            </p>
+          </div>
+        </div>
+      )}
+
       {/* Word tokens with readings */}
       {analysis.tokens.length > 0 && (
         <div className="mb-4">

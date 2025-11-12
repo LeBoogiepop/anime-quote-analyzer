@@ -49,6 +49,7 @@ export interface SentenceAnalysis {
     meaning: string;
     jlptLevel: JLPTLevel;
   }[];
+  explanation: string; // Auto-generated explanation with translation and key points
 }
 
 /**
