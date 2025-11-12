@@ -167,7 +167,7 @@ export function SentenceCard({ analysis, index = 0 }: SentenceCardProps) {
                   {/* WaniKani link for kanji - uses baseForm for dictionary form */}
                   {kanjiChars.length > 0 && (
                     <a
-                      href={`https://www.wanikani.com/vocabulary/${encodeURIComponent((token as any).baseForm || token.surface)}`}
+                      href={`https://www.wanikani.com/vocabulary/${encodeURIComponent(token.baseForm || token.surface)}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="opacity-50 hover:opacity-100 transition-opacity ml-1"
@@ -246,7 +246,7 @@ export function SentenceCard({ analysis, index = 0 }: SentenceCardProps) {
                       {/* WaniKani link - uses baseForm for dictionary form */}
                       {hasKanji && (
                         <a
-                          href={`https://www.wanikani.com/vocabulary/${encodeURIComponent((vocab as any).baseForm || vocab.word)}`}
+                          href={`https://www.wanikani.com/vocabulary/${encodeURIComponent(vocab.baseForm || vocab.word)}`}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="opacity-50 hover:opacity-100 transition-opacity flex-shrink-0 ml-1"

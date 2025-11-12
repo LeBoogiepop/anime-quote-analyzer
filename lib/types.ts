@@ -44,6 +44,7 @@ export interface SentenceAnalysis {
   grammarPatterns: GrammarPattern[];
   vocabulary: {
     word: string;
+    baseForm: string; // Dictionary form for WaniKani links
     reading: string;
     meaning: string;
     jlptLevel: JLPTLevel;

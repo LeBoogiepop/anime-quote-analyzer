@@ -195,11 +195,25 @@ def is_proper_noun(token: Dict[str, str]) -> bool:
 
         if is_all_katakana:
             # Whitelist: common katakana loanwords to KEEP as vocabulary
+            # This includes all katakana words from JLPT N5/N4/N3 levels
             common_loanwords = {
-                'メッセージ', 'パソコン', 'テレビ', 'アニメ', 'コーヒー',
-                'ショック', 'メール', 'データ', 'システム', 'プログラム',
-                'コンピューター', 'スマホ', 'インターネット', 'ホテル', 'レストラン',
-                'コンビニ', 'アプリ', 'ニュース', 'メモ', 'バス', 'タクシー'
+                # Communication & Technology
+                'メッセージ', 'パソコン', 'テレビ', 'メール', 'データ', 'システム',
+                'プログラム', 'コンピューター', 'スマホ', 'インターネット', 'アプリ',
+                'ニュース', 'メモ', 'ページ', 'ノート',
+                # Places & Transportation
+                'ホテル', 'レストラン', 'コンビニ', 'バス', 'タクシー',
+                # Food & Drink
+                'コーヒー', 'ジュース', 'パン', 'デザート',
+                # School & Work
+                'テスト', 'ペン', 'チョーク', 'アルバイト',
+                # Entertainment
+                'アニメ', 'ゲーム', 'スポーツ', 'ドラマ',
+                # Measurements
+                'メートル', 'センチ', 'ミリ', 'キロ', 'グラム', 'リットル',
+                # Other Common Words
+                'ショック', 'ドア', 'ピンク', 'チャンス', 'チーム', 'バランス',
+                'エネルギー'
             }
 
             if surface in common_loanwords:
