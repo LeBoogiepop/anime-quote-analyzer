@@ -10,7 +10,7 @@ Author: Maxime
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-from typing import List, Literal
+from typing import List, Literal, Optional
 import logging
 
 from analyzer import analyze_text
@@ -82,6 +82,21 @@ class Vocabulary(BaseModel):
     jlptLevel: Literal["N5", "N4", "N3", "N2", "N1", "Unknown"]
 
 
+class VocabFocusItem(BaseModel):
+    """Individual vocabulary item in explanation."""
+    term: str
+    detail: str
+
+
+class Explanation(BaseModel):
+    """Structured pedagogical explanation."""
+    summary: str
+    grammar_focus: str
+    vocab_focus: List[VocabFocusItem]
+    culture_note: Optional[str] = None
+    translation_hint: str
+
+
 class AnalyzeResponse(BaseModel):
     """Complete analysis response."""
     originalText: str
@@ -89,7 +104,7 @@ class AnalyzeResponse(BaseModel):
     grammarPatterns: List[GrammarPattern]
     vocabulary: List[Vocabulary]
     jlptLevel: Literal["N5", "N4", "N3", "N2", "N1"]
-    explanation: str
+    explanation: Explanation
 
 
 @app.get("/")

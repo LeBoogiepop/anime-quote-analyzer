@@ -137,17 +137,71 @@ export function SentenceCard({ analysis, index = 0 }: SentenceCardProps) {
         )}
       </AnimatePresence>
 
-      {/* Auto-generated explanation */}
+      {/* Pedagogical explanation */}
       {analysis.explanation && (
         <div className="mb-4">
           <div className="flex items-center gap-2 mb-2">
             <BookOpen className="w-4 h-4 text-muted-foreground" />
             <h3 className="text-sm font-semibold text-foreground">{t("explanation")}</h3>
           </div>
-          <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg p-3">
-            <p className="text-sm text-amber-900 dark:text-amber-100 leading-relaxed">
-              {analysis.explanation}
-            </p>
+          <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg p-4 space-y-3">
+            {/* Summary */}
+            {analysis.explanation.summary && (
+              <div>
+                <p className="text-sm text-amber-900 dark:text-amber-100 leading-relaxed">
+                  {analysis.explanation.summary}
+                </p>
+              </div>
+            )}
+
+            {/* Grammar Focus */}
+            {analysis.explanation.grammarFocus && (
+              <div>
+                <h4 className="text-xs font-semibold text-amber-800 dark:text-amber-200 mb-1">
+                  📖 {t("grammarFocus")}
+                </h4>
+                <p className="text-sm text-amber-900 dark:text-amber-100">
+                  {analysis.explanation.grammarFocus}
+                </p>
+              </div>
+            )}
+
+            {/* Vocabulary Focus */}
+            {analysis.explanation.vocabFocus && analysis.explanation.vocabFocus.length > 0 && (
+              <div>
+                <h4 className="text-xs font-semibold text-amber-800 dark:text-amber-200 mb-1">
+                  ✏️ {t("vocabFocus")}
+                </h4>
+                <ul className="space-y-1">
+                  {analysis.explanation.vocabFocus.map((item, idx) => (
+                    <li key={idx} className="text-sm text-amber-900 dark:text-amber-100">
+                      <span className="font-medium">{item.term}</span> — {item.detail}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            {/* Culture Note */}
+            {analysis.explanation.cultureNote && (
+              <div>
+                <h4 className="text-xs font-semibold text-amber-800 dark:text-amber-200 mb-1">
+                  🏮 {t("cultureNote")}
+                </h4>
+                <p className="text-sm text-amber-900 dark:text-amber-100 italic">
+                  {analysis.explanation.cultureNote}
+                </p>
+              </div>
+            )}
+
+            {/* Translation Hint (only if DeepL not configured) */}
+            {analysis.explanation.translationHint && (
+              <div className="pt-2 border-t border-amber-200 dark:border-amber-700">
+                <p className="text-xs text-amber-700 dark:text-amber-300">
+                  💡 {analysis.explanation.translationHint}
+                </p>
+              </div>
+            )}
           </div>
         </div>
       )}

@@ -200,9 +200,29 @@ COMMON_WORDS_FR = {
     "現状": "situation actuelle, état actuel",
     "げんじょう": "situation actuelle",
 
-    # Katakana loanwords
+    # Katakana loanwords & beverages
     "メッセージ": "message",
     "ショック": "choc",
+    "コーヒー": "café (boisson amère)",
+    "ジュース": "jus (boisson sucrée)",
+    "ブラック": "noir, sans sucre ni lait",
+
+    # Adjectives for taste and preferences
+    "苦い": "amer (goût)",
+    "にがい": "amer (goût)",
+    "苦手": "pas doué, ne pas aimer",
+    "にがて": "pas doué, ne pas aimer",
+
+    # Common verbs and expressions
+    "逸れる": "s'écarter, dévier",
+    "それる": "s'écarter, dévier",
+    "散々": "terriblement, complètement",
+    "さんざん": "terriblement, complètement",
+    "返る": "retourner, revenir",
+    "かえる": "retourner, revenir",
+    "やつ": "type, personne (familier)",
+    "奴": "type, personne (familier)",
+    "チャリ": "vélo (argot)",
 
     # Particules courantes
     "ね": "n'est-ce pas",

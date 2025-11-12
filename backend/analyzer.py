@@ -361,14 +361,16 @@ def generate_explanation(
     tokens: List[Dict[str, str]],
     vocabulary: List[Dict[str, Any]],
     patterns: List[Dict[str, Any]]
-) -> str:
+) -> Dict[str, Any]:
     """
-    Generate an automatic explanation for a Japanese sentence.
+    Generate a pedagogical explanation for a Japanese sentence.
 
-    Creates a comprehensive explanation including:
-    - French translation via DeepL
-    - Grammar patterns used
-    - Key vocabulary with meanings
+    Creates a structured, educational explanation with:
+    - summary: Concise French explanation of what the sentence means/does
+    - grammar_focus: One main grammatical point with usage notes
+    - vocab_focus: 1-3 key vocabulary items with short explanations
+    - culture_note: Optional sociolinguistic/cultural context
+    - translation_hint: Message if DeepL unavailable (empty string otherwise)
 
     Args:
         original_text: The original Japanese sentence
@@ -377,52 +379,99 @@ def generate_explanation(
         patterns: List of detected grammar patterns
 
     Returns:
-        French explanation string
+        Dictionary with pedagogical explanation structure
 
     Example:
-        >>> generate_explanation("私は日本語を勉強しています", tokens, vocab, patterns)
-        "Traduction : J'étudie le japonais. Phrase utilisant [ています], vocabulaire clé [私=je, 日本語=japonais, 勉強する=étudier]."
+        >>> generate_explanation("コーヒー飲める？", tokens, vocab, patterns)
+        {
+            "summary": "Proposition informelle de boire du café ensemble",
+            "grammar_focus": "Forme potentielle 飲める exprime la capacité ou possibilité",
+            "vocab_focus": [
+                {"term": "コーヒー", "detail": "café, boisson amère populaire"},
+                {"term": "飲める", "detail": "pouvoir boire (forme potentielle)"}
+            ],
+            "culture_note": "Le café est souvent associé au monde adulte au Japon",
+            "translation_hint": ""
+        }
     """
     from translator import translate_sentence
 
-    explanation_parts = []
+    # Cultural context keywords mapping
+    CULTURE_NOTES = {
+        "コーヒー": "Le café est souvent perçu comme une boisson sophistiquée, associée au monde adulte et au travail au Japon.",
+        "お茶": "Le thé joue un rôle central dans la culture japonaise, symbolisant l'hospitalité et la convivialité.",
+        "さん": "Suffixe honorifique poli, utilisé pour marquer le respect envers l'interlocuteur.",
+        "ちゃん": "Suffixe affectueux utilisé pour les enfants, proches amis, ou membres de la famille.",
+        "君": "Suffixe familier utilisé principalement entre garçons ou envers des subordonnés.",
+        "先輩": "Désigne une personne plus âgée ou avec plus d'ancienneté, reflet de la hiérarchie sociale japonaise.",
+        "後輩": "Personne plus jeune ou avec moins d'ancienneté, complément du système senpai-kōhai.",
+    }
 
-    # Part 1: Translation
+    # Get translation for summary construction
     translation = translate_sentence(original_text)
-    if translation and not translation.startswith("[Traduction"):
-        explanation_parts.append(f"**Traduction :** {translation}")
-    elif translation:
-        # DeepL not configured, show a helpful message
-        explanation_parts.append("**Traduction :** Non disponible (configurez DeepL API pour activer)")
+    has_deepl = translation and not translation.startswith("[Traduction")
 
-    # Part 2: Grammar patterns
+    # Build summary
+    summary = ""
+    if has_deepl:
+        # Use translation to create a pedagogical summary
+        summary = f"Cette phrase exprime : {translation}"
+    else:
+        # Construct fallback summary from vocabulary
+        if vocabulary:
+            key_words = [v.get("meaning", v.get("word", "")) for v in vocabulary[:2]]
+            summary = f"Phrase utilisant : {', '.join(key_words)}"
+        else:
+            summary = "Phrase en japonais nécessitant une traduction."
+
+    # Build grammar focus (select most important pattern)
+    grammar_focus = ""
     if patterns:
-        pattern_names = [p.get("pattern", "") for p in patterns[:3]]  # Top 3 patterns
-        if pattern_names:
-            patterns_str = ", ".join([f"「{p}」" for p in pattern_names if p])
-            explanation_parts.append(f"**Grammaire :** {patterns_str}")
+        main_pattern = patterns[0]
+        pattern_name = main_pattern.get("pattern", "")
+        pattern_desc = main_pattern.get("description", "")
 
-    # Part 3: Key vocabulary
+        # Create pedagogical grammar explanation
+        if pattern_name:
+            grammar_focus = f"Structure {pattern_name} : {pattern_desc}"
+
+    # Build vocab focus (1-3 key items)
+    vocab_focus = []
     if vocabulary:
-        # Take top 3-5 most important vocabulary words
-        key_vocab = vocabulary[:min(5, len(vocabulary))]
-        vocab_pairs = []
-        for v in key_vocab:
+        for v in vocabulary[:3]:  # Top 3 vocabulary items
             word = v.get("word", "")
             meaning = v.get("meaning", "")
-            # Only include if we have a French translation (not English fallback or missing)
+
+            # Only include French translations
             if meaning and not meaning.endswith("(EN)") and not meaning.startswith("[Traduction"):
-                vocab_pairs.append(f"{word}={meaning}")
+                # Create short pedagogical explanation
+                jlpt = v.get("jlptLevel", "")
+                jlpt_note = f" ({jlpt})" if jlpt and jlpt != "Unknown" else ""
+                vocab_focus.append({
+                    "term": word,
+                    "detail": f"{meaning}{jlpt_note}"
+                })
 
-        if vocab_pairs:
-            vocab_str = ", ".join(vocab_pairs)
-            explanation_parts.append(f"**Vocabulaire clé :** {vocab_str}")
+    # Build culture note (check for cultural keywords)
+    culture_note = None
+    for word_obj in vocabulary:
+        word = word_obj.get("word", "")
+        if word in CULTURE_NOTES:
+            culture_note = CULTURE_NOTES[word]
+            break
 
-    # Combine all parts
-    if explanation_parts:
-        return " ".join(explanation_parts)
-    else:
-        return "Résumé indisponible."
+    # Build translation hint
+    translation_hint = ""
+    if not has_deepl:
+        translation_hint = "Configurez DeepL API pour obtenir des traductions automatiques de phrases complètes."
+
+    return {
+        "summary": summary,
+        "grammar_focus": grammar_focus,
+        "vocab_focus": vocab_focus,
+        "culture_note": culture_note,
+        "translation_hint": translation_hint
+    }
 
 
 def analyze_text(text: str) -> Dict[str, Any]:

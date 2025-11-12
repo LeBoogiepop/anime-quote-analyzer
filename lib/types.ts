@@ -35,6 +35,25 @@ export interface GrammarPattern {
 }
 
 /**
+ * Vocabulary focus item in pedagogical explanation
+ */
+export interface VocabFocusItem {
+  term: string;
+  detail: string;
+}
+
+/**
+ * Structured pedagogical explanation
+ */
+export interface Explanation {
+  summary: string;
+  grammarFocus: string;
+  vocabFocus: VocabFocusItem[];
+  cultureNote?: string;
+  translationHint: string;
+}
+
+/**
  * Analysis result for a Japanese sentence
  */
 export interface SentenceAnalysis {
@@ -49,7 +68,7 @@ export interface SentenceAnalysis {
     meaning: string;
     jlptLevel: JLPTLevel;
   }[];
-  explanation: string; // Auto-generated explanation with translation and key points
+  explanation: Explanation; // Structured pedagogical explanation
 }
 
 /**

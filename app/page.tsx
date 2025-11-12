@@ -289,23 +289,36 @@ export default function Home() {
                 vocabulary: [
                   {
                     word: "私",
+                    baseForm: "私",
                     reading: "わたし",
                     meaning: "I, me",
                     jlptLevel: "N5",
                   },
                   {
                     word: "日本語",
+                    baseForm: "日本語",
                     reading: "にほんご",
                     meaning: "Japanese language",
                     jlptLevel: "N5",
                   },
                   {
                     word: "勉強する",
+                    baseForm: "勉強する",
                     reading: "べんきょうする",
                     meaning: "to study",
                     jlptLevel: "N5",
                   },
                 ],
+                explanation: {
+                  summary: "This phrase expresses the action of studying Japanese",
+                  grammarFocus: "Present progressive form ~ています indicates ongoing action",
+                  vocabFocus: [
+                    { term: "私", detail: "I, me (N5)" },
+                    { term: "日本語", detail: "Japanese language (N5)" },
+                    { term: "勉強する", detail: "to study (N5)" }
+                  ],
+                  translationHint: ""
+                },
               }}
             />
           </motion.div>
