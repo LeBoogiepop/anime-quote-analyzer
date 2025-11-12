@@ -11,6 +11,7 @@ Author: Maxime
 """
 
 from typing import List, Dict, Any
+import os
 import fugashi
 import jaconv
 import logging
@@ -20,6 +21,7 @@ from pathlib import Path
 from jlpt_classifier import classify_word, classify_sentence
 from grammar_detector import detect_patterns
 from translator import translate_to_french
+from ai_explainer import generate_ai_explanation
 
 # Initialize logging
 logging.basicConfig(level=logging.INFO)
@@ -402,13 +404,33 @@ def analyze_text(text: str) -> Dict[str, Any]:
         # Step 4: Classify overall JLPT level
         jlpt_level = classify_sentence(tokens, vocabulary)
 
+        # Step 5: Generate AI explanation (if enabled)
+        ai_explanation = None
+        if os.getenv('AI_PROVIDER') == 'gemini':
+            try:
+                logger.info("Generating AI explanation...")
+                ai_explanation = generate_ai_explanation(
+                    sentence=text,
+                    tokens=tokens,
+                    grammar_patterns=grammar_patterns,
+                    vocab_items=vocabulary
+                )
+                if ai_explanation:
+                    logger.info("✓ AI explanation generated successfully")
+                else:
+                    logger.warning("AI explanation unavailable")
+            except Exception as e:
+                logger.warning(f"AI explanation failed: {e}")
+                ai_explanation = None
+
         # Construct response
         result = {
             "originalText": text,
             "tokens": tokens,
             "grammarPatterns": grammar_patterns,
             "vocabulary": vocabulary,
-            "jlptLevel": jlpt_level
+            "jlptLevel": jlpt_level,
+            "aiExplanation": ai_explanation
         }
 
         return result

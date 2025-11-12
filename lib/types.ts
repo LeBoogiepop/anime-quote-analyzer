@@ -37,6 +37,36 @@ export interface GrammarPattern {
 }
 
 /**
+ * Grammar note in AI explanation
+ */
+export interface GrammarNote {
+  pattern: string;
+  explanation: string;
+  example?: string;
+}
+
+/**
+ * Vocabulary note in AI explanation
+ */
+export interface VocabNote {
+  word: string;
+  reading?: string;
+  nuance: string;
+}
+
+/**
+ * AI-generated pedagogical explanation
+ */
+export interface AIExplanation {
+  summary: string;
+  grammarNotes: GrammarNote[];
+  vocabNotes: VocabNote[];
+  culturalContext?: string;
+  studyTips?: string;
+  registerNote?: string;
+}
+
+/**
  * Analysis result for a Japanese sentence
  */
 export interface SentenceAnalysis {
@@ -51,6 +81,7 @@ export interface SentenceAnalysis {
     meaning: string;
     jlptLevel: JLPTLevel;
   }[];
+  aiExplanation?: AIExplanation;
 }
 
 /**

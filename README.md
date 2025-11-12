@@ -45,6 +45,39 @@ The goal is to upload anime subtitle files (.srt, .ass) and get instant breakdow
 - Python with MeCab/fugashi for Japanese NLP
 - Supabase for database
 
+## 🎓 AI Teacher Feature (Optional)
+
+Get AI-powered pedagogical explanations using Google Gemini! When enabled, each analyzed sentence includes:
+- **Contextualized summary** in natural French
+- **Grammar breakdowns** with practical explanations
+- **Vocabulary nuances** beyond dictionary definitions
+- **Cultural context** notes when relevant
+- **Study tips** and memory aids
+
+### Setup
+
+1. Get a free API key from [Google AI Studio](https://aistudio.google.com/)
+2. Configure in `backend/.env`:
+```bash
+AI_PROVIDER=gemini
+GEMINI_API_KEY=your_key_here
+```
+3. Restart the backend server
+
+**Quota:** Free tier includes 1,500 requests/day
+**Privacy:** Analyzed sentences are sent to Google's Gemini API for processing
+**Cache:** Results are cached for 24h to minimize API calls
+
+### How It Works
+
+The AI Teacher analyzes each sentence using:
+- MeCab tokenization data
+- Detected grammar patterns
+- Extracted vocabulary
+- JLPT level information
+
+Then generates explanations tailored to French-speaking learners, focusing on practical usage rather than academic terminology.
+
 ## Project Structure
 
 ```

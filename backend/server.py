@@ -85,6 +85,30 @@ class Vocabulary(BaseModel):
     jlptLevel: Literal["N5", "N4", "N3", "N2", "N1", "Unknown"]
 
 
+class GrammarNote(BaseModel):
+    """Individual grammar note in AI explanation."""
+    pattern: str
+    explanation: str
+    example: Optional[str] = None
+
+
+class VocabNote(BaseModel):
+    """Individual vocabulary note in AI explanation."""
+    word: str
+    reading: Optional[str] = None
+    nuance: str
+
+
+class AIExplanation(BaseModel):
+    """AI-generated pedagogical explanation."""
+    summary: str
+    grammarNotes: List[GrammarNote]
+    vocabNotes: List[VocabNote]
+    culturalContext: Optional[str] = None
+    studyTips: Optional[str] = None
+    registerNote: Optional[str] = None
+
+
 class AnalyzeResponse(BaseModel):
     """Complete analysis response."""
     originalText: str
@@ -92,6 +116,7 @@ class AnalyzeResponse(BaseModel):
     grammarPatterns: List[GrammarPattern]
     vocabulary: List[Vocabulary]
     jlptLevel: Literal["N5", "N4", "N3", "N2", "N1"]
+    aiExplanation: Optional[AIExplanation] = None
 
 
 @app.get("/")

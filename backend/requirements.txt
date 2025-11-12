@@ -6,3 +6,4 @@ unidic-lite==1.0.8
 jaconv==0.3.4
 python-dotenv==1.0.0
 requests==2.31.0
+google-generativeai==0.3.2

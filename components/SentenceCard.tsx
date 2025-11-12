@@ -226,6 +226,109 @@ export function SentenceCard({ analysis, index = 0 }: SentenceCardProps) {
         </div>
       )}
 
+      {/* AI Teacher Explanation */}
+      {analysis.aiExplanation && (
+        <div className="mb-4">
+          <details open className="group">
+            <summary className="cursor-pointer list-none">
+              <div className="flex items-center gap-2 mb-3 p-3 bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 rounded-lg hover:from-purple-100 hover:to-pink-100 dark:hover:from-purple-900/30 dark:hover:to-pink-900/30 transition-colors">
+                <span className="text-xl">🎓</span>
+                <h3 className="text-sm font-semibold text-purple-700 dark:text-purple-300 flex-1">
+                  Explication du Prof IA
+                </h3>
+                <span className="text-xs text-purple-600 dark:text-purple-400 group-open:rotate-180 transition-transform">
+                  ▼
+                </span>
+              </div>
+            </summary>
+
+            <div className="space-y-4 pl-3 pr-3 pb-3">
+              {/* Summary */}
+              <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
+                {analysis.aiExplanation.summary}
+              </p>
+
+              {/* Grammar Notes */}
+              {analysis.aiExplanation.grammarNotes.length > 0 && (
+                <div>
+                  <h4 className="font-medium text-sm text-purple-600 dark:text-purple-400 mb-2 flex items-center gap-2">
+                    <span>📝</span> Points grammaticaux
+                  </h4>
+                  <div className="space-y-2">
+                    {analysis.aiExplanation.grammarNotes.map((note, i) => (
+                      <div key={i} className="text-sm bg-white dark:bg-gray-800 p-3 rounded border border-purple-100 dark:border-purple-800">
+                        <span className="font-mono text-xs bg-purple-100 dark:bg-purple-900/50 px-2 py-1 rounded text-purple-700 dark:text-purple-300">
+                          {note.pattern}
+                        </span>
+                        <p className="text-gray-700 dark:text-gray-300 mt-2">
+                          {note.explanation}
+                        </p>
+                        {note.example && (
+                          <p className="text-xs text-gray-600 dark:text-gray-400 italic mt-2 border-l-2 border-purple-300 pl-2">
+                            Exemple : {note.example}
+                          </p>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Vocabulary Notes */}
+              {analysis.aiExplanation.vocabNotes.length > 0 && (
+                <div>
+                  <h4 className="font-medium text-sm text-purple-600 dark:text-purple-400 mb-2 flex items-center gap-2">
+                    <span>📚</span> Nuances de vocabulaire
+                  </h4>
+                  <ul className="space-y-2">
+                    {analysis.aiExplanation.vocabNotes.map((vocab, i) => (
+                      <li key={i} className="text-sm bg-white dark:bg-gray-800 p-3 rounded border border-purple-100 dark:border-purple-800">
+                        <span className="font-medium text-gray-900 dark:text-gray-100">
+                          {vocab.word}
+                        </span>
+                        {vocab.reading && (
+                          <span className="text-xs text-gray-500 dark:text-gray-400 ml-2">
+                            ({vocab.reading})
+                          </span>
+                        )}
+                        <span className="text-gray-700 dark:text-gray-300"> : {vocab.nuance}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {/* Cultural Context */}
+              {analysis.aiExplanation.culturalContext && (
+                <div className="text-sm bg-blue-50 dark:bg-blue-900/30 p-3 rounded border border-blue-200 dark:border-blue-800">
+                  <span className="font-medium text-blue-700 dark:text-blue-300">💡 Contexte culturel :</span>
+                  <p className="text-blue-900 dark:text-blue-100 mt-1">
+                    {analysis.aiExplanation.culturalContext}
+                  </p>
+                </div>
+              )}
+
+              {/* Register Note */}
+              {analysis.aiExplanation.registerNote && (
+                <div className="text-xs text-gray-600 dark:text-gray-400 bg-gray-50 dark:bg-gray-800 p-2 rounded border border-gray-200 dark:border-gray-700">
+                  <span className="font-medium">Registre :</span> {analysis.aiExplanation.registerNote}
+                </div>
+              )}
+
+              {/* Study Tips */}
+              {analysis.aiExplanation.studyTips && (
+                <div className="text-sm bg-green-50 dark:bg-green-900/30 p-3 rounded border border-green-200 dark:border-green-800">
+                  <span className="font-medium text-green-700 dark:text-green-300">📖 Conseil d'étude :</span>
+                  <p className="text-green-900 dark:text-green-100 mt-1">
+                    {analysis.aiExplanation.studyTips}
+                  </p>
+                </div>
+              )}
+            </div>
+          </details>
+        </div>
+      )}
+
       {/* Vocabulary list */}
       {analysis.vocabulary.length > 0 && (
         <div>
