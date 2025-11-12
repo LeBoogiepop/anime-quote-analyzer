@@ -81,7 +81,6 @@ export interface SentenceAnalysis {
     meaning: string;
     jlptLevel: JLPTLevel;
   }[];
-  aiExplanation?: AIExplanation;
 }
 
 /**

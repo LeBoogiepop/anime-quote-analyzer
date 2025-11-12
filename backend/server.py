@@ -10,11 +10,12 @@ Author: Maxime
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-from typing import List, Literal, Optional
+from typing import List, Literal, Optional, Dict, Any
 import logging
 
 from analyzer import analyze_text
 from translator import translate_sentence
+from ai_explainer import generate_ai_explanation
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -56,6 +57,14 @@ class TranslateResponse(BaseModel):
     """Translation response."""
     originalText: str
     translation: str
+
+
+class ExplainRequest(BaseModel):
+    """Request body for AI explanation."""
+    sentence: str
+    tokens: List[Dict[str, Any]]
+    grammarPatterns: List[Dict[str, Any]]
+    vocabulary: List[Dict[str, Any]]
 
 
 class Token(BaseModel):
@@ -116,7 +125,6 @@ class AnalyzeResponse(BaseModel):
     grammarPatterns: List[GrammarPattern]
     vocabulary: List[Vocabulary]
     jlptLevel: Literal["N5", "N4", "N3", "N2", "N1"]
-    aiExplanation: Optional[AIExplanation] = None
 
 
 @app.get("/")
@@ -256,6 +264,53 @@ async def translate(request: TranslateRequest):
         raise HTTPException(
             status_code=500,
             detail=f"Translation failed: {str(e)}"
+        )
+
+
+@app.post("/explain", response_model=AIExplanation)
+async def explain(request: ExplainRequest):
+    """
+    Generate AI-powered pedagogical explanation for a Japanese sentence.
+
+    This endpoint provides on-demand AI explanations using Google Gemini.
+    Only called when user clicks "Explication" button to avoid automatic timeouts.
+
+    Args:
+        request: ExplainRequest with sentence and analysis data
+
+    Returns:
+        AIExplanation with pedagogical notes
+
+    Raises:
+        HTTPException: If AI is not configured or explanation fails
+    """
+    try:
+        logger.info(f"Generating AI explanation for: {request.sentence[:50]}...")
+
+        # Call AI explainer
+        explanation = generate_ai_explanation(
+            sentence=request.sentence,
+            tokens=request.tokens,
+            grammar_patterns=request.grammarPatterns,
+            vocab_items=request.vocabulary
+        )
+
+        if explanation is None:
+            raise HTTPException(
+                status_code=503,
+                detail="AI explanation service unavailable. Please check AI_PROVIDER configuration."
+            )
+
+        logger.info("✓ AI explanation generated successfully")
+        return explanation
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"AI explanation failed: {str(e)}")
+        raise HTTPException(
+            status_code=500,
+            detail=f"AI explanation failed: {str(e)}"
         )
 
 

@@ -404,33 +404,14 @@ def analyze_text(text: str) -> Dict[str, Any]:
         # Step 4: Classify overall JLPT level
         jlpt_level = classify_sentence(tokens, vocabulary)
 
-        # Step 5: Generate AI explanation (if enabled)
-        ai_explanation = None
-        if os.getenv('AI_PROVIDER') == 'gemini':
-            try:
-                logger.info("Generating AI explanation...")
-                ai_explanation = generate_ai_explanation(
-                    sentence=text,
-                    tokens=tokens,
-                    grammar_patterns=grammar_patterns,
-                    vocab_items=vocabulary
-                )
-                if ai_explanation:
-                    logger.info("✓ AI explanation generated successfully")
-                else:
-                    logger.warning("AI explanation unavailable")
-            except Exception as e:
-                logger.warning(f"AI explanation failed: {e}")
-                ai_explanation = None
-
         # Construct response
+        # Note: AI explanation is now optional and called via separate /explain endpoint
         result = {
             "originalText": text,
             "tokens": tokens,
             "grammarPatterns": grammar_patterns,
             "vocabulary": vocabulary,
-            "jlptLevel": jlpt_level,
-            "aiExplanation": ai_explanation
+            "jlptLevel": jlpt_level
         }
 
         return result

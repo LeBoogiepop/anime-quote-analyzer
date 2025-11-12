@@ -1,10 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { type SentenceAnalysis } from "@/lib/types";
+import { type SentenceAnalysis, type AIExplanation } from "@/lib/types";
 import { JLPTBadge } from "./JLPTBadge";
 import { motion, AnimatePresence } from "framer-motion";
-import { BookOpen, GraduationCap, Languages, ExternalLink, Eye, EyeOff, Loader2 } from "lucide-react";
+import { BookOpen, GraduationCap, Languages, ExternalLink, Eye, EyeOff, Loader2, Sparkles } from "lucide-react";
 import { useLanguage } from "@/lib/LanguageContext";
 
 interface SentenceCardProps {
@@ -19,6 +19,11 @@ export function SentenceCard({ analysis, index = 0 }: SentenceCardProps) {
   const [translation, setTranslation] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string>("");
+
+  // AI explanation state
+  const [aiExplanation, setAiExplanation] = useState<AIExplanation | null>(null);
+  const [isLoadingAI, setIsLoadingAI] = useState(false);
+  const [aiError, setAiError] = useState<string>("");
 
   const handleToggleTranslation = async () => {
     // If already showing, just toggle off
@@ -60,6 +65,42 @@ export function SentenceCard({ analysis, index = 0 }: SentenceCardProps) {
     }
   };
 
+  const handleGetAIExplanation = async () => {
+    // If we already have explanation, do nothing
+    if (aiExplanation) {
+      return;
+    }
+
+    setIsLoadingAI(true);
+    setAiError("");
+
+    try {
+      const response = await fetch("/api/explain", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          sentence: analysis.originalText,
+          tokens: analysis.tokens,
+          grammarPatterns: analysis.grammarPatterns,
+          vocabulary: analysis.vocabulary,
+        }),
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        setAiExplanation(result.aiExplanation);
+      } else {
+        setAiError(result.error || "AI explanation failed");
+      }
+    } catch (err) {
+      setAiError("Failed to connect to AI service");
+      console.error("AI explanation error:", err);
+    } finally {
+      setIsLoadingAI(false);
+    }
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -97,6 +138,31 @@ export function SentenceCard({ analysis, index = 0 }: SentenceCardProps) {
               <>
                 <Eye className="w-3 h-3" />
                 <span>Translate</span>
+              </>
+            )}
+          </button>
+
+          {/* AI Explanation button */}
+          <button
+            onClick={handleGetAIExplanation}
+            disabled={isLoadingAI || !!aiExplanation}
+            className="inline-flex items-center gap-2 px-3 py-1.5 text-xs font-medium rounded-md border border-purple-300 bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900/30 dark:to-pink-900/30 hover:from-purple-100 hover:to-pink-100 dark:hover:from-purple-900/40 dark:hover:to-pink-900/40 text-purple-700 dark:text-purple-300 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            title={aiExplanation ? "Explanation loaded" : "Get AI explanation"}
+          >
+            {isLoadingAI ? (
+              <>
+                <Loader2 className="w-3 h-3 animate-spin" />
+                <span>Thinking...</span>
+              </>
+            ) : aiExplanation ? (
+              <>
+                <Sparkles className="w-3 h-3" />
+                <span>Ready!</span>
+              </>
+            ) : (
+              <>
+                <Sparkles className="w-3 h-3" />
+                <span>Explication</span>
               </>
             )}
           </button>
@@ -227,7 +293,7 @@ export function SentenceCard({ analysis, index = 0 }: SentenceCardProps) {
       )}
 
       {/* AI Teacher Explanation */}
-      {analysis.aiExplanation && (
+      {aiExplanation && (
         <div className="mb-4">
           <details open className="group">
             <summary className="cursor-pointer list-none">
@@ -245,17 +311,17 @@ export function SentenceCard({ analysis, index = 0 }: SentenceCardProps) {
             <div className="space-y-4 pl-3 pr-3 pb-3">
               {/* Summary */}
               <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
-                {analysis.aiExplanation.summary}
+                {aiExplanation.summary}
               </p>
 
               {/* Grammar Notes */}
-              {analysis.aiExplanation.grammarNotes.length > 0 && (
+              {aiExplanation.grammarNotes.length > 0 && (
                 <div>
                   <h4 className="font-medium text-sm text-purple-600 dark:text-purple-400 mb-2 flex items-center gap-2">
                     <span>📝</span> Points grammaticaux
                   </h4>
                   <div className="space-y-2">
-                    {analysis.aiExplanation.grammarNotes.map((note, i) => (
+                    {aiExplanation.grammarNotes.map((note, i) => (
                       <div key={i} className="text-sm bg-white dark:bg-gray-800 p-3 rounded border border-purple-100 dark:border-purple-800">
                         <span className="font-mono text-xs bg-purple-100 dark:bg-purple-900/50 px-2 py-1 rounded text-purple-700 dark:text-purple-300">
                           {note.pattern}
@@ -275,13 +341,13 @@ export function SentenceCard({ analysis, index = 0 }: SentenceCardProps) {
               )}
 
               {/* Vocabulary Notes */}
-              {analysis.aiExplanation.vocabNotes.length > 0 && (
+              {aiExplanation.vocabNotes.length > 0 && (
                 <div>
                   <h4 className="font-medium text-sm text-purple-600 dark:text-purple-400 mb-2 flex items-center gap-2">
                     <span>📚</span> Nuances de vocabulaire
                   </h4>
                   <ul className="space-y-2">
-                    {analysis.aiExplanation.vocabNotes.map((vocab, i) => (
+                    {aiExplanation.vocabNotes.map((vocab, i) => (
                       <li key={i} className="text-sm bg-white dark:bg-gray-800 p-3 rounded border border-purple-100 dark:border-purple-800">
                         <span className="font-medium text-gray-900 dark:text-gray-100">
                           {vocab.word}
@@ -299,28 +365,28 @@ export function SentenceCard({ analysis, index = 0 }: SentenceCardProps) {
               )}
 
               {/* Cultural Context */}
-              {analysis.aiExplanation.culturalContext && (
+              {aiExplanation.culturalContext && (
                 <div className="text-sm bg-blue-50 dark:bg-blue-900/30 p-3 rounded border border-blue-200 dark:border-blue-800">
                   <span className="font-medium text-blue-700 dark:text-blue-300">💡 Contexte culturel :</span>
                   <p className="text-blue-900 dark:text-blue-100 mt-1">
-                    {analysis.aiExplanation.culturalContext}
+                    {aiExplanation.culturalContext}
                   </p>
                 </div>
               )}
 
               {/* Register Note */}
-              {analysis.aiExplanation.registerNote && (
+              {aiExplanation.registerNote && (
                 <div className="text-xs text-gray-600 dark:text-gray-400 bg-gray-50 dark:bg-gray-800 p-2 rounded border border-gray-200 dark:border-gray-700">
-                  <span className="font-medium">Registre :</span> {analysis.aiExplanation.registerNote}
+                  <span className="font-medium">Registre :</span> {aiExplanation.registerNote}
                 </div>
               )}
 
               {/* Study Tips */}
-              {analysis.aiExplanation.studyTips && (
+              {aiExplanation.studyTips && (
                 <div className="text-sm bg-green-50 dark:bg-green-900/30 p-3 rounded border border-green-200 dark:border-green-800">
                   <span className="font-medium text-green-700 dark:text-green-300">📖 Conseil d'étude :</span>
                   <p className="text-green-900 dark:text-green-100 mt-1">
-                    {analysis.aiExplanation.studyTips}
+                    {aiExplanation.studyTips}
                   </p>
                 </div>
               )}

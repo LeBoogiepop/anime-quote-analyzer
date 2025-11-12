@@ -37,8 +37,8 @@ GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")
 AI_MODEL = os.getenv("AI_MODEL", "gemini-1.5-flash-latest")
 CACHE_MAX_SIZE = 500
 CACHE_TTL_HOURS = 24
-API_TIMEOUT_SECONDS = 10
-MAX_RETRIES = 1
+API_TIMEOUT_SECONDS = 15  # 15s timeout for AI generation
+MAX_RETRIES = 2  # 2 retries with exponential backoff
 
 # Initialize Gemini
 _gemini_model = None
@@ -285,12 +285,14 @@ def _call_gemini_api(prompt: str, retry_count: int = 0) -> Optional[Dict[str, An
     except Exception as e:
         logger.error(f"Gemini API call failed: {e}")
 
-        # Retry logic
+        # Retry logic with exponential backoff
         if retry_count < MAX_RETRIES:
-            logger.info(f"Retrying in 2 seconds...")
-            time.sleep(2)
+            backoff_seconds = 2 ** (retry_count + 1)  # 2s, 4s
+            logger.info(f"Retrying in {backoff_seconds} seconds (attempt {retry_count + 2}/{MAX_RETRIES + 1})...")
+            time.sleep(backoff_seconds)
             return _call_gemini_api(prompt, retry_count + 1)
 
+        logger.error(f"Max retries ({MAX_RETRIES}) reached, giving up")
         return None
 
 
