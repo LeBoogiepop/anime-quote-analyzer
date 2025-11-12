@@ -4,7 +4,7 @@ import { useState } from "react";
 import { type SentenceAnalysis, type AIExplanation } from "@/lib/types";
 import { JLPTBadge } from "./JLPTBadge";
 import { motion, AnimatePresence } from "framer-motion";
-import { BookOpen, GraduationCap, Languages, ExternalLink, Eye, EyeOff, Loader2, Sparkles } from "lucide-react";
+import { GraduationCap, Languages, ExternalLink, Eye, EyeOff, Loader2, Sparkles } from "lucide-react";
 import { useLanguage } from "@/lib/LanguageContext";
 
 interface SentenceCardProps {
@@ -250,44 +250,62 @@ export function SentenceCard({ analysis, index = 0 }: SentenceCardProps) {
         </div>
       )}
 
-      {/* Grammar patterns */}
-      {analysis.grammarPatterns.length > 0 && (
+      {/* Vocabulary list */}
+      {analysis.vocabulary.length > 0 && (
         <div className="mb-4">
           <div className="flex items-center gap-2 mb-2">
-            <BookOpen className="w-4 h-4 text-muted-foreground" />
-            <h3 className="text-sm font-semibold text-foreground">
-              {t("grammarPatterns")}
-            </h3>
+            <GraduationCap className="w-4 h-4 text-muted-foreground" />
+            <h3 className="text-sm font-semibold text-foreground">{t("vocabulary")}</h3>
           </div>
-          <div className="space-y-3">
-            {analysis.grammarPatterns.map((pattern, idx) => (
-              <div
-                key={idx}
-                className="flex items-start gap-2 text-sm bg-secondary/30 rounded p-3"
-              >
-                <JLPTBadge level={pattern.jlptLevel} className="mt-0.5" />
-                <div className="flex-1">
-                  <span className="font-medium">{pattern.pattern}</span>
-                  <p className="text-xs text-muted-foreground mt-1">
-                    {pattern.description}
-                  </p>
-                  {/* Example from sentence */}
-                  {pattern.exampleInSentence && (
-                    <div className="mt-2 px-2 py-1 bg-amber-50 dark:bg-amber-900/30 border border-amber-200 dark:border-amber-700 rounded text-xs">
-                      <span className="font-medium text-amber-900 dark:text-amber-100">
-                        {pattern.exampleInSentence}
-                      </span>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            {analysis.vocabulary.map((vocab, idx) => {
+              const hasKanji = /[\u4E00-\u9FAF]/.test(vocab.word);
+              const shouldShowReading = hasKanji && vocab.reading !== vocab.word && vocab.reading !== 'demo';
+
+              return (
+                <div
+                  key={idx}
+                  className="group flex items-start gap-2 text-sm bg-secondary/30 rounded p-2 cursor-help"
+                >
+                  <JLPTBadge level={vocab.jlptLevel} className="mt-0.5" />
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-1">
+                      <div className="font-medium truncate relative inline-block">
+                        {/* Hover tooltip with reading and translation */}
+                        <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-2 text-xs text-white bg-gray-900 dark:bg-gray-800 rounded-lg shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-10 max-w-xs">
+                          <div className="flex flex-col gap-1">
+                            {shouldShowReading && (
+                              <div className="text-gray-300 dark:text-gray-400 font-mono">
+                                {vocab.reading}
+                              </div>
+                            )}
+                            <div className="text-white font-normal">
+                              {vocab.meaning}
+                            </div>
+                          </div>
+                          {/* Tooltip arrow */}
+                          <div className="absolute top-full left-1/2 -translate-x-1/2 -mt-1 border-4 border-transparent border-t-gray-900 dark:border-t-gray-800"></div>
+                        </span>
+                        {vocab.word}
+                      </div>
+                      {/* WaniKani link - uses baseForm for dictionary form */}
+                      {hasKanji && (
+                        <a
+                          href={`https://www.wanikani.com/vocabulary/${encodeURIComponent(vocab.baseForm || vocab.word)}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="opacity-50 hover:opacity-100 transition-opacity flex-shrink-0 ml-1"
+                          title="View on WaniKani"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          <ExternalLink className="w-3 h-3 text-muted-foreground hover:text-primary" />
+                        </a>
+                      )}
                     </div>
-                  )}
-                  {/* Pedagogical note */}
-                  {pattern.pedagogicalNote && (
-                    <p className="text-xs text-muted-foreground italic mt-2">
-                      💡 {pattern.pedagogicalNote}
-                    </p>
-                  )}
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       )}
@@ -392,66 +410,6 @@ export function SentenceCard({ analysis, index = 0 }: SentenceCardProps) {
               )}
             </div>
           </details>
-        </div>
-      )}
-
-      {/* Vocabulary list */}
-      {analysis.vocabulary.length > 0 && (
-        <div>
-          <div className="flex items-center gap-2 mb-2">
-            <GraduationCap className="w-4 h-4 text-muted-foreground" />
-            <h3 className="text-sm font-semibold text-foreground">{t("vocabulary")}</h3>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-            {analysis.vocabulary.map((vocab, idx) => {
-              const hasKanji = /[\u4E00-\u9FAF]/.test(vocab.word);
-              const shouldShowReading = hasKanji && vocab.reading !== vocab.word && vocab.reading !== 'demo';
-
-              return (
-                <div
-                  key={idx}
-                  className="group flex items-start gap-2 text-sm bg-secondary/30 rounded p-2 cursor-help"
-                >
-                  <JLPTBadge level={vocab.jlptLevel} className="mt-0.5" />
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-1">
-                      <div className="font-medium truncate relative inline-block">
-                        {/* Hover tooltip with reading and translation */}
-                        <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-2 text-xs text-white bg-gray-900 dark:bg-gray-800 rounded-lg shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-10 max-w-xs">
-                          <div className="flex flex-col gap-1">
-                            {shouldShowReading && (
-                              <div className="text-gray-300 dark:text-gray-400 font-mono">
-                                {vocab.reading}
-                              </div>
-                            )}
-                            <div className="text-white font-normal">
-                              {vocab.meaning}
-                            </div>
-                          </div>
-                          {/* Tooltip arrow */}
-                          <div className="absolute top-full left-1/2 -translate-x-1/2 -mt-1 border-4 border-transparent border-t-gray-900 dark:border-t-gray-800"></div>
-                        </span>
-                        {vocab.word}
-                      </div>
-                      {/* WaniKani link - uses baseForm for dictionary form */}
-                      {hasKanji && (
-                        <a
-                          href={`https://www.wanikani.com/vocabulary/${encodeURIComponent(vocab.baseForm || vocab.word)}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="opacity-50 hover:opacity-100 transition-opacity flex-shrink-0 ml-1"
-                          title="View on WaniKani"
-                          onClick={(e) => e.stopPropagation()}
-                        >
-                          <ExternalLink className="w-3 h-3 text-muted-foreground hover:text-primary" />
-                        </a>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
         </div>
       )}
     </motion.div>
