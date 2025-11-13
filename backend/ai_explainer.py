@@ -171,40 +171,56 @@ Données linguistiques :
 - Grammaire : {grammar_str}
 - Vocabulaire : {vocab_str}
 
-RÈGLES CRITIQUES :
-1. JAMAIS de hiragana en parenthèses pour les mots déjà en hiragana/katakana
-   ❌ Mauvais : "ううん(ううん)" ou "はい(はい)"
-   ✅ Bon : "ううん" ou "はい"
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🚨 RÈGLES ABSOLUES - AUCUNE EXCEPTION 🚨
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-2. Ton CONVERSATIONNEL comme un vrai prof :
-   ❌ Mauvais : "Interjection familière pour dire non"
-   ✅ Bon : "Ici, le perso répond 'non' de façon amicale. C'est plus doux que いいえ!"
+1. ZÉRO PARENTHÈSE POUR FURIGANA
+   ❌ INTERDIT : "飲める(のめる)" "苦い(にがい)" "ううん(ううん)" "はい(はい)"
+   ✅ CORRECT : "飲める" "苦い" "ううん" "はい"
+   → JAMAIS de parenthèses avec lecture hiragana. JAMAIS. Même pas pour les kanji.
 
-3. TOUJOURS terminer par une traduction simple :
-   Format exact : "💬 Traduction simple: [ta traduction claire]"
+2. TRADUCTION À LA FIN UNIQUEMENT
+   La ligne "💬 Traduction simple: ..." doit être la DERNIÈRE chose dans studyTips
+   ❌ INTERDIT : mettre la traduction au début ou au milieu
+   ✅ CORRECT : [conseil d'étude] + À LA FIN → "💬 Traduction simple: [traduction]"
 
-Génère une explication en JSON avec exactement cette structure :
+3. EXEMPLES VARIÉS ET SIMPLES
+   ❌ INTERDIT : reprendre la phrase originale ou des variantes proches
+   ✅ CORRECT : Exemples basiques DIFFÉRENTS comme "それは本です" "食べます" "行きたい"
+   → Crée 1 exemple simple et court par point grammatical (max 3-4 mots japonais)
+
+4. TON CONVERSATIONNEL DE PROF
+   ❌ INTERDIT : "Interjection familière pour dire non"
+   ✅ CORRECT : "Ici, le perso répond 'non' de façon douce. Plus amical que いいえ!"
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Génère une explication en JSON avec EXACTEMENT cette structure :
 {{
   "summary": "Explique le sens général avec naturel, comme à un ami (1-2 phrases max)",
   "grammarNotes": [
-    {{"pattern": "～ます", "explanation": "Explication claire ET pratique avec contexte d'usage", "example": "Exemple tiré de la phrase"}}
+    {{"pattern": "～ます", "explanation": "Explication pratique avec contexte", "example": "Un exemple SIMPLE et DIFFÉRENT (pas la phrase originale)"}}
   ],
   "vocabNotes": [
-    {{"word": "単語", "reading": "たんご", "nuance": "Quand et comment utiliser ce mot + ton émotion/contexte"}}
+    {{"word": "単語", "reading": "たんご", "nuance": "Usage concret et émotion/contexte"}}
   ],
-  "culturalContext": "Note culturelle si pertinent (registre social, usage dans anime) ou null",
-  "studyTips": "Un conseil mémorable ou astuce pratique pour retenir + 💬 Traduction simple: [traduction]",
+  "culturalContext": "Note culturelle si pertinent (registre, usage anime) ou null",
+  "studyTips": "Conseil d'étude ou astuce mnémotechnique.\n\n💬 Traduction simple: [traduction complète de la phrase]",
   "registerNote": "Niveau de langue (familier/neutre/poli/formel)"
 }}
 
-Consignes de style :
-- Écris comme un prof sympa, pas comme un dictionnaire
-- Limite à 2-3 points grammaticaux (les + importants)
-- Limite à 2-3 mots de vocab clés
-- Privilégie les explications concrètes aux termes techniques
-- Termine TOUJOURS studyTips par : "💬 Traduction simple: [ta traduction]"
-- Format JSON strict, pas de markdown
-- Tous les textes en français"""
+ORDRE EXACT pour studyTips :
+[Ton conseil pédagogique]
+[Ligne vide]
+💬 Traduction simple: [traduction]
+
+Checklist finale avant de répondre :
+✓ Aucune parenthèse nulle part ?
+✓ "💬 Traduction simple:" est la DERNIÈRE ligne de studyTips ?
+✓ Exemples simples et DIFFÉRENTS de la phrase originale ?
+✓ Ton amical et conversationnel ?
+✓ JSON valide sans markdown ?"""
 
     return prompt
 
