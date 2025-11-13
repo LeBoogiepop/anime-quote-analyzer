@@ -314,11 +314,6 @@ export function SentenceCard({ analysis, index = 0 }: SentenceCardProps) {
             </summary>
 
             <div className="space-y-4 pl-3 pr-3 pb-3">
-              {/* Summary */}
-              <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
-                {aiExplanation.summary}
-              </p>
-
               {/* Grammar Notes */}
               {aiExplanation.grammarNotes.length > 0 && (
                 <div>
@@ -335,7 +330,7 @@ export function SentenceCard({ analysis, index = 0 }: SentenceCardProps) {
                           {note.explanation}
                         </p>
                         {note.example && (
-                          <p className="text-xs text-gray-600 dark:text-gray-400 italic mt-2 border-l-2 border-purple-300 pl-2">
+                          <p className="text-xs text-gray-600 dark:text-gray-400 mt-2 border-l-2 border-purple-300 pl-2">
                             Exemple : {note.example}
                           </p>
                         )}
@@ -357,11 +352,6 @@ export function SentenceCard({ analysis, index = 0 }: SentenceCardProps) {
                         <span className="font-medium text-gray-900 dark:text-gray-100">
                           {vocab.word}
                         </span>
-                        {vocab.reading && (
-                          <span className="text-xs text-gray-500 dark:text-gray-400 ml-2">
-                            ({vocab.reading})
-                          </span>
-                        )}
                         <span className="text-gray-700 dark:text-gray-300"> : {vocab.nuance}</span>
                       </li>
                     ))}
@@ -392,16 +382,6 @@ export function SentenceCard({ analysis, index = 0 }: SentenceCardProps) {
                   <span className="font-medium text-green-700 dark:text-green-300">📖 Conseil d'étude :</span>
                   <p className="text-green-900 dark:text-green-100 mt-1">
                     {aiExplanation.studyTips}
-                  </p>
-                </div>
-              )}
-
-              {/* Simple Translation - Always at the end */}
-              {aiExplanation.simpleTranslation && (
-                <div className="text-sm bg-blue-50 dark:bg-blue-900/30 p-3 rounded border border-blue-200 dark:border-blue-800">
-                  <span className="font-medium text-blue-700 dark:text-blue-300">💬 Traduction simple :</span>
-                  <p className="text-blue-900 dark:text-blue-100 mt-1 font-medium">
-                    {aiExplanation.simpleTranslation}
                   </p>
                 </div>
               )}

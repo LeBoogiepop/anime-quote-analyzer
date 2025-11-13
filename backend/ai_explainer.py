@@ -172,38 +172,42 @@ Données linguistiques :
 {grammar_str}
 {vocab_str}
 
+MISSION : Génère une explication PEDAGOGIQUE uniquement (PAS de traduction, PAS de résumé).
+
 REGLES ABSOLUES :
-1. ZERO PARENTHESE : N'écris JAMAIS de lecture en parenthèses nulle part
-   - Dans word : écris "ううん" PAS "ううん(ううん)"
-   - Dans word : écris "飲める" PAS "飲める(のめる)"
-   - Dans nuance : écris "飲める peut viser..." PAS "飲める(のめる) peut viser..."
-   - Aucune parenthèse nulle part dans ta réponse
+1. ZERO PARENTHESE nulle part
+   - Écris "私" PAS "私(わたし)"
+   - Écris "飲める" PAS "飲める(のめる)"
+   - Dans nuance écris "私 désigne le locuteur" PAS "私(わたし) désigne..."
 
-2. La traduction est un champ SEPARE à la fin (simpleTranslation)
+2. EXEMPLES simples et différents
+   - 3-5 mots maximum
+   - PAS tirés de la phrase originale
+   - Utiles pédagogiquement
+   - SANS italiques ni formatting
 
-3. Les exemples doivent être SIMPLES et DIFFERENTS de la phrase originale
+3. Ton conversationnel de prof sympa
 
-4. Ton conversationnel comme un prof sympa
+4. PAS de traduction, PAS de résumé du sens
 
 Génère un JSON valide avec cette structure EXACTE :
 {{
-  "summary": "Explication naturelle du sens en 1-2 phrases",
   "grammarNotes": [
-    {{"pattern": "forme", "explanation": "Explication claire et pratique", "example": "Exemple simple différent"}}
+    {{"pattern": "forme grammaticale", "explanation": "Explication claire et pratique du fonctionnement", "example": "Exemple simple différent"}}
   ],
   "vocabNotes": [
-    {{"word": "mot", "reading": "lecture", "nuance": "Usage et contexte (SANS parenthèses dans le texte)"}}
+    {{"word": "mot", "nuance": "Nuance d'usage et contexte SANS parenthèses"}}
   ],
-  "culturalContext": "Note culturelle si pertinent ou null",
-  "studyTips": "Conseil pour retenir",
-  "registerNote": "Niveau de langue",
-  "simpleTranslation": "Traduction claire de la phrase complète"
+  "culturalContext": "Note culturelle si pertinent sinon null",
+  "studyTips": "Conseil pratique pour retenir",
+  "registerNote": "Niveau de langue si pertinent sinon null"
 }}
 
 IMPORTANT :
 - Réponds uniquement avec du JSON valide
-- ZERO parenthèse dans word ou nuance
-- simpleTranslation est un champ séparé à la fin"""
+- ZERO parenthèse nulle part
+- PAS de champ summary ou translation
+- Commence directement par les explications grammaticales"""
 
     return prompt
 
@@ -214,13 +218,11 @@ def _get_fallback_explanation() -> Dict[str, Any]:
     This prevents 503 errors and provides basic functionality.
     """
     return {
-        "summary": "L'IA n'a pas pu générer une explication détaillée pour cette phrase. Utilisez les informations de grammaire et de vocabulaire ci-dessus.",
         "grammarNotes": [],
         "vocabNotes": [],
         "culturalContext": None,
-        "studyTips": "Essayez de décomposer la phrase en parties plus petites et de chercher les mots individuellement.",
-        "registerNote": "Non disponible",
-        "simpleTranslation": "Traduction non disponible - veuillez utiliser le bouton Traduire"
+        "studyTips": "L'IA n'a pas pu générer une explication détaillée. Utilisez les informations de grammaire et de vocabulaire ci-dessus, et décomposez la phrase en parties plus petites.",
+        "registerNote": None
     }
 
 
@@ -272,7 +274,7 @@ def _sanitize_json_string(content: str) -> str:
 
 def _validate_response(response_data: Dict[str, Any]) -> bool:
     """Validate the structure of the AI response."""
-    required_fields = ["summary", "grammarNotes", "vocabNotes", "studyTips", "registerNote", "simpleTranslation"]
+    required_fields = ["grammarNotes", "vocabNotes", "studyTips"]
 
     for field in required_fields:
         if field not in response_data:

@@ -50,7 +50,6 @@ export interface GrammarNote {
  */
 export interface VocabNote {
   word: string;
-  reading?: string;
   nuance: string;
 }
 
@@ -58,13 +57,11 @@ export interface VocabNote {
  * AI-generated pedagogical explanation
  */
 export interface AIExplanation {
-  summary: string;
   grammarNotes: GrammarNote[];
   vocabNotes: VocabNote[];
   culturalContext?: string;
   studyTips?: string;
   registerNote?: string;
-  simpleTranslation: string;
 }
 
 /**
