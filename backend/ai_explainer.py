@@ -162,37 +162,48 @@ def _build_prompt(sentence: str, tokens: List[Dict], grammar: List[Dict], vocab:
     grammar_str = _format_grammar_for_prompt(grammar)
     vocab_str = _format_vocab_for_prompt(vocab)
 
-    prompt = f"""Tu es un professeur de japonais expérimenté qui enseigne à des francophones de niveau débutant/intermédiaire.
+    prompt = f"""Tu es un professeur de japonais bienveillant qui enseigne à des francophones passionnés d'anime et de manga. Ton style est conversationnel, encourageant et pratique - comme si tu parlais à un ami qui apprend.
 
-Analyse cette phrase japonaise : "{sentence}"
+Phrase à expliquer : "{sentence}"
 
-Données linguistiques détectées :
+Données linguistiques :
 - Tokens : {tokens_str}
-- Structures grammaticales :
-{grammar_str}
-- Vocabulaire clé :
-{vocab_str}
+- Grammaire : {grammar_str}
+- Vocabulaire : {vocab_str}
 
-Génère une explication pédagogique en JSON avec exactement cette structure :
+RÈGLES CRITIQUES :
+1. JAMAIS de hiragana en parenthèses pour les mots déjà en hiragana/katakana
+   ❌ Mauvais : "ううん(ううん)" ou "はい(はい)"
+   ✅ Bon : "ううん" ou "はい"
+
+2. Ton CONVERSATIONNEL comme un vrai prof :
+   ❌ Mauvais : "Interjection familière pour dire non"
+   ✅ Bon : "Ici, le perso répond 'non' de façon amicale. C'est plus doux que いいえ!"
+
+3. TOUJOURS terminer par une traduction simple :
+   Format exact : "💬 Traduction simple: [ta traduction claire]"
+
+Génère une explication en JSON avec exactement cette structure :
 {{
-  "summary": "Le sens et contexte en 1-2 phrases naturelles",
+  "summary": "Explique le sens général avec naturel, comme à un ami (1-2 phrases max)",
   "grammarNotes": [
-    {{"pattern": "～ます", "explanation": "Explication claire", "example": "Exemple tiré de la phrase"}}
+    {{"pattern": "～ます", "explanation": "Explication claire ET pratique avec contexte d'usage", "example": "Exemple tiré de la phrase"}}
   ],
   "vocabNotes": [
-    {{"word": "単語", "reading": "たんご", "nuance": "Nuance d'usage importante"}}
+    {{"word": "単語", "reading": "たんご", "nuance": "Quand et comment utiliser ce mot + ton émotion/contexte"}}
   ],
-  "culturalContext": "Note culturelle si pertinent (registre, contexte social) ou null",
-  "studyTips": "Un conseil mnémotechnique ou astuce d'apprentissage",
-  "registerNote": "Niveau de langue (familier/poli/formel)"
+  "culturalContext": "Note culturelle si pertinent (registre social, usage dans anime) ou null",
+  "studyTips": "Un conseil mémorable ou astuce pratique pour retenir + 💬 Traduction simple: [traduction]",
+  "registerNote": "Niveau de langue (familier/neutre/poli/formel)"
 }}
 
-Règles importantes :
-- Limite à 2-3 points grammaticaux essentiels (les plus importants de la phrase)
-- Limite à 2-3 mots de vocabulaire clés
-- Sois concis mais précis
-- Privilégie les explications pratiques aux termes techniques
-- Format JSON strict, pas de markdown, pas de texte avant/après
+Consignes de style :
+- Écris comme un prof sympa, pas comme un dictionnaire
+- Limite à 2-3 points grammaticaux (les + importants)
+- Limite à 2-3 mots de vocab clés
+- Privilégie les explications concrètes aux termes techniques
+- Termine TOUJOURS studyTips par : "💬 Traduction simple: [ta traduction]"
+- Format JSON strict, pas de markdown
 - Tous les textes en français"""
 
     return prompt
