@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { type AnalyzeResponse } from "@/lib/types";
+import { backendConfig } from "@/lib/config";
+import { callBackend, BackendTimeoutError, BackendConnectionError } from "@/lib/backend-client";
 
 /**
  * NOTE: This API route now calls the Python backend for real NLP analysis using MeCab.
@@ -43,35 +45,23 @@ export async function POST(request: NextRequest) {
     console.log('Analyzing text:', text.substring(0, 50));
 
     // Call Python backend for real NLP processing
-    const backendUrl = process.env.PYTHON_BACKEND_URL || 'http://localhost:8000';
-    console.log('Calling Python backend at:', backendUrl);
-
-    const startTime = Date.now();
-
     try {
-      // Create abort controller for timeout
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+      const analysis = await callBackend<AnalyzeResponse['analysis']>(
+        '/analyze',
+        'POST',
+        { text },
+        {
+          timeout: backendConfig.defaultTimeout,
+          timeoutMessage: 'Backend request timed out. The Python backend may be overloaded.',
+          connectionErrorMessage: 'Python backend is not running. Start it with: cd backend && python server.py',
+        }
+      );
 
-      const response = await fetch(`${backendUrl}/analyze`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ text }),
-        signal: controller.signal,
-      });
-
-      clearTimeout(timeoutId);
-
-      if (!response.ok) {
-        throw new Error(`Backend returned ${response.status}: ${response.statusText}`);
-      }
-
-      const analysis = await response.json();
-      const duration = Date.now() - startTime;
-
-      console.log(`✓ Analysis complete in ${duration}ms. Tokens: ${analysis.tokens?.length || 0}, Vocab: ${analysis.vocabulary?.length || 0}, Level: ${analysis.jlptLevel}`);
+      // Log detailed analysis results
+      console.log(
+        `✓ Analysis complete. Tokens: ${analysis.tokens?.length || 0}, ` +
+        `Vocab: ${analysis.vocabulary?.length || 0}, Level: ${analysis.jlptLevel}`
+      );
 
       return NextResponse.json(
         {
@@ -80,37 +70,31 @@ export async function POST(request: NextRequest) {
         } as AnalyzeResponse,
         { status: 200 }
       );
-
-    } catch (fetchError: unknown) {
-      // Handle backend connection errors
-      const error = fetchError as Error & { name?: string; code?: string };
-
-      if (error.name === 'AbortError') {
-        console.error('Backend request timed out after 10 seconds');
+    } catch (error: unknown) {
+      // Handle specific backend errors
+      if (error instanceof BackendTimeoutError) {
         return NextResponse.json(
           {
             success: false,
             analysis: null,
-            error: "Backend request timed out. The Python backend may be overloaded.",
+            error: error.message,
           } as AnalyzeResponse & { analysis: null },
           { status: 504 }
         );
       }
 
-      if (error.message?.includes('fetch failed') || error.code === 'ECONNREFUSED') {
-        console.error('Python backend is not running');
+      if (error instanceof BackendConnectionError) {
         return NextResponse.json(
           {
             success: false,
             analysis: null,
-            error: "Python backend is not running. Start it with: cd backend && python server.py",
+            error: error.message,
           } as AnalyzeResponse & { analysis: null },
           { status: 503 }
         );
       }
 
-      // Other backend errors
-      console.error('Backend error:', error.message || 'Unknown error');
+      // Re-throw other errors to be caught by outer catch
       throw error;
     }
 

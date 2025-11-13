@@ -2,7 +2,7 @@
 
 A web app for analyzing Japanese text in anime subtitles. Built to help with my own Japanese learning and as a portfolio project for summer internship applications.
 
-⚠️ **Work in progress** - The Python NLP backend integration is coming soon. Currently using mock data for the demo.
+✅ **Backend integrated** - Full Japanese NLP analysis using MeCab/fugashi is now working!
 
 [![Next.js](https://img.shields.io/badge/Next.js-14-black)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-blue)](https://www.typescriptlang.org/)
@@ -22,16 +22,17 @@ The goal is to upload anime subtitle files (.srt, .ass) and get instant breakdow
 
 **What works:**
 - Subtitle file parsing (.srt and .ass formats)
-- Basic UI with drag & drop upload
-- Mock analysis data to demonstrate the concept
-- Responsive design
+- Full Japanese NLP analysis with MeCab/fugashi tokenization
+- Real JLPT level detection (N5-N1)
+- Grammar pattern recognition and explanations
+- Vocabulary extraction with French translations
+- AI-powered explanations (optional, via OpenRouter or Gemini)
+- Responsive UI with drag & drop upload
 
 **What's next:**
-- Integrate Python backend with MeCab for real Japanese tokenization
-- Implement actual JLPT level detection using vocabulary databases
-- Grammar pattern matching
-- Anki flashcard export
-- User accounts and progress tracking with Supabase
+- Anki flashcard export (.apkg format)
+- User accounts and progress tracking
+- Support for .vtt subtitle format
 
 ## Tech Stack
 
@@ -41,9 +42,10 @@ The goal is to upload anime subtitle files (.srt, .ass) and get instant breakdow
 - Framer Motion for animations
 - Lucide React icons
 
-**Backend (planned):**
-- Python with MeCab/fugashi for Japanese NLP
-- Supabase for database
+**Backend:**
+- Python FastAPI with MeCab/fugashi for Japanese NLP
+- Real-time tokenization and JLPT classification
+- AI explanations via OpenRouter (Perplexity) or Google Gemini
 
 ## 🎓 AI Teacher Feature (Optional)
 
@@ -107,56 +109,102 @@ Then generates explanations tailored to French-speaking learners, focusing on pr
 anime-quote-analyzer/
 ├── app/                    # Next.js pages and API routes
 │   ├── api/parse/         # Subtitle parsing
-│   ├── api/analyze/       # Text analysis (currently mock)
+│   ├── api/analyze/       # Text analysis (calls Python backend)
+│   ├── api/explain/       # AI explanations
 │   └── page.tsx           # Landing page
+├── backend/               # Python FastAPI backend
+│   ├── server.py         # FastAPI server
+│   ├── analyzer.py        # MeCab tokenization & analysis
+│   ├── jlpt_classifier.py # JLPT level detection
+│   ├── grammar_detector.py # Grammar pattern matching
+│   ├── translator.py     # Translation service
+│   ├── ai_explainer.py    # AI explanation generator
+│   └── data/              # Vocabulary & grammar databases
 ├── components/            # React components
 │   ├── FileUploader.tsx   # Drag & drop upload
 │   ├── SentenceCard.tsx   # Analysis display
 │   └── JLPTBadge.tsx      # Level indicators
-├── lib/                   # Utils and types
-└── python/                # NLP processing (stub)
+└── lib/                   # Utils and types
 ```
 
 ## Getting Started
 
-Install dependencies:
+### Prerequisites
+
+- Node.js 18+ and npm
+- Python 3.9+
+- 1GB free disk space (for UniDic dictionary)
+
+### Frontend Setup
+
+1. Install dependencies:
 ```bash
 npm install
 ```
 
-Run the dev server:
+2. Run the dev server:
 ```bash
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000)
+3. Open [http://localhost:3000](http://localhost:3000)
 
-## Development Notes
+### Backend Setup
 
-The current implementation uses mock data to demonstrate the UI and parsing logic. The actual Japanese NLP analysis will be handled by a Python backend using MeCab/fugashi, which I'm working on integrating next.
-
-For the Python backend (when ready):
+1. Navigate to backend directory:
 ```bash
-cd python
+cd backend
+```
+
+2. Create virtual environment:
+```bash
+python -m venv venv
+# On Windows:
+venv\Scripts\activate
+# On Linux/Mac:
+source venv/bin/activate
+```
+
+3. Install dependencies:
+```bash
 pip install -r requirements.txt
 ```
+
+4. Configure environment variables (optional):
+```bash
+# Copy the example file
+cp env.example .env
+# Edit .env with your API keys if you want AI explanations
+```
+
+5. Start the backend server:
+```bash
+python server.py
+```
+
+The backend will run on `http://localhost:8000`
+
+**Note:** Both servers need to be running for full functionality. The frontend calls the Python backend for NLP analysis.
 
 ## Roadmap
 
 **Phase 1: Foundation** ✅
 - [x] Next.js setup
-- [x] Subtitle parsing
+- [x] Subtitle parsing (.srt, .ass)
 - [x] UI components
 - [x] Landing page
 
-**Phase 2: NLP Integration** (current)
-- [ ] Python backend with MeCab
-- [ ] Real JLPT level detection
-- [ ] Grammar pattern recognition
-- [ ] Vocabulary database
+**Phase 2: NLP Integration** ✅
+- [x] Python backend with FastAPI
+- [x] MeCab/fugashi tokenization
+- [x] Real JLPT level detection (N5-N1)
+- [x] Grammar pattern recognition
+- [x] Vocabulary extraction with translations
+- [x] AI-powered explanations (optional)
 
-**Phase 3: Features**
-- [ ] Anki export (.apkg)
+**Phase 3: Features** (current)
+- [ ] Anki export (.apkg format)
+- [ ] Support for .vtt subtitle format
 - [ ] User authentication
 - [ ] Learning progress tracking
 - [ ] Audio playback
@@ -176,4 +224,4 @@ Feel free to open an issue if you have questions or suggestions!
 
 ---
 
-*This is a personal learning project and portfolio piece. The JLPT level detection and grammar analysis features are still in development.*
+*This is a personal learning project and portfolio piece. Built with Next.js, FastAPI, and MeCab for Japanese language learning.*

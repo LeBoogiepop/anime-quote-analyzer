@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
+import { backendConfig } from "@/lib/config";
+import { callBackend, BackendTimeoutError, BackendConnectionError } from "@/lib/backend-client";
 
 /**
  * API Route: POST /api/explain
@@ -44,54 +46,22 @@ export async function POST(request: NextRequest) {
     console.log('Generating AI explanation for:', sentence.substring(0, 50));
 
     // Call Python backend for AI explanation
-    const backendUrl = process.env.PYTHON_BACKEND_URL || 'http://localhost:8000';
-    console.log('Calling Python backend at:', backendUrl);
-
-    const startTime = Date.now();
-
     try {
-      // Create abort controller for timeout (15s for AI generation)
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 15000); // 15 second timeout
-
-      const response = await fetch(`${backendUrl}/explain`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
+      const result = await callBackend(
+        '/explain',
+        'POST',
+        {
           sentence,
           tokens,
           grammarPatterns,
           vocabulary
-        }),
-        signal: controller.signal,
-      });
-
-      clearTimeout(timeoutId);
-
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-
-        if (response.status === 503) {
-          // AI service unavailable (not configured)
-          return NextResponse.json(
-            {
-              success: false,
-              aiExplanation: null,
-              error: "AI explanation service is not configured. Please set GEMINI_API_KEY in backend/.env",
-            },
-            { status: 503 }
-          );
+        },
+        {
+          timeout: backendConfig.aiExplanationTimeout,
+          timeoutMessage: 'AI explanation request timed out. The AI service may be slow. Please try again.',
+          connectionErrorMessage: 'Python backend is not running. Start it with: cd backend && python server.py',
         }
-
-        throw new Error(`Backend returned ${response.status}: ${errorData.detail || response.statusText}`);
-      }
-
-      const result = await response.json();
-      const duration = Date.now() - startTime;
-
-      console.log(`✓ AI explanation generated in ${duration}ms`);
+      );
 
       return NextResponse.json(
         {
@@ -100,37 +70,43 @@ export async function POST(request: NextRequest) {
         },
         { status: 200 }
       );
-
-    } catch (fetchError: unknown) {
-      // Handle backend connection errors
-      const error = fetchError as Error & { name?: string; code?: string };
-
-      if (error.name === 'AbortError') {
-        console.error('Backend request timed out after 15 seconds');
+    } catch (error: unknown) {
+      // Handle specific backend errors
+      if (error instanceof BackendTimeoutError) {
         return NextResponse.json(
           {
             success: false,
             aiExplanation: null,
-            error: "AI explanation request timed out. The AI service may be slow. Please try again.",
+            error: error.message,
           },
           { status: 504 }
         );
       }
 
-      if (error.message?.includes('fetch failed') || error.code === 'ECONNREFUSED') {
-        console.error('Python backend is not running');
+      if (error instanceof BackendConnectionError) {
         return NextResponse.json(
           {
             success: false,
             aiExplanation: null,
-            error: "Python backend is not running. Start it with: cd backend && python server.py",
+            error: error.message,
           },
           { status: 503 }
         );
       }
 
-      // Other backend errors
-      console.error('Backend error:', error.message || 'Unknown error');
+      // Handle AI service unavailable (503 from backend)
+      if (error instanceof Error && (error as Error & { status?: number }).status === 503) {
+        return NextResponse.json(
+          {
+            success: false,
+            aiExplanation: null,
+            error: "AI explanation service is not configured. Please set AI_PROVIDER and API keys in backend/.env",
+          },
+          { status: 503 }
+        );
+      }
+
+      // Re-throw other errors to be caught by outer catch
       throw error;
     }
 
