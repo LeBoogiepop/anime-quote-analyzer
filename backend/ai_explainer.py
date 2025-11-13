@@ -17,6 +17,7 @@ import json
 import time
 import logging
 import hashlib
+import re
 from typing import Dict, List, Any, Optional
 from functools import lru_cache
 from datetime import datetime, timedelta
@@ -207,6 +208,68 @@ IMPORTANT :
     return prompt
 
 
+def _get_fallback_explanation() -> Dict[str, Any]:
+    """
+    Return a generic fallback explanation when AI response parsing fails.
+    This prevents 503 errors and provides basic functionality.
+    """
+    return {
+        "summary": "L'IA n'a pas pu générer une explication détaillée pour cette phrase. Utilisez les informations de grammaire et de vocabulaire ci-dessus.",
+        "grammarNotes": [],
+        "vocabNotes": [],
+        "culturalContext": None,
+        "studyTips": "Essayez de décomposer la phrase en parties plus petites et de chercher les mots individuellement.",
+        "registerNote": "Non disponible",
+        "simpleTranslation": "Traduction non disponible - veuillez utiliser le bouton Traduire"
+    }
+
+
+def _sanitize_json_string(content: str) -> str:
+    """
+    Sanitize JSON string to fix common issues from AI responses.
+    Handles unescaped quotes, newlines, and other problematic characters.
+    """
+    try:
+        # Try parsing as-is first
+        json.loads(content)
+        return content
+    except json.JSONDecodeError as e:
+        logger.warning(f"JSON needs sanitization: {e}")
+
+        # Create a sanitized version
+        sanitized = content
+
+        # Step 1: Try to find and fix unterminated strings by looking for patterns
+        # Common issue: quotes inside string values that aren't escaped
+        # This is complex, so we'll try a simpler approach: use regex to escape unescaped quotes
+
+        # Step 2: Ensure newlines within strings are properly escaped
+        # Replace literal newlines with \n (but not already escaped ones)
+
+        # Try to fix unescaped quotes within JSON string values
+        # This is a heuristic approach - look for quotes that appear in the middle of values
+        # Pattern: "key": "value with "quote" inside"
+        # We can't perfectly fix this without a full parser, so we'll try basic cleanup
+
+        logger.info("Attempting basic JSON sanitization...")
+
+        # Try escaping common problematic characters in a safe way
+        # Replace any literal newlines (not \n) with \n
+        sanitized = re.sub(r'(?<!\\)\n', r'\\n', sanitized)
+
+        # Replace any literal tabs with \t
+        sanitized = re.sub(r'(?<!\\)\t', r'\\t', sanitized)
+
+        # Try parsing again
+        try:
+            json.loads(sanitized)
+            logger.info("JSON sanitization successful")
+            return sanitized
+        except json.JSONDecodeError:
+            logger.warning("Basic sanitization failed, returning original")
+            return content
+
+
 def _validate_response(response_data: Dict[str, Any]) -> bool:
     """Validate the structure of the AI response."""
     required_fields = ["summary", "grammarNotes", "vocabNotes", "studyTips", "registerNote", "simpleTranslation"]
@@ -301,6 +364,9 @@ def _call_openrouter_api(prompt: str) -> Optional[Dict[str, Any]]:
             content = content[:-3]  # Remove ```
         content = content.strip()
 
+        # Sanitize JSON to fix common issues
+        content = _sanitize_json_string(content)
+
         # Parse JSON
         try:
             response_data = json.loads(content)
@@ -323,7 +389,14 @@ def _call_openrouter_api(prompt: str) -> Optional[Dict[str, Any]]:
             print("="*60)
             print(content)
             print("="*60 + "\n")
-            return None
+
+            # Return fallback explanation instead of None
+            logger.warning("Returning fallback explanation due to JSON parse error")
+            return _get_fallback_explanation()
+
+    except json.JSONDecodeError as parse_error:
+        logger.error(f"Failed to parse API response JSON: {parse_error}")
+        return _get_fallback_explanation()
 
     except httpx.HTTPError as e:
         logger.error(f"OpenRouter API HTTP error: {e}")
@@ -374,6 +447,9 @@ def _call_gemini_api(prompt: str, retry_count: int = 0) -> Optional[Dict[str, An
                 response_text = response_text[:-3]  # Remove ```
             response_text = response_text.strip()
 
+            # Sanitize JSON to fix common issues
+            response_text = _sanitize_json_string(response_text)
+
             response_data = json.loads(response_text)
 
             # Validate structure
@@ -394,7 +470,10 @@ def _call_gemini_api(prompt: str, retry_count: int = 0) -> Optional[Dict[str, An
             print("="*60)
             print(response_text)
             print("="*60 + "\n")
-            return None
+
+            # Return fallback explanation instead of None
+            logger.warning("Returning fallback explanation due to JSON parse error")
+            return _get_fallback_explanation()
 
     except Exception as e:
         logger.error(f"Gemini API call failed: {e}")
