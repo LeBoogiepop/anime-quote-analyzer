@@ -203,7 +203,7 @@ export function SentenceCard({ analysis, index = 0 }: SentenceCardProps) {
         )}
       </AnimatePresence>
 
-      {/* Word tokens with readings */}
+      {/* Word tokens with readings - Décomposition at full width */}
       {analysis.tokens.length > 0 && (
         <div className="mb-4">
           <div className="flex items-center gap-2 mb-2">
@@ -260,32 +260,16 @@ export function SentenceCard({ analysis, index = 0 }: SentenceCardProps) {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             {analysis.vocabulary.map((vocab, idx) => {
               const hasKanji = /[\u4E00-\u9FAF]/.test(vocab.word);
-              const shouldShowReading = hasKanji && vocab.reading !== vocab.word && vocab.reading !== 'demo';
 
               return (
                 <div
                   key={idx}
-                  className="group flex items-start gap-2 text-sm bg-secondary/30 rounded p-2 cursor-help"
+                  className="flex items-start gap-2 text-sm bg-secondary/30 rounded p-2"
                 >
                   <JLPTBadge level={vocab.jlptLevel} className="mt-0.5" />
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-1">
-                      <div className="font-medium truncate relative inline-block">
-                        {/* Hover tooltip with reading and translation */}
-                        <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-2 text-xs text-white bg-gray-900 dark:bg-gray-800 rounded-lg shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-10 max-w-xs">
-                          <div className="flex flex-col gap-1">
-                            {shouldShowReading && (
-                              <div className="text-gray-300 dark:text-gray-400 font-mono">
-                                {vocab.reading}
-                              </div>
-                            )}
-                            <div className="text-white font-normal">
-                              {vocab.meaning}
-                            </div>
-                          </div>
-                          {/* Tooltip arrow */}
-                          <div className="absolute top-full left-1/2 -translate-x-1/2 -mt-1 border-4 border-transparent border-t-gray-900 dark:border-t-gray-800"></div>
-                        </span>
+                      <div className="font-medium truncate">
                         {vocab.word}
                       </div>
                       {/* WaniKani link - uses baseForm for dictionary form */}
@@ -301,6 +285,9 @@ export function SentenceCard({ analysis, index = 0 }: SentenceCardProps) {
                           <ExternalLink className="w-3 h-3 text-muted-foreground hover:text-primary" />
                         </a>
                       )}
+                    </div>
+                    <div className="text-xs text-muted-foreground mt-0.5">
+                      {vocab.meaning}
                     </div>
                   </div>
                 </div>
@@ -327,11 +314,6 @@ export function SentenceCard({ analysis, index = 0 }: SentenceCardProps) {
             </summary>
 
             <div className="space-y-4 pl-3 pr-3 pb-3">
-              {/* Summary */}
-              <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
-                {aiExplanation.summary}
-              </p>
-
               {/* Grammar Notes */}
               {aiExplanation.grammarNotes.length > 0 && (
                 <div>
@@ -348,7 +330,7 @@ export function SentenceCard({ analysis, index = 0 }: SentenceCardProps) {
                           {note.explanation}
                         </p>
                         {note.example && (
-                          <p className="text-xs text-gray-600 dark:text-gray-400 italic mt-2 border-l-2 border-purple-300 pl-2">
+                          <p className="text-xs text-gray-600 dark:text-gray-400 mt-2 border-l-2 border-purple-300 pl-2">
                             Exemple : {note.example}
                           </p>
                         )}
@@ -370,11 +352,6 @@ export function SentenceCard({ analysis, index = 0 }: SentenceCardProps) {
                         <span className="font-medium text-gray-900 dark:text-gray-100">
                           {vocab.word}
                         </span>
-                        {vocab.reading && (
-                          <span className="text-xs text-gray-500 dark:text-gray-400 ml-2">
-                            ({vocab.reading})
-                          </span>
-                        )}
                         <span className="text-gray-700 dark:text-gray-300"> : {vocab.nuance}</span>
                       </li>
                     ))}

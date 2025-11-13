@@ -17,6 +17,7 @@ import json
 import time
 import logging
 import hashlib
+import re
 from typing import Dict, List, Any, Optional
 from functools import lru_cache
 from datetime import datetime, timedelta
@@ -162,45 +163,165 @@ def _build_prompt(sentence: str, tokens: List[Dict], grammar: List[Dict], vocab:
     grammar_str = _format_grammar_for_prompt(grammar)
     vocab_str = _format_vocab_for_prompt(vocab)
 
-    prompt = f"""Tu es un professeur de japonais expérimenté qui enseigne à des francophones de niveau débutant/intermédiaire.
+    prompt = f"""Tu es un professeur de japonais sympa qui enseigne à des francophones passionnés d'anime. Tu expliques comme un vrai prof qui parle à un étudiant, PAS comme un dictionnaire.
 
-Analyse cette phrase japonaise : "{sentence}"
+Phrase japonaise : "{sentence}"
 
-Données linguistiques détectées :
-- Tokens : {tokens_str}
-- Structures grammaticales :
+Données linguistiques :
+{tokens_str}
 {grammar_str}
-- Vocabulaire clé :
 {vocab_str}
 
-Génère une explication pédagogique en JSON avec exactement cette structure :
+MISSION : Explique cette phrase de manière NATURELLE et CONVERSATIONNELLE, comme si tu parlais à un ami qui apprend.
+
+REGLES ABSOLUES :
+1. ZERO PARENTHESE nulle part
+   - Écris "私" PAS "私(わたし)"
+   - Écris "飲める" PAS "飲める(のめる)"
+
+2. TON NATUREL ET CONVERSATIONNEL
+   - Parle comme un vrai prof à son élève
+   - Commence par le SENS/USAGE, pas par la structure grammaticale sèche
+   - Utilise "tu", "ça", "c'est comme", "ici tu dis que"
+   - Évite le jargon technique quand c'est pas nécessaire
+
+   ❌ Mauvais (sec): "Forme passée négative familière de だ"
+   ✅ Bon (naturel): "Tu dis qu'avant c'était pas comme ça. Le 'ja' rend ça familier entre amis."
+
+3. EXPLICATIONS COMPLETES MAIS CONCISES
+   - 2-3 phrases par point grammatical
+   - Phrase 1: Qu'est-ce que ça exprime? (le sens)
+   - Phrase 2: Comment/quand on l'utilise?
+   - Phrase 3 (optionnelle): Pourquoi/nuance particulière?
+
+4. EXEMPLES SIMPLES
+   - 3-5 mots maximum
+   - PAS tirés de la phrase originale
+   - Faciles à retenir
+
+Génère un JSON valide avec cette structure EXACTE :
 {{
-  "summary": "Le sens et contexte en 1-2 phrases naturelles",
   "grammarNotes": [
-    {{"pattern": "～ます", "explanation": "Explication claire", "example": "Exemple tiré de la phrase"}}
+    {{"pattern": "forme", "explanation": "Explication naturelle en 2-3 phrases, commence par le sens/usage", "example": "Exemple simple"}}
   ],
   "vocabNotes": [
-    {{"word": "単語", "reading": "たんご", "nuance": "Nuance d'usage importante"}}
+    {{"word": "mot", "nuance": "Explication conversationnelle de la nuance (1-2 phrases)"}}
   ],
-  "culturalContext": "Note culturelle si pertinent (registre, contexte social) ou null",
-  "studyTips": "Un conseil mnémotechnique ou astuce d'apprentissage",
-  "registerNote": "Niveau de langue (familier/poli/formel)"
+  "culturalContext": "Note culturelle naturelle si pertinent sinon null",
+  "studyTips": "Conseil pratique conversationnel",
+  "registerNote": "Niveau de langue expliqué naturellement"
 }}
 
-Règles importantes :
-- Limite à 2-3 points grammaticaux essentiels (les plus importants de la phrase)
-- Limite à 2-3 mots de vocabulaire clés
-- Sois concis mais précis
-- Privilégie les explications pratiques aux termes techniques
-- Format JSON strict, pas de markdown, pas de texte avant/après
-- Tous les textes en français"""
+EXEMPLES DE BON TON :
+- grammarNotes: "Tu dis que tu n'es pas doué dans quelque chose. C'est plus gentil que 'je déteste' - c'est plutôt 'j'ai du mal avec ça'. Ça marche pour la musique, les maths, les gens, tout."
+- vocabNotes: "Quand tu veux dire que quelque chose t'embête ou te gêne. Plus doux que dire que tu détestes carrément."
+- culturalContext: "Au Japon, on préfère dire qu'on est 'pas doué' plutôt que critiquer directement. C'est plus poli."
+- studyTips: "Pense à '苦手' comme 'I'm not good with' en anglais - inconfortable mais pas haine."
+- registerNote: "Utilisé entre amis ou dans des contextes détendus. Trop familier pour un entretien d'embauche."
+
+IMPORTANT :
+- Réponds uniquement avec du JSON valide
+- ZERO parenthèse nulle part
+- Ton naturel et pédagogique, pas encyclopédique
+- Explique d'abord le SENS, ensuite la structure si nécessaire"""
 
     return prompt
 
 
+def _get_fallback_explanation() -> Dict[str, Any]:
+    """
+    Return a generic fallback explanation when AI response parsing fails.
+    This prevents 503 errors and provides basic functionality.
+    """
+    return {
+        "grammarNotes": [],
+        "vocabNotes": [],
+        "culturalContext": None,
+        "studyTips": "L'IA n'a pas pu générer une explication détaillée. Utilisez les informations de grammaire et de vocabulaire ci-dessus, et décomposez la phrase en parties plus petites.",
+        "registerNote": None
+    }
+
+
+def _sanitize_json_string(content: str) -> str:
+    """
+    Sanitize JSON string to fix common issues from AI responses.
+    Handles unescaped quotes, newlines, and other problematic characters.
+    Multiple passes for aggressive cleaning.
+    """
+    try:
+        # Try parsing as-is first
+        json.loads(content)
+        return content
+    except json.JSONDecodeError as e:
+        logger.warning(f"JSON needs sanitization: {e}")
+
+        sanitized = content
+
+        logger.info("Attempting aggressive JSON sanitization...")
+
+        # Pass 1: Fix literal newlines and tabs
+        # Replace any literal newlines (not \n) with \\n
+        sanitized = re.sub(r'(?<!\\)\n', r'\\n', sanitized)
+        # Replace any literal tabs with \\t
+        sanitized = re.sub(r'(?<!\\)\t', r'\\t', sanitized)
+
+        # Pass 2: Remove trailing commas before closing brackets/braces
+        # This is a common issue with AI-generated JSON
+        sanitized = re.sub(r',(\s*[}\]])', r'\1', sanitized)
+
+        # Pass 3: Fix control characters
+        # Remove or escape common control characters
+        sanitized = sanitized.replace('\r', '')
+        sanitized = sanitized.replace('\b', '')
+        sanitized = sanitized.replace('\f', '')
+
+        # Pass 4: Try to fix unescaped quotes in string values (heuristic)
+        # This is tricky - we look for patterns like: "text "quoted" text"
+        # and try to escape the inner quotes
+        # Pattern: Find strings with unescaped quotes between key-value strings
+        def escape_inner_quotes(match):
+            # Get the full string value
+            full_str = match.group(0)
+            # If it has more than 2 quotes, we have a problem
+            if full_str.count('"') > 2:
+                # Escape all quotes except the first and last
+                parts = full_str.split('"')
+                if len(parts) > 2:
+                    # Keep first empty part, last empty part, escape middle
+                    result = '"' + '\\"'.join(parts[1:-1]) + '"'
+                    return result
+            return full_str
+
+        # This regex is risky, but we'll try it as a last resort
+        # Match string values: "key": "value with possible "quotes" inside"
+        # sanitized = re.sub(r'"[^"\\]*(?:\\.[^"\\]*)*"', escape_inner_quotes, sanitized)
+
+        # Try parsing after basic sanitization
+        try:
+            json.loads(sanitized)
+            logger.info("JSON sanitization successful (basic pass)")
+            return sanitized
+        except json.JSONDecodeError as e2:
+            logger.warning(f"Basic sanitization failed: {e2}")
+
+            # Pass 5: More aggressive - try to fix common patterns
+            # Remove any null bytes
+            sanitized = sanitized.replace('\x00', '')
+
+            # Try one more time
+            try:
+                json.loads(sanitized)
+                logger.info("JSON sanitization successful (aggressive pass)")
+                return sanitized
+            except json.JSONDecodeError as e3:
+                logger.error(f"All sanitization attempts failed: {e3}")
+                # Return original and let fallback handle it
+                return content
+
+
 def _validate_response(response_data: Dict[str, Any]) -> bool:
     """Validate the structure of the AI response."""
-    required_fields = ["summary", "grammarNotes", "vocabNotes", "studyTips", "registerNote"]
+    required_fields = ["grammarNotes", "vocabNotes", "studyTips"]
 
     for field in required_fields:
         if field not in response_data:
@@ -292,6 +413,9 @@ def _call_openrouter_api(prompt: str) -> Optional[Dict[str, Any]]:
             content = content[:-3]  # Remove ```
         content = content.strip()
 
+        # Sanitize JSON to fix common issues
+        content = _sanitize_json_string(content)
+
         # Parse JSON
         try:
             response_data = json.loads(content)
@@ -299,14 +423,29 @@ def _call_openrouter_api(prompt: str) -> Optional[Dict[str, Any]]:
             # Validate structure
             if not _validate_response(response_data):
                 logger.error("Invalid response structure from OpenRouter")
+                logger.error(f"Response data: {json.dumps(response_data, ensure_ascii=False, indent=2)}")
                 return None
 
             return response_data
 
         except json.JSONDecodeError as e:
             logger.error(f"Failed to parse OpenRouter response as JSON: {e}")
-            logger.debug(f"Response content: {content[:200]}...")
-            return None
+            logger.error(f"Full response content (first 500 chars): {content[:500]}")
+            logger.error(f"Response length: {len(content)} characters")
+            # Print full content to console for debugging
+            print("\n" + "="*60)
+            print("FULL API RESPONSE CONTENT:")
+            print("="*60)
+            print(content)
+            print("="*60 + "\n")
+
+            # Return fallback explanation instead of None
+            logger.warning("Returning fallback explanation due to JSON parse error")
+            return _get_fallback_explanation()
+
+    except json.JSONDecodeError as parse_error:
+        logger.error(f"Failed to parse API response JSON: {parse_error}")
+        return _get_fallback_explanation()
 
     except httpx.HTTPError as e:
         logger.error(f"OpenRouter API HTTP error: {e}")
@@ -357,19 +496,33 @@ def _call_gemini_api(prompt: str, retry_count: int = 0) -> Optional[Dict[str, An
                 response_text = response_text[:-3]  # Remove ```
             response_text = response_text.strip()
 
+            # Sanitize JSON to fix common issues
+            response_text = _sanitize_json_string(response_text)
+
             response_data = json.loads(response_text)
 
             # Validate structure
             if not _validate_response(response_data):
                 logger.error("Invalid response structure from Gemini")
+                logger.error(f"Response data: {json.dumps(response_data, ensure_ascii=False, indent=2)}")
                 return None
 
             return response_data
 
         except json.JSONDecodeError as e:
             logger.error(f"Failed to parse Gemini response as JSON: {e}")
-            logger.debug(f"Response text: {response.text[:200]}...")
-            return None
+            logger.error(f"Full response text (first 500 chars): {response_text[:500]}")
+            logger.error(f"Response length: {len(response_text)} characters")
+            # Print full content to console for debugging
+            print("\n" + "="*60)
+            print("FULL API RESPONSE CONTENT:")
+            print("="*60)
+            print(response_text)
+            print("="*60 + "\n")
+
+            # Return fallback explanation instead of None
+            logger.warning("Returning fallback explanation due to JSON parse error")
+            return _get_fallback_explanation()
 
     except Exception as e:
         logger.error(f"Gemini API call failed: {e}")

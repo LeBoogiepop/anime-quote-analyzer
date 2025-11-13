@@ -104,13 +104,11 @@ class GrammarNote(BaseModel):
 class VocabNote(BaseModel):
     """Individual vocabulary note in AI explanation."""
     word: str
-    reading: Optional[str] = None
     nuance: str
 
 
 class AIExplanation(BaseModel):
     """AI-generated pedagogical explanation."""
-    summary: str
     grammarNotes: List[GrammarNote]
     vocabNotes: List[VocabNote]
     culturalContext: Optional[str] = None
