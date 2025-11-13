@@ -172,48 +172,52 @@ Données linguistiques :
 {grammar_str}
 {vocab_str}
 
-MISSION : Génère une explication PEDAGOGIQUE contextuelle (PAS de traduction, PAS de résumé).
+MISSION : Génère une explication PEDAGOGIQUE concise (PAS de traduction, PAS de résumé).
 
 REGLES ABSOLUES :
 1. ZERO PARENTHESE nulle part
    - Écris "私" PAS "私(わたし)"
    - Écris "飲める" PAS "飲める(のめる)"
-   - Dans nuance écris "私 désigne le locuteur" PAS "私(わたし) désigne..."
 
-2. CONTEXTUALISATION OBLIGATOIRE
-   - Chaque explication doit commencer par "Ici dans cette phrase, [contexte spécifique]..."
-   - Ensuite ajoute l'explication générale
-   - Format: "Ici dans cette phrase, X sert à Y. Généralement, cette forme..."
+2. EXPLICATIONS COURTES ET DIRECTES
+   - 1-2 phrases par pattern grammatical maximum
+   - Explique le rôle dans cette phrase de manière concise
+   - PAS de formules répétitives comme "Ici dans cette phrase... Généralement..."
+   - Va droit au but
 
 3. EXEMPLES simples et différents
    - 3-5 mots maximum
    - PAS tirés de la phrase originale
    - Utiles pédagogiquement
-   - SANS italiques ni formatting
 
-4. Ton conversationnel de prof sympa
-
-5. PAS de traduction, PAS de résumé du sens
+4. Ton conversationnel mais concis
 
 Génère un JSON valide avec cette structure EXACTE :
 {{
   "grammarNotes": [
-    {{"pattern": "forme grammaticale", "explanation": "Ici dans cette phrase, [contexte specifique]. Généralement, [explication generale].", "example": "Exemple simple différent"}}
+    {{"pattern": "forme", "explanation": "Explication directe du rôle dans la phrase (1-2 phrases max)", "example": "Exemple simple"}}
   ],
   "vocabNotes": [
-    {{"word": "mot", "nuance": "Ici, [usage dans la phrase]. En général, [nuance d'usage] SANS parenthèses"}}
+    {{"word": "mot", "nuance": "Nuance d'usage concise SANS parenthèses"}}
   ],
-  "culturalContext": "Note culturelle si pertinent sinon null",
-  "studyTips": "Conseil pratique pour retenir",
-  "registerNote": "Niveau de langue si pertinent sinon null"
+  "culturalContext": "Note culturelle standalone si pertinent sinon null",
+  "studyTips": "Conseil pratique court",
+  "registerNote": "Niveau de langue (familier/neutre/poli) si pertinent sinon null"
 }}
+
+FORMAT DES EXPLICATIONS :
+- grammarNotes: Explique le rôle/fonction directement. Ex: "Forme passée négative familière. Marque que l'état ne s'appliquait pas avant."
+- vocabNotes: Juste la nuance/usage. Ex: "Exprime une capacité acquise récemment"
+- culturalContext: Usage culturel standalone sans référence à "cette phrase"
+- studyTips: Astuce mnémotechnique ou conseil pratique
+- registerNote: Juste le registre (ex: "Familier" ou "Poli")
 
 IMPORTANT :
 - Réponds uniquement avec du JSON valide
 - ZERO parenthèse nulle part
-- PAS de champ summary ou translation
-- TOUJOURS contextualiser avec "Ici dans cette phrase" au début
-- Commence directement par les explications grammaticales"""
+- Maximum 40% du texte précédent
+- Évite les répétitions
+- Chaque section est standalone (pas de "Ici dans cette phrase" partout)"""
 
     return prompt
 
