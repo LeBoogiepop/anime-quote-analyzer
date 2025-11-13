@@ -162,65 +162,36 @@ def _build_prompt(sentence: str, tokens: List[Dict], grammar: List[Dict], vocab:
     grammar_str = _format_grammar_for_prompt(grammar)
     vocab_str = _format_vocab_for_prompt(vocab)
 
-    prompt = f"""Tu es un professeur de japonais bienveillant qui enseigne à des francophones passionnés d'anime et de manga. Ton style est conversationnel, encourageant et pratique - comme si tu parlais à un ami qui apprend.
+    prompt = f"""Tu es un professeur de japonais sympa qui enseigne à des francophones passionnés d'anime.
 
-Phrase à expliquer : "{sentence}"
+Phrase japonaise : "{sentence}"
 
 Données linguistiques :
-- Tokens : {tokens_str}
-- Grammaire : {grammar_str}
-- Vocabulaire : {vocab_str}
+{tokens_str}
+{grammar_str}
+{vocab_str}
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-🚨 RÈGLES ABSOLUES - AUCUNE EXCEPTION 🚨
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+REGLES IMPORTANTES :
+1. JAMAIS de parenthèses pour les lectures : Écris "ううん" pas "ううん(ううん)", écris "飲める" pas "飲める(のめる)"
+2. La traduction doit être à la FIN du champ studyTips
+3. Les exemples doivent être SIMPLES et DIFFERENTS de la phrase originale (ex: "それは本です" "食べます")
+4. Ton conversationnel comme un prof sympa, pas encyclopédique
 
-1. ZÉRO PARENTHÈSE POUR FURIGANA
-   ❌ INTERDIT : "飲める(のめる)" "苦い(にがい)" "ううん(ううん)" "はい(はい)"
-   ✅ CORRECT : "飲める" "苦い" "ううん" "はい"
-   → JAMAIS de parenthèses avec lecture hiragana. JAMAIS. Même pas pour les kanji.
-
-2. TRADUCTION À LA FIN UNIQUEMENT
-   La ligne "💬 Traduction simple: ..." doit être la DERNIÈRE chose dans studyTips
-   ❌ INTERDIT : mettre la traduction au début ou au milieu
-   ✅ CORRECT : [conseil d'étude] + À LA FIN → "💬 Traduction simple: [traduction]"
-
-3. EXEMPLES VARIÉS ET SIMPLES
-   ❌ INTERDIT : reprendre la phrase originale ou des variantes proches
-   ✅ CORRECT : Exemples basiques DIFFÉRENTS comme "それは本です" "食べます" "行きたい"
-   → Crée 1 exemple simple et court par point grammatical (max 3-4 mots japonais)
-
-4. TON CONVERSATIONNEL DE PROF
-   ❌ INTERDIT : "Interjection familière pour dire non"
-   ✅ CORRECT : "Ici, le perso répond 'non' de façon douce. Plus amical que いいえ!"
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-Génère une explication en JSON avec EXACTEMENT cette structure :
+Génère un JSON valide avec cette structure exacte :
 {{
-  "summary": "Explique le sens général avec naturel, comme à un ami (1-2 phrases max)",
+  "summary": "Explication naturelle du sens en 1-2 phrases",
   "grammarNotes": [
-    {{"pattern": "～ます", "explanation": "Explication pratique avec contexte", "example": "Un exemple SIMPLE et DIFFÉRENT (pas la phrase originale)"}}
+    {{"pattern": "forme", "explanation": "Explication claire et pratique", "example": "Exemple simple différent de la phrase"}}
   ],
   "vocabNotes": [
-    {{"word": "単語", "reading": "たんご", "nuance": "Usage concret et émotion/contexte"}}
+    {{"word": "mot", "reading": "lecture", "nuance": "Usage et contexte concret"}}
   ],
-  "culturalContext": "Note culturelle si pertinent (registre, usage anime) ou null",
-  "studyTips": "Conseil d'étude ou astuce mnémotechnique.\n\n💬 Traduction simple: [traduction complète de la phrase]",
-  "registerNote": "Niveau de langue (familier/neutre/poli/formel)"
+  "culturalContext": "Note culturelle si pertinent ou null",
+  "studyTips": "Conseil pour retenir.\\n\\nTraduction simple : [ta traduction de la phrase complète]",
+  "registerNote": "Niveau de langue"
 }}
 
-ORDRE EXACT pour studyTips :
-[Ton conseil pédagogique]
-[Ligne vide]
-💬 Traduction simple: [traduction]
-
-Checklist finale avant de répondre :
-✓ Aucune parenthèse nulle part ?
-✓ "💬 Traduction simple:" est la DERNIÈRE ligne de studyTips ?
-✓ Exemples simples et DIFFÉRENTS de la phrase originale ?
-✓ Ton amical et conversationnel ?
-✓ JSON valide sans markdown ?"""
+IMPORTANT : Réponds uniquement avec du JSON valide, pas de markdown, pas de texte avant ou après."""
 
     return prompt
 
@@ -326,13 +297,21 @@ def _call_openrouter_api(prompt: str) -> Optional[Dict[str, Any]]:
             # Validate structure
             if not _validate_response(response_data):
                 logger.error("Invalid response structure from OpenRouter")
+                logger.error(f"Response data: {json.dumps(response_data, ensure_ascii=False, indent=2)}")
                 return None
 
             return response_data
 
         except json.JSONDecodeError as e:
             logger.error(f"Failed to parse OpenRouter response as JSON: {e}")
-            logger.debug(f"Response content: {content[:200]}...")
+            logger.error(f"Full response content (first 500 chars): {content[:500]}")
+            logger.error(f"Response length: {len(content)} characters")
+            # Print full content to console for debugging
+            print("\n" + "="*60)
+            print("FULL API RESPONSE CONTENT:")
+            print("="*60)
+            print(content)
+            print("="*60 + "\n")
             return None
 
     except httpx.HTTPError as e:
@@ -389,13 +368,21 @@ def _call_gemini_api(prompt: str, retry_count: int = 0) -> Optional[Dict[str, An
             # Validate structure
             if not _validate_response(response_data):
                 logger.error("Invalid response structure from Gemini")
+                logger.error(f"Response data: {json.dumps(response_data, ensure_ascii=False, indent=2)}")
                 return None
 
             return response_data
 
         except json.JSONDecodeError as e:
             logger.error(f"Failed to parse Gemini response as JSON: {e}")
-            logger.debug(f"Response text: {response.text[:200]}...")
+            logger.error(f"Full response text (first 500 chars): {response_text[:500]}")
+            logger.error(f"Response length: {len(response_text)} characters")
+            # Print full content to console for debugging
+            print("\n" + "="*60)
+            print("FULL API RESPONSE CONTENT:")
+            print("="*60)
+            print(response_text)
+            print("="*60 + "\n")
             return None
 
     except Exception as e:
