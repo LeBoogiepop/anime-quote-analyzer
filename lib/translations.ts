@@ -10,7 +10,7 @@ export const translations = {
     heroDescription: "Upload anime subtitle files to analyze JLPT levels, break down grammar patterns, and create custom Anki flashcards for effective learning.",
 
     // Demo Banner
-    demoBanner: "⚠️ Demo Mode - Using mock JLPT analysis. Python backend coming soon!",
+    demoBanner: "✅ Python MeCab Backend Active - Real Japanese NLP analysis!",
 
     // Features
     jlptDetectionTitle: "JLPT Level Detection",
@@ -47,7 +47,7 @@ export const translations = {
 
     // Footer
     builtWith: "Built with Next.js 14, TypeScript, Tailwind CSS, and Framer Motion",
-    pythonBackend: "Python NLP backend integration coming soon (MeCab/fugashi)",
+    pythonBackend: "Python NLP backend (MeCab/fugashi) • Automatic translations via Jisho/DeepL",
 
     // JLPT Levels
     beginner: "Beginner",
@@ -66,7 +66,7 @@ export const translations = {
     heroDescription: "Téléchargez des fichiers de sous-titres d'anime pour analyser les niveaux JLPT, décomposer les structures grammaticales et créer des flashcards Anki personnalisées pour un apprentissage efficace.",
 
     // Demo Banner
-    demoBanner: "⚠️ Mode Démo - Utilise une analyse JLPT factice. Backend Python à venir !",
+    demoBanner: "✅ Backend Python MeCab Actif - Analyse NLP japonaise réelle !",
 
     // Features
     jlptDetectionTitle: "Détection du Niveau JLPT",
@@ -103,7 +103,7 @@ export const translations = {
 
     // Footer
     builtWith: "Construit avec Next.js 14, TypeScript, Tailwind CSS et Framer Motion",
-    pythonBackend: "Intégration du backend Python NLP à venir (MeCab/fugashi)",
+    pythonBackend: "Backend Python NLP (MeCab/fugashi) • Traductions automatiques via Jisho/DeepL",
 
     // JLPT Levels
     beginner: "Débutant",

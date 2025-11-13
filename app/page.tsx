@@ -14,7 +14,7 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
   const [subtitles, setSubtitles] = useState<SubtitleEntry[]>([]);
   const [analyses, setAnalyses] = useState<SentenceAnalysis[]>([]);
-  const [displayCount, setDisplayCount] = useState(5);
+  const [displayCount, setDisplayCount] = useState(30);
 
   const handleFileUpload = async (file: File) => {
     console.log('Starting file upload:', file.name);
@@ -43,8 +43,8 @@ export default function Home() {
 
       setSubtitles(parseData.entries);
 
-      // Analyze first 5 entries (for demo purposes)
-      const entriesToAnalyze = parseData.entries.slice(0, 5);
+      // Analyze first 50 entries for better analysis coverage
+      const entriesToAnalyze = parseData.entries.slice(0, 50);
       const analysisPromises = entriesToAnalyze.map((entry: SubtitleEntry) =>
         fetch("/api/analyze", {
           method: "POST",
@@ -59,7 +59,7 @@ export default function Home() {
         .map((result) => result.analysis);
 
       setAnalyses(validAnalyses);
-      setDisplayCount(5); // Reset display count when new file is uploaded
+      setDisplayCount(10); // Show first 10, allow loading more
     } catch (error) {
       console.error("Error processing file:", error);
       alert("Failed to process file. Please try again.");
@@ -69,7 +69,7 @@ export default function Home() {
   };
 
   const handleLoadMore = () => {
-    setDisplayCount(prev => Math.min(prev + 5, analyses.length));
+    setDisplayCount(prev => Math.min(prev + 10, analyses.length));
   };
 
   return (
@@ -122,15 +122,15 @@ export default function Home() {
           </p>
         </motion.div>
 
-        {/* Demo Mode Banner */}
+        {/* Backend Status Banner */}
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.1 }}
           className="max-w-3xl mx-auto mb-8"
         >
-          <div className="bg-yellow-50 dark:bg-yellow-900/20 border-2 border-yellow-200 dark:border-yellow-800 rounded-lg p-4 text-center">
-            <p className="text-sm font-medium text-yellow-800 dark:text-yellow-200">
+          <div className="bg-green-50 dark:bg-green-900/20 border-2 border-green-200 dark:border-green-800 rounded-lg p-4 text-center">
+            <p className="text-sm font-medium text-green-800 dark:text-green-200">
               {t("demoBanner")}
             </p>
           </div>
@@ -289,18 +289,21 @@ export default function Home() {
                 vocabulary: [
                   {
                     word: "私",
+                    baseForm: "私",
                     reading: "わたし",
                     meaning: "I, me",
                     jlptLevel: "N5",
                   },
                   {
                     word: "日本語",
+                    baseForm: "日本語",
                     reading: "にほんご",
                     meaning: "Japanese language",
                     jlptLevel: "N5",
                   },
                   {
                     word: "勉強する",
+                    baseForm: "勉強する",
                     reading: "べんきょうする",
                     meaning: "to study",
                     jlptLevel: "N5",

@@ -1,17 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-import { type AnalyzeResponse } from "@/lib/types";
 
 /**
- * NOTE: This API route now calls the Python backend for real NLP analysis using MeCab.
- * The previous mockAnalyze() function has been removed in favor of real Japanese tokenization.
- *
- * To run the backend: cd backend && python server.py
- * Backend API documentation: http://localhost:8000/docs
- */
-
-/**
- * API Route: POST /api/analyze
- * Accepts Japanese text and returns JLPT level + grammar analysis
+ * API Route: POST /api/translate
+ * Translates Japanese sentences to French using the Python backend
  *
  * Request body:
  * {
@@ -21,7 +12,8 @@ import { type AnalyzeResponse } from "@/lib/types";
  * Response:
  * {
  *   "success": true,
- *   "analysis": { ... }
+ *   "originalText": "...",
+ *   "translation": "..."
  * }
  */
 export async function POST(request: NextRequest) {
@@ -33,16 +25,17 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         {
           success: false,
-          analysis: null,
+          originalText: "",
+          translation: "",
           error: "Invalid or missing text parameter",
-        } as AnalyzeResponse & { analysis: null },
+        },
         { status: 400 }
       );
     }
 
-    console.log('Analyzing text:', text.substring(0, 50));
+    console.log('Translating text:', text.substring(0, 50));
 
-    // Call Python backend for real NLP processing
+    // Call Python backend for translation
     const backendUrl = process.env.PYTHON_BACKEND_URL || 'http://localhost:8000';
     console.log('Calling Python backend at:', backendUrl);
 
@@ -53,7 +46,7 @@ export async function POST(request: NextRequest) {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
 
-      const response = await fetch(`${backendUrl}/analyze`, {
+      const response = await fetch(`${backendUrl}/translate-sentence`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -68,16 +61,17 @@ export async function POST(request: NextRequest) {
         throw new Error(`Backend returned ${response.status}: ${response.statusText}`);
       }
 
-      const analysis = await response.json();
+      const result = await response.json();
       const duration = Date.now() - startTime;
 
-      console.log(`✓ Analysis complete in ${duration}ms. Tokens: ${analysis.tokens?.length || 0}, Vocab: ${analysis.vocabulary?.length || 0}, Level: ${analysis.jlptLevel}`);
+      console.log(`✓ Translation complete in ${duration}ms`);
 
       return NextResponse.json(
         {
           success: true,
-          analysis,
-        } as AnalyzeResponse,
+          originalText: result.originalText,
+          translation: result.translation,
+        },
         { status: 200 }
       );
 
@@ -90,9 +84,10 @@ export async function POST(request: NextRequest) {
         return NextResponse.json(
           {
             success: false,
-            analysis: null,
-            error: "Backend request timed out. The Python backend may be overloaded.",
-          } as AnalyzeResponse & { analysis: null },
+            originalText: text,
+            translation: "",
+            error: "Translation request timed out. The Python backend may be overloaded.",
+          },
           { status: 504 }
         );
       }
@@ -102,9 +97,10 @@ export async function POST(request: NextRequest) {
         return NextResponse.json(
           {
             success: false,
-            analysis: null,
+            originalText: text,
+            translation: "",
             error: "Python backend is not running. Start it with: cd backend && python server.py",
-          } as AnalyzeResponse & { analysis: null },
+          },
           { status: 503 }
         );
       }
@@ -115,13 +111,14 @@ export async function POST(request: NextRequest) {
     }
 
   } catch (error) {
-    console.error("Analysis error:", error);
+    console.error("Translation error:", error);
     return NextResponse.json(
       {
         success: false,
-        analysis: null,
-        error: "Failed to analyze text",
-      } as AnalyzeResponse & { analysis: null },
+        originalText: "",
+        translation: "",
+        error: "Failed to translate text",
+      },
       { status: 500 }
     );
   }

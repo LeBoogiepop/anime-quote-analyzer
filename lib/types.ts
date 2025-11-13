@@ -29,9 +29,41 @@ export interface WordToken {
  */
 export interface GrammarPattern {
   pattern: string; // e.g., "てform + います"
-  description: string; // Explaination of the pattern
+  description: string; // Explanation of the pattern
   jlptLevel: JLPTLevel;
+  example?: string; // Generic example
+  exampleInSentence?: string; // Actual example extracted from analyzed sentence
+  pedagogicalNote?: string; // Practical usage advice
+}
+
+/**
+ * Grammar note in AI explanation
+ */
+export interface GrammarNote {
+  pattern: string;
+  explanation: string;
   example?: string;
+}
+
+/**
+ * Vocabulary note in AI explanation
+ */
+export interface VocabNote {
+  word: string;
+  reading?: string;
+  nuance: string;
+}
+
+/**
+ * AI-generated pedagogical explanation
+ */
+export interface AIExplanation {
+  summary: string;
+  grammarNotes: GrammarNote[];
+  vocabNotes: VocabNote[];
+  culturalContext?: string;
+  studyTips?: string;
+  registerNote?: string;
 }
 
 /**
@@ -44,6 +76,7 @@ export interface SentenceAnalysis {
   grammarPatterns: GrammarPattern[];
   vocabulary: {
     word: string;
+    baseForm: string; // Dictionary form for WaniKani links
     reading: string;
     meaning: string;
     jlptLevel: JLPTLevel;

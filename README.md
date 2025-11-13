@@ -45,6 +45,62 @@ The goal is to upload anime subtitle files (.srt, .ass) and get instant breakdow
 - Python with MeCab/fugashi for Japanese NLP
 - Supabase for database
 
+## 🎓 AI Teacher Feature (Optional)
+
+Get AI-powered pedagogical explanations on demand! When enabled, each sentence gets an "Explication" button that generates:
+- **Contextualized summary** in natural French
+- **Grammar breakdowns** with practical explanations
+- **Vocabulary nuances** beyond dictionary definitions
+- **Cultural context** notes when relevant
+- **Study tips** and memory aids
+
+### Setup (OpenRouter - Recommended)
+
+1. Get a free API key from [OpenRouter](https://openrouter.ai/keys)
+2. Configure in `backend/.env`:
+```bash
+AI_PROVIDER=openrouter
+OPENROUTER_API_KEY=your_key_here
+AI_MODEL=perplexity/sonar-small-chat
+```
+3. Install dependencies: `cd backend && pip install -r requirements.txt`
+4. Restart the backend server
+
+**Why OpenRouter?**
+- Free tier: ~2,000 requests/month with Perplexity Sonar
+- Fast responses (2-4 seconds)
+- Cost-effective for personal use
+- Access to multiple AI models through one API
+
+### Alternative Setup (Google Gemini)
+
+1. Get a free API key from [Google AI Studio](https://aistudio.google.com/)
+2. Configure in `backend/.env`:
+```bash
+AI_PROVIDER=gemini
+GEMINI_API_KEY=your_key_here
+AI_MODEL=gemini-1.5-flash-latest
+```
+
+**Gemini Free Tier:** 1,500 requests/day
+
+### Usage
+
+- Click the "Explication" button on any analyzed sentence
+- AI generates explanation in 5-10 seconds
+- Results are cached for 24h to save quota
+- **Privacy:** Sentences are sent to the AI provider for processing
+
+### How It Works
+
+The AI Teacher analyzes each sentence using:
+- MeCab tokenization data
+- Detected grammar patterns
+- Extracted vocabulary
+- JLPT level information
+
+Then generates explanations tailored to French-speaking learners, focusing on practical usage rather than academic terminology.
+
 ## Project Structure
 
 ```

@@ -1,0 +1,702 @@
+[
+  {
+    "pattern": "～ています",
+    "regex": "ています$",
+    "description": "Forme progressive/continue. Utilisée pour exprimer: (1) une action en cours au moment de parler (Je suis en train de manger), (2) un état résultant d'une action passée (La fenêtre est ouverte = quelqu'un l'a ouverte), (3) une action habituelle ou répétée (Je vais à l'école tous les jours). Cette forme se construit en ajoutant います à la forme en て du verbe. C'est l'équivalent de 'être en train de' ou du présent progressif anglais.",
+    "jlptLevel": "N5",
+    "example": "今、勉強しています (Je suis en train d'étudier maintenant) | 窓が開いています (La fenêtre est ouverte) | 毎日走っています (Je cours tous les jours)"
+  },
+  {
+    "pattern": "～ます",
+    "regex": "ます$",
+    "description": "Forme polie présent/futur des verbes. C'est la forme de base polie utilisée dans les situations formelles ou avec des personnes qu'on ne connaît pas bien. Elle peut exprimer le présent habituel ou le futur. Se forme en ajoutant ます au radical du verbe (radical masu). Cette forme est neutre et respectueuse, contrairement à la forme dictionnaire qui est plus informelle.",
+    "jlptLevel": "N5",
+    "example": "明日、学校に行きます (Je vais/j'irai à l'école demain) | 毎日コーヒーを飲みます (Je bois du café tous les jours) | 日本語を勉強します (J'étudie le japonais)"
+  },
+  {
+    "pattern": "～です",
+    "regex": "です$",
+    "description": "Copule polie. Utilisée pour relier un sujet à son attribut, équivalent de 'être' en français ou 'to be' en anglais. C'est la forme polie de だ. S'utilise après les noms et les adjectifs-な pour créer des phrases déclaratives polies. Contrairement aux verbes, です n'a pas de forme en て.",
+    "jlptLevel": "N5",
+    "example": "私は学生です (Je suis étudiant) | これは本です (Ceci est un livre) | 彼は親切です (Il est gentil)"
+  },
+  {
+    "pattern": "～ました",
+    "regex": "ました$",
+    "description": "Forme polie du passé des verbes. Exprime une action complétée dans le passé de manière polie et formelle. Se forme en remplaçant ます par ました. Utilisée pour parler d'événements passés dans un contexte poli ou formel.",
+    "jlptLevel": "N5",
+    "example": "昨日、映画を見ました (J'ai regardé un film hier) | 朝ごはんを食べました (J'ai mangé le petit-déjeuner) | 友達に会いました (J'ai rencontré un ami)"
+  },
+  {
+    "pattern": "～でした",
+    "regex": "でした$",
+    "description": "Copule polie au passé. Forme passée de です, utilisée pour décrire des états ou des identités dans le passé de manière polie. S'utilise après les noms et les adjectifs-な.",
+    "jlptLevel": "N5",
+    "example": "昨日は雨でした (C'était pluvieux hier) | 彼は学生でした (Il était étudiant) | 昔、ここは静かでした (Autrefois, c'était calme ici)"
+  },
+  {
+    "pattern": "～たい",
+    "regex": "たい",
+    "description": "Forme du désir pour exprimer 'vouloir faire quelque chose'. Se forme en ajoutant たい au radical masu du verbe. たい se conjugue comme un adjectif-い. Important: cette forme exprime uniquement le désir du locuteur (je veux) ou une question directe (tu veux?). Pour parler du désir d'une tierce personne, on utilise plutôt ～たがる.",
+    "jlptLevel": "N5",
+    "example": "日本に行きたい (Je veux aller au Japon) | 何が食べたいですか (Qu'est-ce que tu veux manger?) | 休みたくない (Je ne veux pas me reposer)"
+  },
+  {
+    "pattern": "～ない",
+    "regex": "ない$",
+    "description": "Forme négative informelle des verbes. Exprime qu'une action n'a pas lieu ou ne se produit pas. Pour les verbes du groupe I (五段動詞), on change la voyelle 'u' finale en 'a' + ない. Pour les verbes du groupe II (一段動詞), on enlève る et on ajoute ない. Pour する → しない, 来る → 来ない (こない). Cette forme se conjugue comme un adjectif-い.",
+    "jlptLevel": "N5",
+    "example": "今日は行かない (Je ne vais pas aujourd'hui) | 肉を食べない (Je ne mange pas de viande) | 分からない (Je ne comprends pas)"
+  },
+  {
+    "pattern": "～ません",
+    "regex": "ません$",
+    "description": "Forme négative polie des verbes. Version polie de ～ない, utilisée dans les contextes formels. Se forme en remplaçant ます par ません. C'est la forme standard pour exprimer la négation poliment.",
+    "jlptLevel": "N5",
+    "example": "お酒を飲みません (Je ne bois pas d'alcool) | 今日は行きません (Je n'irai pas aujourd'hui) | よく分かりません (Je ne comprends pas très bien)"
+  },
+  {
+    "pattern": "～ませんか",
+    "regex": "ませんか$",
+    "description": "Forme interrogative négative polie. Utilisée principalement pour faire des invitations polies ou des suggestions. Littéralement 'ne... pas?', mais se traduit souvent par 'voulez-vous...?' ou 'et si on...?'. Cette forme est plus polie et indirecte que ～ましょうか.",
+    "jlptLevel": "N5",
+    "example": "一緒に行きませんか (Voulez-vous venir avec moi?) | コーヒーを飲みませんか (Voulez-vous boire un café?) | 映画を見ませんか (Et si on regardait un film?)"
+  },
+  {
+    "pattern": "～て",
+    "regex": "[て|で]$",
+    "description": "Forme en て des verbes. Forme conjonctive très importante avec de nombreux usages: (1) relier des verbes en séquence, (2) base pour de nombreuses constructions grammaticales (～ている, ～てください, etc.), (3) exprimer une raison ou une cause, (4) demander une permission (～てもいい). La conjugaison dépend du type de verbe: verbes en う/つ/る → って, verbes en む/ぶ/ぬ → んで, verbes en く → いて (exception: 行く → 行って), verbes en ぐ → いで, verbes en す → して.",
+    "jlptLevel": "N5",
+    "example": "朝起きて、顔を洗って、朝ごはんを食べます (Je me lève, me lave le visage et mange le petit-déjeuner) | 雨が降って、試合が中止になった (Il a plu et le match a été annulé)"
+  },
+  {
+    "pattern": "～てください",
+    "regex": "[て|で]ください",
+    "description": "Forme de requête polie. Exprime une demande polie de faire quelque chose: 'veuillez...' ou 's'il vous plaît...'. Se forme avec la forme en て + ください. C'est une expression très courante et utile pour demander poliment à quelqu'un de faire quelque chose. Plus poli que l'impératif direct.",
+    "jlptLevel": "N5",
+    "example": "ここに座ってください (Veuillez vous asseoir ici) | もう一度言ってください (Veuillez répéter) | 窓を開けてください (S'il vous plaît, ouvrez la fenêtre)"
+  },
+  {
+    "pattern": "～た",
+    "regex": "た$",
+    "description": "Forme passée informelle des verbes. Exprime une action complétée dans le passé de manière informelle. La conjugaison suit les mêmes règles que la forme en て (remplacer て/で par た/だ). Cette forme est utilisée dans les conversations entre amis, dans les pensées intérieures, et dans les propositions subordonnées même en contexte formel.",
+    "jlptLevel": "N5",
+    "example": "昨日、友達に会った (J'ai rencontré un ami hier) | もう食べた (J'ai déjà mangé) | 彼が来たときに、私は寝ていた (Quand il est venu, je dormais)"
+  },
+  {
+    "pattern": "～てる",
+    "regex": "てる$",
+    "description": "Forme progressive contractée (informelle). Contraction de ～ている utilisée dans la conversation informelle. Garde la même signification que ～ています mais est plus décontractée. Très courante dans les anime et le japonais parlé quotidien.",
+    "jlptLevel": "N5",
+    "example": "何してる？ (Qu'est-ce que tu fais?) | テレビ見てる (Je regarde la télé) | 知ってる (Je sais / Je le connais)"
+  },
+  {
+    "pattern": "～でしょう",
+    "regex": "でしょう$",
+    "description": "Marqueur de probabilité et de conjecture. Exprime une supposition ou une prédiction avec un degré de certitude modéré: 'probablement', 'je pense que', 'n'est-ce pas?'. でしょう est la forme polie, だろう est informelle. Peut aussi servir à chercher confirmation (avec intonation montante).",
+    "jlptLevel": "N4",
+    "example": "明日は雨でしょう (Il pleuvra probablement demain) | 彼は来ないでしょう (Il ne viendra probablement pas) | 知っているでしょう？ (Tu le sais, n'est-ce pas?)"
+  },
+  {
+    "pattern": "～そうです",
+    "regex": "そうです$",
+    "description": "Deux usages principaux: (1) Ouï-dire: rapporter ce qu'on a entendu dire (attaché à la forme simple). (2) Apparence: décrire comment quelque chose semble/paraît (attaché au radical du verbe/adjectif). Pour l'apparence: verbe-ます radical + そう, adjectif-い sans い + そう. Pour l'ouï-dire: forme simple + そうです.",
+    "jlptLevel": "N4",
+    "example": "美味しそうです (Ça a l'air délicieux - apparence) | 雨が降りそうです (On dirait qu'il va pleuvoir - apparence) | 田中さんは来ないそうです (J'ai entendu dire que Tanaka ne viendra pas - ouï-dire)"
+  },
+  {
+    "pattern": "～てもいい",
+    "regex": "[て|で]もいい",
+    "description": "Exprime la permission ou l'autorisation. 'Il est permis de...', 'Tu peux...', 'C'est OK de...'. La forme polie est ～てもいいです. La forme négative ～なくてもいい signifie 'pas obligé de', 'ce n'est pas nécessaire de'.",
+    "jlptLevel": "N4",
+    "example": "ここで写真を撮ってもいいですか (Puis-je prendre des photos ici?) | 食べてもいいよ (Tu peux manger) | 行かなくてもいい (Tu n'es pas obligé d'y aller)"
+  },
+  {
+    "pattern": "～なければならない",
+    "regex": "なければならない",
+    "description": "Exprime l'obligation forte ou la nécessité. 'Devoir faire', 'il faut que'. Se forme avec la forme négative ない → なければ + ならない. Formes contractées courantes: ～なきゃならない, ～なくちゃならない (informel), ～なければなりません (poli). Synonyme: ～ないといけない.",
+    "jlptLevel": "N4",
+    "example": "明日早く起きなければならない (Je dois me lever tôt demain) | 宿題をしなければなりません (Je dois faire mes devoirs) | 薬を飲まなきゃならない (Je dois prendre mes médicaments)"
+  },
+  {
+    "pattern": "～ようです",
+    "regex": "ようです$",
+    "description": "Exprime une supposition ou une déduction basée sur l'observation directe ou l'évidence. 'Il semble que...', 'On dirait que...'. Plus objectif que そうです (apparence). Se forme: verbe (forme simple) + ようです, nom/adjectif-な + のようです, adjectif-い + ようです.",
+    "jlptLevel": "N4",
+    "example": "雨が降るようです (Il semble qu'il va pleuvoir - basé sur les nuages sombres) | 彼は学生のようです (Il semble être étudiant) | 誰もいないようだ (On dirait qu'il n'y a personne)"
+  },
+  {
+    "pattern": "～らしい",
+    "regex": "らしい$",
+    "description": "Deux usages: (1) Supposition basée sur l'information obtenue: 'apparemment', 'il paraît que', 'j'ai entendu que'. (2) Caractéristique typique de: 'typique de', 'digne de' (ex: 男らしい = viril). Pour l'usage (1), s'attache à la forme simple du verbe/adjectif ou directement au nom.",
+    "jlptLevel": "N4",
+    "example": "彼は学生らしい (Il est apparemment étudiant - j'ai entendu dire) | 明日は雨らしい (Il paraît qu'il pleuvra demain) | 彼女は女性らしい (Elle est très féminine - caractéristique)"
+  },
+  {
+    "pattern": "～ことができる",
+    "regex": "ことができる",
+    "description": "Exprime la capacité, la possibilité ou l'aptitude. 'Pouvoir faire', 'être capable de'. Se forme: verbe (forme dictionnaire) + ことができる. Alternative: forme potentielle du verbe (ex: 食べられる). La forme polie est ～ことができます. La négative: ～ことができない = ne pas pouvoir.",
+    "jlptLevel": "N4",
+    "example": "日本語を話すことができます (Je peux parler japonais) | 泳ぐことができない (Je ne peux pas nager) | ここで勉強することができる (On peut étudier ici)"
+  },
+  {
+    "pattern": "～つもりです",
+    "regex": "つもりです$",
+    "description": "Exprime l'intention ferme de faire quelque chose. 'Avoir l'intention de', 'prévoir de'. Plus fort que ～と思います. Se forme: verbe (forme dictionnaire) + つもりです. La forme négative a deux sens: (1) ～ないつもりです = avoir l'intention de ne pas faire, (2) ～つもりはない = ne pas avoir l'intention de faire.",
+    "jlptLevel": "N4",
+    "example": "来年日本に行くつもりです (J'ai l'intention d'aller au Japon l'année prochaine) | タバコをやめるつもりだ (J'ai l'intention d'arrêter de fumer) | 行かないつもりです (J'ai l'intention de ne pas y aller)"
+  },
+  {
+    "pattern": "～はずです",
+    "regex": "はずです$",
+    "description": "Exprime une forte attente ou certitude logique basée sur des faits ou des connaissances. 'Devrait', 'il est censé', 'il est logique que'. La forme: verbe/adjectif (forme simple) + はずです, nom/adjectif-な + のはずです. La négative ～はずがない = il n'y a aucune chance que, c'est impossible que.",
+    "jlptLevel": "N3",
+    "example": "彼はもう着いたはずです (Il devrait déjà être arrivé - logiquement) | このカギで開くはずだ (Cette clé devrait ouvrir - c'est censé) | 彼が知っているはずがない (Il est impossible qu'il sache)"
+  },
+  {
+    "pattern": "～ばかりです",
+    "regex": "ばかりです$",
+    "description": "Exprime qu'une action vient juste d'être complétée très récemment. 'Venir de...'. Se forme: verbe (forme た) + ばかりです. Implique une période très courte depuis l'action (minutes, heures, parfois jours). Différent de ～たところです (qui implique un laps de temps encore plus court).",
+    "jlptLevel": "N3",
+    "example": "今、食べたばかりです (Je viens juste de manger) | 日本に来たばかりです (Je viens d'arriver au Japon) | 買ったばかりの本 (Un livre que je viens d'acheter)"
+  },
+  {
+    "pattern": "～ように",
+    "regex": "ように",
+    "description": "Plusieurs usages importants: (1) But/objectif: 'afin que', 'pour que' (avec verbes non-volontaires ou pour le but d'autrui). (2) Manière: 'comme', 'de la même façon que'. (3) Souhait: ～ますように = 'j'espère que'. (4) Ordre indirect: dire/demander à quelqu'un de faire qqch. Se distingue de ために qui s'utilise pour les actions volontaires du locuteur.",
+    "jlptLevel": "N3",
+    "example": "忘れないように、メモを取った (J'ai pris des notes pour ne pas oublier - but) | 先生が言ったように (Comme le professeur a dit - manière) | 合格しますように (J'espère réussir - souhait) | 静かにするように言った (J'ai dit de se taire - ordre indirect)"
+  },
+  {
+    "pattern": "～ながら",
+    "regex": "ながら",
+    "description": "Exprime la simultanéité de deux actions: 'tout en...', 'en faisant...'. Se forme: verbe (radical masu) + ながら. L'action principale vient après ながら, l'action secondaire/simultanée avant. Peut aussi exprimer un contraste/contradiction (similaire à のに): ～ながらも.",
+    "jlptLevel": "N4",
+    "example": "音楽を聞きながら勉強する (Étudier tout en écoutant de la musique) | 歩きながら話す (Parler en marchant) | 知っていながら教えなかった (Il savait mais ne l'a pas dit - contraste)"
+  },
+  {
+    "pattern": "～ば",
+    "regex": "ば$",
+    "description": "Forme conditionnelle: 'si...'. Pour les verbes: changer la finale en え段 + ば. Pour les adjectifs-い: final い → ければ. Pour les adjectifs-な et noms: → であれば/ならば. Exprime une condition générale, pas limitée à une situation unique. Souvent utilisé pour des vérités générales ou des conseils.",
+    "jlptLevel": "N4",
+    "example": "安ければ買います (Si c'est bon marché, j'achèterai) | 勉強すれば、できる (Si tu étudies, tu pourras le faire) | 春になれば、桜が咲く (Quand le printemps arrive, les cerisiers fleurissent)"
+  },
+  {
+    "pattern": "～たら",
+    "regex": "たら$",
+    "description": "Forme conditionnelle: 'si...', 'quand...'. Se forme: forme た +ら. Usages: (1) condition hypothétique, (2) découverte/résultat inattendu, (3) suggestion 'et si...?', (4) séquence temporelle 'après que...'. Plus versatile que ば mais ne peut pas exprimer des ordres/requêtes dans la partie résultat.",
+    "jlptLevel": "N4",
+    "example": "雨が降ったら、行きません (S'il pleut, je n'irai pas) | 家に帰ったら、誰もいなかった (Quand je suis rentré, il n'y avait personne - découverte) | 映画を見たら？ (Et si tu regardais un film? - suggestion)"
+  },
+  {
+    "pattern": "～なら",
+    "regex": "なら$",
+    "description": "Conditionnel contextuel. 'Si c'est le cas que...', 'si on parle de...'. S'utilise pour: (1) parler d'un sujet mentionné par l'interlocuteur, (2) donner conseil/recommandation basée sur le contexte, (3) définir le contexte/circonstances. Forme: verbe/adjectif (forme simple) + なら, nom/adjectif-な + なら.",
+    "jlptLevel": "N4",
+    "example": "日本に行くなら、京都がおすすめです (Si tu vas au Japon, je recommande Kyoto) | 彼なら知っているはずだ (S'il s'agit de lui, il devrait savoir) | 安いなら買います (Si c'est bon marché, j'achèterai)"
+  },
+  {
+    "pattern": "～のに",
+    "regex": "のに$",
+    "description": "Exprime un contraste ou une contradiction par rapport à l'attente: 'bien que', 'malgré que', 'alors que'. Contient souvent une nuance de déception ou de surprise. Forme: verbe/adjectif-い (forme simple) + のに, nom/adjectif-な + なのに. Plus émotionnel que が ou けど.",
+    "jlptLevel": "N3",
+    "example": "たくさん勉強したのに、試験に落ちた (J'ai beaucoup étudié mais j'ai raté l'examen) | 高いのに、美味しくない (C'est cher mais pas bon) | 約束したのに、来なかった (Il a promis mais n'est pas venu)"
+  },
+  {
+    "pattern": "～ために",
+    "regex": "ために",
+    "description": "Deux usages: (1) But/objectif: 'pour', 'afin de' (verbe forme dictionnaire + ために). Utilisé pour actions volontaires du locuteur. (2) Raison/cause: 'à cause de', 'en raison de' (verbe forme た + ために). Peut aussi indiquer 'pour le bénéfice de' (nom + のために).",
+    "jlptLevel": "N3",
+    "example": "日本語を勉強するために、日本に来た (Je suis venu au Japon pour étudier le japonais - but) | 雨が降ったために、試合が中止になった (À cause de la pluie, le match a été annulé - cause) | 子供のために働く (Travailler pour ses enfants - bénéfice)"
+  },
+  {
+    "pattern": "～てしまう",
+    "regex": "[て|で]しまう",
+    "description": "Exprime: (1) l'achèvement complet d'une action, (2) un regret ou un résultat non désiré, (3) une action irrévocable. Forme contractée informelle: ～ちゃう/～じゃう. La nuance dépend du contexte - peut être neutre, regrettable ou emphatique.",
+    "jlptLevel": "N4",
+    "example": "宿題をやってしまった (J'ai fini mes devoirs - achèvement) | 財布を忘れてしまった (J'ai oublié mon portefeuille - regret) | 全部食べちゃった (J'ai tout mangé - contracté, peut impliquer regret)"
+  },
+  {
+    "pattern": "～てみる",
+    "regex": "[て|で]みる",
+    "description": "Exprime 'essayer de faire quelque chose pour voir le résultat'. 'Essayer pour voir', 'tenter'. Implique la curiosité ou l'expérimentation. Se forme: verbe (forme て) + みる. Différent de ～ようとする (tenter/s'efforcer) qui implique l'effort sans garantie de résultat.",
+    "jlptLevel": "N4",
+    "example": "この料理を食べてみます (Je vais essayer ce plat) | 日本語で話してみた (J'ai essayé de parler en japonais) | やってみなければ分からない (On ne peut pas savoir sans essayer)"
+  },
+  {
+    "pattern": "～ておく",
+    "regex": "[て|で]おく",
+    "description": "Exprime faire quelque chose à l'avance ou en préparation pour plus tard. 'Faire qqch à l'avance', 'laisser qqch dans un certain état'. Forme contractée: ～とく. Implique une action préparatoire ou le maintien d'un état.",
+    "jlptLevel": "N4",
+    "example": "明日のために勉強しておく (Étudier à l'avance pour demain) | ドアを開けておいてください (Laissez la porte ouverte s'il vous plaît) | 予約しとく (Je vais réserver à l'avance - contracté)"
+  },
+  {
+    "pattern": "～てくる",
+    "regex": "[て|で]くる",
+    "description": "Plusieurs significations: (1) faire qqch et revenir, (2) commencer à/devenir graduellement (changement vers le présent), (3) mouvement vers le locuteur. S'oppose à ～ていく (mouvement/changement vers l'avenir ou loin du locuteur).",
+    "jlptLevel": "N4",
+    "example": "買ってくる (Aller acheter et revenir) | 雨が降ってきた (Il a commencé à pleuvoir) | 日本語が分かってきた (Je commence à comprendre le japonais - changement graduel)"
+  },
+  {
+    "pattern": "～ていく",
+    "regex": "[て|で]いく",
+    "description": "Exprime: (1) faire qqch et partir/s'éloigner, (2) changement graduel vers le futur, (3) continuation dans le futur. Contraste avec ～てくる. Souvent utilisé pour décrire des processus qui continueront.",
+    "jlptLevel": "N4",
+    "example": "持っていく (Emporter, apporter là-bas) | これから変わっていく (Ça va changer à partir de maintenant) | 暗くなっていく (Il fait de plus en plus sombre - changement progressif)"
+  },
+  {
+    "pattern": "～てあげる",
+    "regex": "[て|で]あげる",
+    "description": "Verbe auxiliaire de faveur: faire quelque chose pour quelqu'un d'autre (du locuteur vers autrui). 'Faire qqch pour quelqu'un'. Attention: peut sonner condescendant si mal utilisé. Fait partie du trio ～てあげる/～てくれる/～てもらう.",
+    "jlptLevel": "N4",
+    "example": "友達に本を貸してあげた (J'ai prêté un livre à mon ami) | 手伝ってあげましょうか (Voulez-vous que je vous aide?) | 教えてあげる (Je vais te l'apprendre)"
+  },
+  {
+    "pattern": "～てくれる",
+    "regex": "[て|で]くれる",
+    "description": "Verbe auxiliaire de faveur: quelqu'un fait quelque chose pour le locuteur ou son groupe. 'Faire qqch pour moi/nous'. Exprime la gratitude ou l'appréciation implicite. Du point de vue du receveur (moi/nous).",
+    "jlptLevel": "N4",
+    "example": "友達が手伝ってくれた (Mon ami m'a aidé) | 先生が教えてくれました (Le professeur me l'a enseigné) | 来てくれてありがとう (Merci d'être venu)"
+  },
+  {
+    "pattern": "～てもらう",
+    "regex": "[て|で]もらう",
+    "description": "Verbe auxiliaire de faveur: recevoir une faveur de quelqu'un. 'Recevoir l'action de', 'faire faire qqch par quelqu'un'. Forme: に + verbe て + もらう. Le receveur est le sujet de la phrase, celui qui fait l'action est marqué par に.",
+    "jlptLevel": "N4",
+    "example": "先生に教えてもらった (J'ai reçu l'enseignement du professeur = Le professeur me l'a enseigné) | 友達に手伝ってもらう (Je me fais aider par un ami) | 母に作ってもらった料理 (Un plat que ma mère a préparé pour moi)"
+  },
+  {
+    "pattern": "～ことにする",
+    "regex": "ことにする",
+    "description": "Exprime une décision volontaire: 'décider de faire qqch'. Le locuteur prend activement la décision. Forme: verbe (forme dictionnaire/ない) + ことにする. Pour les habitudes/règles établies, on utilise ～ことにしている (j'ai pour règle de...).",
+    "jlptLevel": "N3",
+    "example": "毎日運動することにした (J'ai décidé de faire de l'exercice tous les jours) | タバコをやめることにします (Je vais décider d'arrêter de fumer) | 早く寝ることにしている (J'ai pour règle de me coucher tôt)"
+  },
+  {
+    "pattern": "～ことになる",
+    "regex": "ことになる",
+    "description": "Exprime qu'il a été décidé (par des circonstances externes ou d'autres personnes) que quelque chose se passera. 'Il est décidé que', 'il se trouve que'. Contraste avec ～ことにする (décision personnelle). Forme: verbe (forme dictionnaire/ない) + ことになる.",
+    "jlptLevel": "N3",
+    "example": "来月、転勤することになった (Il a été décidé que je serai muté le mois prochain) | 会議は中止になりました (La réunion a été annulée - décision externe) | 行かないことになった (Il a été décidé que je n'irai pas)"
+  },
+  {
+    "pattern": "～かもしれない",
+    "regex": "かもしれない",
+    "description": "Exprime une possibilité ou une probabilité incertaine: 'peut-être', 'il se peut que', 'possiblement'. Degré de certitude environ 30-50%. Forme: verbe/adjectif (forme simple) + かもしれない, nom/adjectif-な + かもしれない. Forme polie: ～かもしれません.",
+    "jlptLevel": "N4",
+    "example": "雨が降るかもしれない (Il se peut qu'il pleuve) | 彼は知らないかもしれません (Peut-être qu'il ne sait pas) | 間違いかもしれない (C'est peut-être une erreur)"
+  },
+  {
+    "pattern": "～に違いない",
+    "regex": "に違いない",
+    "description": "Exprime une forte certitude ou conviction basée sur l'évidence: 'sans aucun doute', 'certainement', 'il doit être'. Degré de certitude environ 90-95%. Forme: verbe/adjectif-い (forme simple) + に違いない, nom/adjectif-な + に違いない.",
+    "jlptLevel": "N3",
+    "example": "彼は天才に違いない (Il est sans doute un génie) | これは本物に違いありません (Ceci est certainement l'original) | 成功するに違いない (Il réussira sans aucun doute)"
+  },
+  {
+    "pattern": "～わけがない",
+    "regex": "わけがない",
+    "description": "Exprime qu'il n'y a aucune possibilité, que c'est impossible: 'il n'y a aucune raison que', 'c'est impossible que'. Forte négation basée sur la logique. Forme: verbe/adjectif (forme simple) + わけがない. Variante: ～わけはない, ～はずがない.",
+    "jlptLevel": "N3",
+    "example": "そんなことができるわけがない (Il est impossible de faire une telle chose) | 彼が知らないわけがない (Il est impossible qu'il ne sache pas) | 嘘なわけがない (Il n'y a aucune raison que ce soit un mensonge)"
+  },
+  {
+    "pattern": "～わけだ",
+    "regex": "わけだ",
+    "description": "Exprime une conclusion logique, une raison naturelle ou une conséquence évidente: 'c'est pourquoi', 'pas étonnant que', 'il est naturel que'. Indique que le locuteur comprend/réalise quelque chose. Forme: verbe/adjectif (forme simple) + わけだ.",
+    "jlptLevel": "N3",
+    "example": "毎日練習している。上手なわけだ (Il pratique tous les jours. Pas étonnant qu'il soit bon) | だから遅れたわけですね (C'est donc pour ça que vous êtes en retard) | 高いわけだ (Pas étonnant que ce soit cher)"
+  },
+  {
+    "pattern": "～わけではない",
+    "regex": "わけではない",
+    "description": "Exprime une négation partielle: 'ce n'est pas que...', 'pas nécessairement'. Utilisé pour nuancer ou corriger une impression. Forme: verbe/adjectif (forme simple) + わけではない. Variante: ～わけじゃない (informel).",
+    "jlptLevel": "N3",
+    "example": "嫌いなわけではない (Ce n'est pas que je déteste) | 分からないわけじゃない (Ce n'est pas que je ne comprends pas) | 全部が悪いわけではありません (Ce n'est pas que tout est mauvais)"
+  },
+  {
+    "pattern": "～べきだ",
+    "regex": "べきだ",
+    "description": "Exprime le devoir moral, l'obligation morale ou ce qui devrait être fait: 'devoir', 'devrait'. Plus fort moralement que ～たほうがいい (conseil). Forme: verbe (forme dictionnaire) + べきだ. Exception: する → すべき. Forme polie: ～べきです.",
+    "jlptLevel": "N3",
+    "example": "学生は勉強するべきだ (Les étudiants devraient étudier) | 謝るべきです (Tu devrais t'excuser - obligation morale) | そんなことを言うべきではない (Tu ne devrais pas dire de telles choses)"
+  },
+  {
+    "pattern": "～たほうがいい",
+    "regex": "たほうがいい",
+    "description": "Exprime un conseil ou une recommandation: 'il vaudrait mieux', 'tu devrais'. Forme: verbe (forme た) + ほうがいい. Pour le conseil négatif: verbe (forme ない) + ほうがいい. Plus doux que ～べきだ.",
+    "jlptLevel": "N4",
+    "example": "早く寝たほうがいいよ (Tu devrais te coucher tôt) | 医者に行ったほうがいいです (Il vaudrait mieux aller chez le médecin) | 行かないほうがいい (Il vaudrait mieux ne pas y aller)"
+  },
+  {
+    "pattern": "～とき",
+    "regex": "とき",
+    "description": "Exprime 'quand' ou 'au moment où'. Forme: verbe (forme simple) + とき, nom + のとき. Important: verbe (forme dictionnaire) + とき = avant/pendant l'action, verbe (forme た) + とき = après l'action. Pour les adjectifs: adjectif-い + とき, adjectif-な + なとき.",
+    "jlptLevel": "N5",
+    "example": "日本に行くとき、カメラを買った (Quand je suis allé au Japon, j'ai acheté un appareil photo - avant le départ) | 日本に行ったとき、富士山を見た (Quand je suis allé au Japon, j'ai vu le Mont Fuji - pendant/après être arrivé) | 暇なとき、本を読む (Quand j'ai du temps libre, je lis)"
+  },
+  {
+    "pattern": "～あいだ",
+    "regex": "あいだ",
+    "description": "Exprime une période de temps: 'pendant', 'durant', 'tandis que'. Forme: verbe (forme simple) + あいだ, nom + のあいだ, adjectif-い + あいだ. Pour une action continue durant toute la période: ～あいだに. Pour indiquer un point dans cette période: ～あいだに.",
+    "jlptLevel": "N4",
+    "example": "留守のあいだ、猫の世話をしてください (Veuillez vous occuper du chat pendant mon absence) | 夏休みのあいだに旅行した (J'ai voyagé pendant les vacances d'été) | 寝ているあいだに雨が降った (Il a plu pendant que je dormais)"
+  },
+  {
+    "pattern": "～まえに",
+    "regex": "まえに",
+    "description": "Exprime 'avant de faire quelque chose'. Forme: verbe (forme dictionnaire) + まえに, nom + のまえに. L'action principale vient après まえに. Attention: toujours utiliser la forme non-passée même si l'action principale est au passé.",
+    "jlptLevel": "N5",
+    "example": "寝る前に歯を磨く (Je me brosse les dents avant de dormir) | 出かける前に電気を消してください (Éteignez la lumière avant de sortir) | 食事の前に手を洗いましょう (Lavons-nous les mains avant le repas)"
+  },
+  {
+    "pattern": "～あとで",
+    "regex": "あとで",
+    "description": "Exprime 'après avoir fait quelque chose'. Forme: verbe (forme た) + あとで, nom + のあとで. L'action principale vient après あとで. Similaire mais légèrement différent de ～てから (qui met plus l'accent sur la séquence).",
+    "jlptLevel": "N5",
+    "example": "宿題をした後で、遊びに行く (Après avoir fini mes devoirs, j'irai jouer) | 食事の後で、散歩しましょう (Faisons une promenade après le repas) | 会議が終わった後で話しましょう (Parlons après la fin de la réunion)"
+  },
+  {
+    "pattern": "～てから",
+    "regex": "[て|で]から",
+    "description": "Exprime 'après avoir fait', avec emphase sur la séquence et que la première action est une condition/prérequis pour la seconde. 'Depuis que' pour indiquer une durée. Forme: verbe (forme て) + から. Peut aussi indiquer combien de temps s'est écoulé depuis: ～てから + durée.",
+    "jlptLevel": "N4",
+    "example": "昼ご飯を食べてから、出かけます (Je sortirai après avoir mangé le déjeuner) | 日本に来てから3年になる (Ça fait 3 ans que je suis venu au Japon) | よく考えてから決めてください (Veuillez bien réfléchir avant de décider)"
+  },
+  {
+    "pattern": "～ところだ",
+    "regex": "ところだ",
+    "description": "Exprime le moment exact d'une action, avec trois formes: (1) verbe (forme dictionnaire) + ところだ = sur le point de faire, (2) verbe (forme て) + いるところだ = en train de faire (maintenant), (3) verbe (forme た) + ところだ = vient juste de faire (à l'instant).",
+    "jlptLevel": "N3",
+    "example": "今から出かけるところです (Je suis sur le point de sortir maintenant) | 今、勉強しているところです (Je suis en train d'étudier maintenant) | 今、食べたところです (Je viens juste de manger à l'instant)"
+  },
+  {
+    "pattern": "～すぎる",
+    "regex": "すぎる",
+    "description": "Exprime l'excès: 'trop', 'excessivement'. Se forme: verbe (radical masu) + すぎる, adjectif-い (sans い) + すぎる, adjectif-な + すぎる. すぎる se conjugue comme un verbe ru (一段動詞). Nuance souvent négative.",
+    "jlptLevel": "N4",
+    "example": "食べすぎた (J'ai trop mangé) | この服は高すぎる (Ces vêtements sont trop chers) | 心配しすぎないで (Ne t'inquiète pas trop)"
+  },
+  {
+    "pattern": "～やすい",
+    "regex": "やすい",
+    "description": "Exprime la facilité ou la tendance: 'facile à faire', 'avoir tendance à'. Se forme: verbe (radical masu) + やすい. Se conjugue comme un adjectif-い. Opposé: ～にくい (difficile à faire).",
+    "jlptLevel": "N4",
+    "example": "この本は読みやすい (Ce livre est facile à lire) | 分かりやすい説明 (Une explication facile à comprendre) | 壊れやすいから気をつけて (Fais attention car ça casse facilement)"
+  },
+  {
+    "pattern": "～にくい",
+    "regex": "にくい",
+    "description": "Exprime la difficulté: 'difficile à faire', 'dur à faire'. Se forme: verbe (radical masu) + にくい. Se conjugue comme un adjectif-い. Opposé de ～やすい. Peut aussi avoir une nuance de désagrément.",
+    "jlptLevel": "N4",
+    "example": "この漢字は覚えにくい (Ce kanji est difficile à mémoriser) | 読みにくい字 (Une écriture difficile à lire) | 言いにくいことですが... (C'est difficile à dire, mais...)"
+  },
+  {
+    "pattern": "～じゃん",
+    "regex": "じゃん$",
+    "description": "Particule finale très informelle et populaire, surtout chez les jeunes. Équivalent de ～じゃない ou ～だろう mais en beaucoup plus décontracté. Utilisée pour confirmer quelque chose d'évident ou chercher l'accord. Origines du dialecte de Tokyo/Yokohama, maintenant répandue partout. Très commune dans les anime modernes.",
+    "jlptLevel": "N3",
+    "example": "簡単じゃん (C'est facile, non?) | 知ってるじゃん (Tu le sais bien, non?) | できるじゃん！ (Tu peux le faire, regarde!) | やばいじゃん (C'est dingue, non?)"
+  },
+  {
+    "pattern": "～っけ",
+    "regex": "っけ$",
+    "description": "Particule finale pour exprimer le rappel, la confirmation ou le questionnement sur quelque chose qu'on a oublié. 'Déjà', 'c'était quoi déjà?', 'si je me souviens bien'. Donne une tonalité informelle et réfléchie. Très utilisé dans les conversations quotidiennes et les anime pour montrer qu'un personnage essaie de se rappeler quelque chose.",
+    "jlptLevel": "N3",
+    "example": "何だっけ？ (C'était quoi déjà?) | 明日だったっけ？ (C'était demain, si je me souviens bien?) | 彼の名前、何だっけ (Son nom, c'était quoi déjà?) | 約束したっけ？ (On avait promis, déjà?)"
+  },
+  {
+    "pattern": "～のだ/～んだ",
+    "regex": "(の|ん)だ",
+    "description": "Pattern d'explication/emphase très important. Utilisé pour: (1) donner une explication ou raison, (2) chercher une explication (forme interrogative), (3) insister/souligner, (4) découverte ou réalisation. ～のだ est formel, ～んだ est informel (très courant dans les anime). Les formes: ～のです/～んです (poli), ～の/～ん (très informel). Absolument essentiel pour parler naturellement en japonais.",
+    "jlptLevel": "N4",
+    "example": "疲れたんだ (Je suis fatigué - explication) | どうしたの？ (Qu'est-ce qui se passe? - chercher explication) | 行くんだ！ (J'y vais! - emphase) | そうだったんですか (C'était donc ça - réalisation)"
+  },
+  {
+    "pattern": "～って",
+    "regex": "って",
+    "description": "Particule multi-usage extrêmement courante dans le japonais parlé et les anime: (1) Citation/rapporter ce que quelqu'un a dit: '...que', (2) Définir/présenter un sujet: 'quant à', 'en ce qui concerne', (3) Équivalent informel de ～という, (4) Expression de surprise: 'Tu dis que...?!'. Remplace souvent は ou という dans la conversation informelle.",
+    "jlptLevel": "N4",
+    "example": "彼が来るって言った (Il a dit qu'il viendrait - citation) | 明日って何曜日？ (Demain, c'est quel jour? - sujet) | 日本語って難しい (Le japonais, c'est difficile) | 100万円って！ (100 millions de yens?! - surprise)"
+  },
+  {
+    "pattern": "～なんて",
+    "regex": "なんて",
+    "description": "Exprime la surprise, le dédain, l'incrédulité ou la modestie excessive: 'comme quoi', 'un truc comme', 'comment'. Souvent utilisé avec une connotation négative ou d'étonnement. Peut aussi minimiser quelque chose par modestie. Très émotionnel et expressif, parfait pour les dialogues d'anime.",
+    "jlptLevel": "N3",
+    "example": "そんなことを言うなんて！ (Dire une telle chose, vraiment!) | 天才なんて、とんでもない (Un génie? Pas du tout! - modestie) | 信じられないなんて (Comment peux-tu ne pas croire?) | 私なんて (Quelqu'un comme moi... - auto-dépréciation)"
+  },
+  {
+    "pattern": "～っぽい",
+    "regex": "っぽい",
+    "description": "Suffixe informel signifiant 'avoir l'air de', 'ressembler à', 'typique de', 'genre'. S'attache aux noms, verbes (radical masu), et même adjectifs. Plus informel que ～らしい. Très utilisé par les jeunes et dans les anime pour décrire des apparences, comportements ou caractères. Se conjugue comme un adjectif-い.",
+    "jlptLevel": "N3",
+    "example": "子供っぽい (Puéril, enfantin) | 安っぽい (Qui a l'air bon marché) | 忘れっぽい (Qui oublie facilement) | 彼女っぽい服 (Des vêtements genre fille)"
+  },
+  {
+    "pattern": "～とか",
+    "regex": "とか",
+    "description": "Particule pour donner des exemples non-exhaustifs: 'comme', 'et cetera', 'par exemple'. Plus vague et informel que ～や. Souvent répété (AとかBとか) pour lister plusieurs choses. Peut aussi adoucir une affirmation ou rendre le discours moins direct. Extrêmement courant dans la conversation informelle.",
+    "jlptLevel": "N4",
+    "example": "映画とか音楽とか好き (J'aime les films, la musique, ce genre de choses) | 明日とか来週とか (Demain ou la semaine prochaine, un truc comme ça) | そんなこと言ってないとか (Genre je n'ai pas dit ça)"
+  },
+  {
+    "pattern": "～かい",
+    "regex": "かい$",
+    "description": "Particule interrogative informelle, principalement utilisée par les hommes (surtout les personnes âgées ou dans un contexte autoritaire). Version masculine et un peu rude de ～か ou ～の. Dans les anime, souvent utilisée par les personnages masculins plus âgés, les chefs, ou pour montrer une relation hiérarchique.",
+    "jlptLevel": "N3",
+    "example": "分かったかい？ (Tu as compris? - masculin, un peu autoritaire) | どこに行くんだい？ (Où vas-tu? - paternel) | 大丈夫かい (Ça va? - concerné mais masculin)"
+  },
+  {
+    "pattern": "～だい",
+    "regex": "だい$",
+    "description": "Particule interrogative masculine et informelle, version de ～だ utilisée principalement par les hommes dans les questions. Plus douce que ～かい mais reste masculine. Souvent entendue dans les anime de la bouche de personnages masculins âgés ou paternels.",
+    "jlptLevel": "N3",
+    "example": "何をしているんだい？ (Qu'est-ce que tu fais? - masculin, paternel) | 名前は何だい？ (Comment tu t'appelles? - masculin, amical)"
+  },
+  {
+    "pattern": "～わ (féminin)",
+    "regex": "わ$",
+    "description": "Particule finale traditionnellement féminine pour adoucir une affirmation ou montrer de l'émotion douce. Dans le japonais moderne, son usage diminue chez les jeunes femmes (considéré parfois trop 'girly'), mais reste très présent dans les anime pour caractériser des personnages féminins, surtout élégants ou traditionnels. À ne pas confondre avec わ utilisé par les hommes pour l'emphase (intonation différente).",
+    "jlptLevel": "N4",
+    "example": "そうよ、知っているわ (Oui, je le sais - féminin doux) | きれいだわ (C'est joli - admiration féminine) | 行くわよ (J'y vais! - féminin assertif)"
+  },
+  {
+    "pattern": "～ぞ",
+    "regex": "ぞ$",
+    "description": "Particule finale masculine pour l'emphase forte, l'assertion ou l'avertissement. Très masculine et rugueuse, souvent utilisée dans les anime par des personnages masculins forts, des combattants, ou dans des moments d'intensité. Peut sonner agressive dans le mauvais contexte. Équivalent masculin intense de よ.",
+    "jlptLevel": "N3",
+    "example": "行くぞ！ (On y va! / J'y vais! - masculin, déterminé) | 気をつけろぞ (Fais attention! - avertissement masculin) | やるぞ！ (Je vais le faire! - détermination masculine)"
+  },
+  {
+    "pattern": "～ぜ",
+    "regex": "ぜ$",
+    "description": "Particule finale masculine très informelle pour l'emphase, similaire à ～ぞ mais légèrement moins intense et plus 'cool'. Utilisée par les jeunes hommes ou personnages masculins dans les anime pour sonner décontracté et confiant. Donne une impression de masculinité détendue.",
+    "jlptLevel": "N3",
+    "example": "面白いぜ (C'est intéressant! - masculin cool) | 任せろぜ (Laisse-moi faire - confiant masculin) | 行こうぜ (Allons-y! - invitation masculine décontractée)"
+  },
+  {
+    "pattern": "～な (prohibitif)",
+    "regex": "な$",
+    "description": "Impératif négatif informel: 'ne fais pas'. Forme très courte et directe de ～ないで. Peut sonner brusque ou amical selon le contexte et l'intonation. S'attache directement à la forme dictionnaire du verbe. Très courant dans les anime lors de moments de tension ou entre amis proches. À distinguer de な (particule finale d'émotion).",
+    "jlptLevel": "N4",
+    "example": "行くな！ (N'y va pas! - ordre brusque) | 泣くな (Ne pleure pas - réconfortant mais direct) | 心配するな (Ne t'inquiète pas - rassurant entre hommes) | 触るな (Ne touche pas!)"
+  },
+  {
+    "pattern": "～ちゃう/～じゃう",
+    "regex": "(ちゃう|じゃう)",
+    "description": "Contraction très informelle de ～てしまう. Exprime l'achèvement complet, le regret, ou qu'une action s'est produite complètement/involontairement. ～ちゃう pour les verbes en て, ～じゃう pour les verbes en で. Extrêmement courant dans la conversation quotidienne et les anime. Donne un ton léger et naturel.",
+    "jlptLevel": "N4",
+    "example": "食べちゃった (J'ai tout mangé - oups!) | 忘れちゃった (J'ai oublié - désolé!) | 壊しちゃった (Je l'ai cassé - regret) | 行っちゃう？ (Tu y vas vraiment?)"
+  },
+  {
+    "pattern": "～ちゃえ/～じゃえ",
+    "regex": "(ちゃえ|じゃえ)",
+    "description": "Forme impérative de ～ちゃう/～じゃう, signifiant 'vas-y et fais-le complètement', souvent avec une nuance de 'tant pis' ou 'autant le faire'. Encourage quelqu'un (ou soi-même) à aller jusqu'au bout. Très informel et expressif, courant dans les anime pour montrer la détermination ou l'abandon des hésitations.",
+    "jlptLevel": "N3",
+    "example": "やっちゃえ！ (Vas-y, fais-le! - encouragement) | 言っちゃえば (Si je le dis franchement / Autant le dire) | 全部食べちゃえ (Mange tout! - encouragement)"
+  },
+  {
+    "pattern": "～なさい",
+    "regex": "なさい$",
+    "description": "Forme impérative polie utilisée principalement par les femmes, les parents envers les enfants, ou les professeurs envers les élèves. Plus doux que l'impératif direct mais garde une autorité. Se forme: radical masu + なさい. Dans les anime, souvent utilisé par les mères, grandes sœurs, ou professeures féminines.",
+    "jlptLevel": "N4",
+    "example": "勉強しなさい (Étudie! - maternel/professoral) | 早く食べなさい (Mange vite - parental) | 静かにしなさい (Sois tranquille - autorité douce) | ちゃんと聞きなさい (Écoute bien - instruction)"
+  },
+  {
+    "pattern": "～ろ/～れ (impératif)",
+    "regex": "(ろ|れ)$",
+    "description": "Forme impérative directe des verbes. Pour les verbes ru (一段): radical + ろ. Pour les verbes u (五段): forme え段 + (parfois + ろ/よ). Très direct et peut être brusque, impoli ou amical selon le contexte. Couramment utilisé entre amis proches masculins ou dans les ordres militaires/sportifs dans les anime. Les formes: 見ろ (miro), 食べろ (tabero), 来い (koi), しろ (shiro).",
+    "jlptLevel": "N4",
+    "example": "見ろ！ (Regarde! - ordre direct) | 食べろ (Mange! - direct) | やれ (Fais-le! - ordre) | 来い (Viens! - masculin direct)"
+  },
+  {
+    "pattern": "やばい",
+    "regex": "やばい",
+    "description": "Adjectif argotique ultra-populaire avec double sens: (1) Dangereux, problématique, risqué (sens original), (2) Incroyable, génial, impressionnant (sens moderne). L'usage positif est devenu dominant chez les jeunes. C'est probablement l'expression argotique la plus utilisée dans les anime modernes. Se conjugue comme un adjectif-い: やばかった (c'était dingue), やばくない (pas si fou).",
+    "jlptLevel": "N3",
+    "example": "やばい！遅刻する！ (Merde! Je vais être en retard! - négatif) | これやばいうまい！ (C'est incroyablement bon! - positif) | やばいやばい (Oh non oh non / Trop cool trop cool - selon contexte) | やばすぎる (C'est trop fou)"
+  },
+  {
+    "pattern": "すごい/すげえ",
+    "regex": "(すごい|すげえ|スゴイ)",
+    "description": "Très courant pour exprimer l'admiration, la surprise ou l'intensité: 'incroyable', 'génial', 'impressionnant', 'très'. すごい est standard, すげえ est la version masculine/argotique. Peut être utilisé comme adjectif (すごい人 = personne incroyable) ou adverbe (すごく = très). Dans les anime, すげえ est souvent utilisé par les personnages masculins excités.",
+    "jlptLevel": "N5",
+    "example": "すごい！ (Incroyable! Génial!) | すげえな！ (Trop cool! - masculin) | すごく美味しい (Très délicieux) | すごいことになった (C'est devenu une affaire sérieuse)"
+  },
+  {
+    "pattern": "まじ/マジ",
+    "regex": "(まじ|マジ)",
+    "description": "Argot très populaire signifiant 'sérieux', 'vraiment', 'pour de vrai'. Abréviation de 真面目 (majime = sérieux). Utilisé comme adverbe (マジで = sérieusement) ou interjection (マジ？ = Sérieux?). Extrêmement courant dans les anime modernes, surtout parmi les jeunes personnages. Peut être écrit en hiragana ou katakana.",
+    "jlptLevel": "N3",
+    "example": "マジ？ (Sérieux? Vraiment?) | マジで？ (Pour de vrai?) | マジすごい (Vraiment incroyable) | マジやばい (Vraiment fou/génial) | マジかよ！ (Tu déconnes?! - masculin surpris)"
+  },
+  {
+    "pattern": "うざい",
+    "regex": "うざい",
+    "description": "Argot signifiant 'énervant', 'chiant', 'gonflant', 'agaçant'. Vient de うざったい (uzattai). Très informel et peut être impoli si utilisé directement envers quelqu'un. Couramment utilisé dans les anime par des adolescents ou personnages irrités pour exprimer l'agacement. Se conjugue comme un adjectif-い.",
+    "jlptLevel": "N3",
+    "example": "うざい！ (C'est chiant! / T'es chiant!) | あいつマジうざい (Ce mec est vraiment agaçant) | うざいから黙れ (T'es chiant, tais-toi - rude)"
+  },
+  {
+    "pattern": "むかつく",
+    "regex": "むかつく",
+    "description": "Verbe argotique signifiant 'énerver', 'agacer', 'mettre en colère', littéralement 'donner la nausée'. Plus fort que うざい. Exprime une irritation ou colère profonde. Très courant dans les anime pour montrer qu'un personnage est vraiment énervé par quelque chose ou quelqu'un.",
+    "jlptLevel": "N3",
+    "example": "むかつく！ (Ça m'énerve! / Il/Elle m'énerve!) | あいつマジむかつく (Ce type m'énerve vraiment) | むかつくけど仕方ない (C'est énervant mais tant pis)"
+  },
+  {
+    "pattern": "くそ/クソ",
+    "regex": "(くそ|クソ|糞)",
+    "description": "Juron vulgaire signifiant littéralement 'merde' ou 'merdique'. Utilisé comme: (1) Interjection de frustration: 'Merde!', (2) Préfixe intensificateur négatif: 'putain de...'. Très vulgaire et impoli, mais extrêmement courant dans les anime, surtout dans les moments de frustration ou de colère. Les personnages féminins l'utilisent moins.",
+    "jlptLevel": "N3",
+    "example": "くそ！ (Merde! - frustration) | くそったれ！ (Putain! - plus vulgaire) | クソゲー (Jeu de merde - くそ + game) | くそ暑い (Putain qu'il fait chaud)"
+  },
+  {
+    "pattern": "ちくしょう",
+    "regex": "(ちくしょう|畜生)",
+    "description": "Juron/exclamation de frustration, colère ou défaite: 'Merde!', 'Bordel!', 'Saloperie!'. Littéralement 'bête' ou 'animal'. Moins vulgaire que くそ mais reste fort. Très dramatique et expressif, parfait pour les scènes émotionnelles d'anime. Souvent crié par les personnages qui ont perdu, échoué ou sont frustrés.",
+    "jlptLevel": "N3",
+    "example": "ちくしょう！ (Merde! Bordel! - frustration) | ちくしょう、負けた (Putain, j'ai perdu) | ちくしょうめ (Saloperie - très en colère)"
+  },
+  {
+    "pattern": "やった",
+    "regex": "やった",
+    "description": "Exclamation de victoire, succès ou joie: 'Yes!', 'Génial!', 'J'ai réussi!'. Forme passée de やる (faire) utilisée comme interjection. Extrêmement courant dans les anime lors de moments de victoire, succès ou bonnes nouvelles. Peut être répété (やったやった！) pour plus d'enthousiasme.",
+    "jlptLevel": "N5",
+    "example": "やった！ (Yes! J'ai réussi!) | やったね！ (Bravo! Super!) | やったー！ (Ouais! - prolongé pour plus d'enthousiasme) | やったぞ！ (On a réussi! - masculin triomphant)"
+  },
+  {
+    "pattern": "よし",
+    "regex": "よし",
+    "description": "Interjection pour se donner du courage ou marquer une décision: 'Allez!', 'Bon!', 'OK!', 'C'est parti!'. Utilisée avant de commencer quelque chose ou après avoir pris une décision. Très courante dans les anime lors de moments de détermination. Peut être prolongée (よーし！) pour plus d'emphase.",
+    "jlptLevel": "N4",
+    "example": "よし、行くぞ！ (Allez, on y va!) | よし、やってみよう (Bon, essayons) | よーし！ (OK! C'est parti!) | よしよし (Bien bien - encouragement doux)"
+  },
+  {
+    "pattern": "えっ/え",
+    "regex": "(えっ|え)$",
+    "description": "Interjection de surprise ou incompréhension: 'Hein?', 'Quoi?', 'Euh?'. Une des interjections les plus basiques et courantes en japonais. えっ avec le petit っ montre plus de surprise que え simple. Peut être répété (えっ、えっ？) pour montrer la confusion continue. Absolument essentiel dans tout dialogue naturel.",
+    "jlptLevel": "N5",
+    "example": "えっ？ (Hein? Quoi?) | えっ、本当？ (Euh, vraiment?) | えーっ！ (Quoiii?! - très surpris) | え、何？ (Hein, quoi?)"
+  },
+  {
+    "pattern": "へえ",
+    "regex": "へえ",
+    "description": "Interjection exprimant l'intérêt, la surprise légère ou la découverte: 'Ah bon?', 'Vraiment?', 'Tiens donc'. Peut être prolongée (へええ) pour montrer plus d'intérêt ou de surprise. Plus neutre et curieux que えっ. Utilisée quand on apprend quelque chose de nouveau mais pas choquant.",
+    "jlptLevel": "N5",
+    "example": "へえ (Ah bon) | へええ、そうなんだ (Ahhh, c'est vrai?) | へえ、知らなかった (Tiens, je ne savais pas)"
+  },
+  {
+    "pattern": "ふうん",
+    "regex": "ふうん",
+    "description": "Interjection montrant un intérêt poli mais modéré, parfois du scepticisme: 'Hum', 'Ah bon', 'Mouais'. Peut sonner désintéressé ou dubitatif selon l'intonation. Dans les anime, souvent utilisé par des personnages qui ne sont pas vraiment impressionnés ou qui doutent de ce qu'on leur dit.",
+    "jlptLevel": "N5",
+    "example": "ふうん (Hum... / Ah bon) | ふーん、そう (Mouais, d'accord - pas très convaincu) | ふうん、本当かな (Hum, c'est vrai ça?)"
+  },
+  {
+    "pattern": "はあ/はぁ",
+    "regex": "(はあ|はぁ)",
+    "description": "Soupir ou interjection montrant: (1) Le soulagement, (2) La fatigue/lassitude, (3) La confusion/frustration, (4) L'étonnement exaspéré. Le contexte et l'intonation déterminent le sens exact. Très courant dans les anime pour montrer l'état émotionnel des personnages.",
+    "jlptLevel": "N5",
+    "example": "はぁ... (Soupir de fatigue) | はぁ？ (Hein?! - confus ou énervé) | はぁ、疲れた (Soupir, je suis fatigué) | はあ？何言ってんの (Hein?! Tu dis quoi? - incrédule)"
+  },
+  {
+    "pattern": "あの/あのう",
+    "regex": "(あの|あのう)",
+    "description": "Interjection hésitante pour attirer l'attention poliment ou exprimer l'hésitation: 'Euh...', 'Hum...', 'Excusez-moi...'. Utilisée au début d'une phrase quand on est hésitant ou qu'on veut poliment interrompre. あのう est plus poli. Très courant dans les anime pour montrer la timidité, l'hésitation ou la politesse.",
+    "jlptLevel": "N5",
+    "example": "あの... (Euh...) | あのう、すみません (Euh, excusez-moi) | あの、ちょっと聞きたいんですが (Euh, je voudrais demander quelque chose) | あのね (Dis donc / Écoute)"
+  },
+  {
+    "pattern": "えっと/ええと",
+    "regex": "(えっと|ええと)",
+    "description": "Interjection de réflexion ou hésitation: 'Euh...', 'Voyons...', 'Hmm...'. Utilisée quand on réfléchit, qu'on essaie de se souvenir de quelque chose, ou qu'on hésite sur quoi dire. えっと est plus courant dans le japonais moderne, ええと est légèrement plus formel. Très naturel dans la conversation.",
+    "jlptLevel": "N5",
+    "example": "えっと、何だっけ？ (Euh, c'était quoi déjà?) | ええと、そうですね (Euh, voyons voir) | えっとね (Euh eh bien...) | えっと... (Hmm... - réfléchit)"
+  },
+  {
+    "pattern": "そうか/そっか",
+    "regex": "(そうか|そっか)",
+    "description": "Expression de compréhension ou réalisation: 'Je vois', 'Ah bon', 'D'accord', 'Ah je comprends'. そうか est standard, そっか est plus contracté et informel. Utilisée quand on comprend enfin quelque chose ou qu'on accepte une information. Très fréquent dans les dialogues pour montrer qu'on suit la conversation.",
+    "jlptLevel": "N5",
+    "example": "そうか (Je vois, d'accord) | そっか、分かった (Ah OK, j'ai compris) | そうか、そうだったのか (Je vois, c'était donc ça) | そっかそっか (D'accord d'accord)"
+  },
+  {
+    "pattern": "なるほど",
+    "regex": "なるほど",
+    "description": "Expression de compréhension intellectuelle: 'Je vois', 'Ah d'accord', 'C'est logique'. Implique qu'on comprend le raisonnement ou la logique derrière quelque chose. Plus intellectuel que そうか. Très utilisé dans les anime par des personnages qui réalisent quelque chose ou comprennent une explication.",
+    "jlptLevel": "N4",
+    "example": "なるほど (Je vois, c'est logique) | なるほどね (Ah OK je vois) | なるほど、そういうことか (Ah je vois, c'est donc ça) | なるほどなるほど (Je vois je vois)"
+  },
+  {
+    "pattern": "もちろん",
+    "regex": "もちろん",
+    "description": "Adverbe signifiant 'bien sûr', 'évidemment', 'naturellement'. Utilisé pour confirmer fortement quelque chose qui devrait être évident ou pour accepter avec enthousiasme. Peut sonner confiant ou rassurant. Très courant dans les réponses affirmatives fortes.",
+    "jlptLevel": "N4",
+    "example": "もちろん！ (Bien sûr!) | もちろんだよ (Bien sûr que oui) | もちろん知ってる (Évidemment que je sais) | もちろん行くよ (Bien sûr que j'y vais)"
+  },
+  {
+    "pattern": "ごめん/すまん",
+    "regex": "(ごめん|すまん|スマン)",
+    "description": "Excuses informelles: 'Désolé', 'Pardon'. ごめん est neutre/légèrement féminin, すまん est masculin. Formes complètes: ごめんなさい (poli), すまない (masculin formel). Raccourcis très courants: ごめんね, すまんな. Dans les anime, le choix entre ごめん et すまん aide à caractériser le personnage (genre, personnalité).",
+    "jlptLevel": "N5",
+    "example": "ごめん！ (Désolé!) | すまん (Pardon - masculin) | ごめんね (Désolé hein - doux) | すまんかった (J'étais désolé - masculin passé) | マジごめん (Vraiment désolé - jeune)"
+  },
+  {
+    "pattern": "ありがとう",
+    "regex": "ありがとう",
+    "description": "Remerciement standard: 'Merci'. Formes: ありがとう (informel), ありがとうございます (poli), どうもありがとう (merci beaucoup), ありがとな (masculin informel). Peut être raccourci à あり~ entre très proches. Une des expressions les plus essentielles en japonais.",
+    "jlptLevel": "N5",
+    "example": "ありがとう！ (Merci!) | ありがとうございます (Merci - poli) | どうもありがとう (Merci beaucoup) | ありがとな (Merci - masculin informel) | ありがとね (Merci hein - amical)"
+  },
+  {
+    "pattern": "やれやれ",
+    "regex": "やれやれ",
+    "description": "Interjection exprimant l'exaspération légère, la résignation ou le soulagement après une épreuve: 'Eh bien...', 'Bon sang...', 'Ouf...'. Souvent accompagnée d'un soupir. Dans les anime, très associée à des personnages blasés, fatigués ou exaspérés (archétype du personnage cool et détaché). Rendue célèbre par certains personnages d'anime/manga.",
+    "jlptLevel": "N3",
+    "example": "やれやれ (Eh bien... / Ouf - résigné) | やれやれだぜ (Bon sang... - signature de certains personnages) | やれやれ、困ったな (Eh bien, c'est problématique)"
+  },
+  {
+    "pattern": "めんどくさい/めんどい",
+    "regex": "(めんどくさい|めんどい|面倒)",
+    "description": "Adjectif signifiant 'chiant', 'pénible', 'embêtant', 'la flemme'. めんどくさい est complet, めんどい/めんど est contracté. Exprime qu'on trouve quelque chose trop d'effort ou trop compliqué. Très courant chez les jeunes et dans les anime pour exprimer la flemme ou le refus de faire quelque chose de compliqué.",
+    "jlptLevel": "N3",
+    "example": "めんどくさい (C'est chiant / J'ai la flemme) | めんどい (C'est pénible - contracté) | 面倒だな (C'est embêtant) | めんどくさいからやめる (C'est trop chiant, j'abandonne)"
+  },
+  {
+    "pattern": "しょうがない/仕方ない",
+    "regex": "(しょうがない|仕方ない|しかたない|しゃあない)",
+    "description": "Expression de résignation: 'Tant pis', 'Rien à faire', 'On n'y peut rien', 'C'est comme ça'. Reflète l'acceptation stoïque des circonstances qu'on ne peut changer, concept important dans la culture japonaise. Variations: しょうがない (contracté), 仕方がない (complet), しゃあない (très informel, dialectal).",
+    "jlptLevel": "N3",
+    "example": "しょうがない (Tant pis, on n'y peut rien) | 仕方ないよ (C'est comme ça) | しょうがないね (Bon, tant pis) | まあ、しょうがない (Bon, on n'y peut rien - résigné)"
+  },
+  {
+    "pattern": "本当/ほんと",
+    "regex": "(本当|ほんと|ホント)",
+    "description": "Mot très versatile signifiant 'vraiment', 'vrai', 'sérieusement': (1) Adverbe: 'vraiment', 'réellement', (2) Nom: 'la vérité', (3) Question: 'Vraiment?', 'C'est vrai?'. ほんと/ホント est la forme contractée informelle. Une des expressions les plus fréquentes en japonais parlé.",
+    "jlptLevel": "N5",
+    "example": "本当？ (Vraiment? C'est vrai?) | ほんとに (Vraiment, sérieusement) | ほんと！ (Sérieux! / Pour de vrai!) | ほんとだ (C'est vrai!) | ほんとありがとう (Merci vraiment)"
+  },
+  {
+    "pattern": "嘘/うそ",
+    "regex": "(嘘|うそ|ウソ)",
+    "description": "Signifie 'mensonge' ou utilisé comme interjection de surprise incrédule: 'Pas vrai!', 'Tu mens!', 'C'est pas possible!'. Comme interjection, exprime qu'on ne peut pas croire ce qu'on vient d'entendre. Très courant dans les anime lors de révélations choquantes.",
+    "jlptLevel": "N4",
+    "example": "嘘！ (Pas vrai! Tu déconnes!) | うそでしょ？ (C'est une blague, hein?) | 嘘だ (C'est un mensonge / C'est pas possible) | 嘘つき (Menteur) | マジ嘘 (Sérieux, pas vrai)"
+  },
+  {
+    "pattern": "大丈夫/だいじょうぶ",
+    "regex": "(大丈夫|だいじょうぶ|ダイジョブ)",
+    "description": "Expression versatile signifiant: (1) 'Ça va', 'Tout va bien' (état), (2) 'Pas de problème', 'C'est OK' (permission/assurance), (3) 'Est-ce que ça va?' (question). ダイジョブ est une prononciation contractée informelle. Absolument essentiel dans la communication quotidienne.",
+    "jlptLevel": "N5",
+    "example": "大丈夫？ (Ça va? Tout va bien?) | 大丈夫だよ (Ça va / Pas de problème) | 大丈夫です (C'est bon, merci - poli) | 大丈夫、大丈夫 (C'est bon, c'est bon - rassurant) | ダイジョブ (Pas de souci - très informel)"
+  },
+  {
+    "pattern": "Phrase simple",
+    "regex": "^[^ていてまでたなばのにがもかをにへとやより]+$",
+    "description": "Structure de phrase déclarative simple sans marqueurs grammaticaux complexes. Peut être composée de particules de base (は、が、を、に、で、と、など), de noms, de verbes à la forme simple, ou d'adjectifs. Ce sont des phrases courtes et directes souvent utilisées dans la conversation quotidienne, les exclamations, ou les réponses courtes.",
+    "jlptLevel": "N5",
+    "example": "綺麗 (Joli) | 本当？ (Vraiment?) | そうか (Je vois)"
+  }
+]
