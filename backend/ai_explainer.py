@@ -172,7 +172,7 @@ Données linguistiques :
 {grammar_str}
 {vocab_str}
 
-MISSION : Génère une explication PEDAGOGIQUE uniquement (PAS de traduction, PAS de résumé).
+MISSION : Génère une explication PEDAGOGIQUE contextuelle (PAS de traduction, PAS de résumé).
 
 REGLES ABSOLUES :
 1. ZERO PARENTHESE nulle part
@@ -180,23 +180,28 @@ REGLES ABSOLUES :
    - Écris "飲める" PAS "飲める(のめる)"
    - Dans nuance écris "私 désigne le locuteur" PAS "私(わたし) désigne..."
 
-2. EXEMPLES simples et différents
+2. CONTEXTUALISATION OBLIGATOIRE
+   - Chaque explication doit commencer par "Ici dans cette phrase, [contexte spécifique]..."
+   - Ensuite ajoute l'explication générale
+   - Format: "Ici dans cette phrase, X sert à Y. Généralement, cette forme..."
+
+3. EXEMPLES simples et différents
    - 3-5 mots maximum
    - PAS tirés de la phrase originale
    - Utiles pédagogiquement
    - SANS italiques ni formatting
 
-3. Ton conversationnel de prof sympa
+4. Ton conversationnel de prof sympa
 
-4. PAS de traduction, PAS de résumé du sens
+5. PAS de traduction, PAS de résumé du sens
 
 Génère un JSON valide avec cette structure EXACTE :
 {{
   "grammarNotes": [
-    {{"pattern": "forme grammaticale", "explanation": "Explication claire et pratique du fonctionnement", "example": "Exemple simple différent"}}
+    {{"pattern": "forme grammaticale", "explanation": "Ici dans cette phrase, [contexte specifique]. Généralement, [explication generale].", "example": "Exemple simple différent"}}
   ],
   "vocabNotes": [
-    {{"word": "mot", "nuance": "Nuance d'usage et contexte SANS parenthèses"}}
+    {{"word": "mot", "nuance": "Ici, [usage dans la phrase]. En général, [nuance d'usage] SANS parenthèses"}}
   ],
   "culturalContext": "Note culturelle si pertinent sinon null",
   "studyTips": "Conseil pratique pour retenir",
@@ -207,6 +212,7 @@ IMPORTANT :
 - Réponds uniquement avec du JSON valide
 - ZERO parenthèse nulle part
 - PAS de champ summary ou translation
+- TOUJOURS contextualiser avec "Ici dans cette phrase" au début
 - Commence directement par les explications grammaticales"""
 
     return prompt
@@ -230,6 +236,7 @@ def _sanitize_json_string(content: str) -> str:
     """
     Sanitize JSON string to fix common issues from AI responses.
     Handles unescaped quotes, newlines, and other problematic characters.
+    Multiple passes for aggressive cleaning.
     """
     try:
         # Try parsing as-is first
@@ -238,38 +245,68 @@ def _sanitize_json_string(content: str) -> str:
     except json.JSONDecodeError as e:
         logger.warning(f"JSON needs sanitization: {e}")
 
-        # Create a sanitized version
         sanitized = content
 
-        # Step 1: Try to find and fix unterminated strings by looking for patterns
-        # Common issue: quotes inside string values that aren't escaped
-        # This is complex, so we'll try a simpler approach: use regex to escape unescaped quotes
+        logger.info("Attempting aggressive JSON sanitization...")
 
-        # Step 2: Ensure newlines within strings are properly escaped
-        # Replace literal newlines with \n (but not already escaped ones)
-
-        # Try to fix unescaped quotes within JSON string values
-        # This is a heuristic approach - look for quotes that appear in the middle of values
-        # Pattern: "key": "value with "quote" inside"
-        # We can't perfectly fix this without a full parser, so we'll try basic cleanup
-
-        logger.info("Attempting basic JSON sanitization...")
-
-        # Try escaping common problematic characters in a safe way
-        # Replace any literal newlines (not \n) with \n
+        # Pass 1: Fix literal newlines and tabs
+        # Replace any literal newlines (not \n) with \\n
         sanitized = re.sub(r'(?<!\\)\n', r'\\n', sanitized)
-
-        # Replace any literal tabs with \t
+        # Replace any literal tabs with \\t
         sanitized = re.sub(r'(?<!\\)\t', r'\\t', sanitized)
 
-        # Try parsing again
+        # Pass 2: Remove trailing commas before closing brackets/braces
+        # This is a common issue with AI-generated JSON
+        sanitized = re.sub(r',(\s*[}\]])', r'\1', sanitized)
+
+        # Pass 3: Fix control characters
+        # Remove or escape common control characters
+        sanitized = sanitized.replace('\r', '')
+        sanitized = sanitized.replace('\b', '')
+        sanitized = sanitized.replace('\f', '')
+
+        # Pass 4: Try to fix unescaped quotes in string values (heuristic)
+        # This is tricky - we look for patterns like: "text "quoted" text"
+        # and try to escape the inner quotes
+        # Pattern: Find strings with unescaped quotes between key-value strings
+        def escape_inner_quotes(match):
+            # Get the full string value
+            full_str = match.group(0)
+            # If it has more than 2 quotes, we have a problem
+            if full_str.count('"') > 2:
+                # Escape all quotes except the first and last
+                parts = full_str.split('"')
+                if len(parts) > 2:
+                    # Keep first empty part, last empty part, escape middle
+                    result = '"' + '\\"'.join(parts[1:-1]) + '"'
+                    return result
+            return full_str
+
+        # This regex is risky, but we'll try it as a last resort
+        # Match string values: "key": "value with possible "quotes" inside"
+        # sanitized = re.sub(r'"[^"\\]*(?:\\.[^"\\]*)*"', escape_inner_quotes, sanitized)
+
+        # Try parsing after basic sanitization
         try:
             json.loads(sanitized)
-            logger.info("JSON sanitization successful")
+            logger.info("JSON sanitization successful (basic pass)")
             return sanitized
-        except json.JSONDecodeError:
-            logger.warning("Basic sanitization failed, returning original")
-            return content
+        except json.JSONDecodeError as e2:
+            logger.warning(f"Basic sanitization failed: {e2}")
+
+            # Pass 5: More aggressive - try to fix common patterns
+            # Remove any null bytes
+            sanitized = sanitized.replace('\x00', '')
+
+            # Try one more time
+            try:
+                json.loads(sanitized)
+                logger.info("JSON sanitization successful (aggressive pass)")
+                return sanitized
+            except json.JSONDecodeError as e3:
+                logger.error(f"All sanitization attempts failed: {e3}")
+                # Return original and let fallback handle it
+                return content
 
 
 def _validate_response(response_data: Dict[str, Any]) -> bool:

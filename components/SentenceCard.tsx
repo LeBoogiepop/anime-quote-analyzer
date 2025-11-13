@@ -203,53 +203,6 @@ export function SentenceCard({ analysis, index = 0 }: SentenceCardProps) {
         )}
       </AnimatePresence>
 
-      {/* Word tokens with readings */}
-      {analysis.tokens.length > 0 && (
-        <div className="mb-4">
-          <div className="flex items-center gap-2 mb-2">
-            <Languages className="w-4 h-4 text-muted-foreground" />
-            <h3 className="text-sm font-semibold text-foreground">{t("breakdown")}</h3>
-          </div>
-          <div className="flex flex-wrap gap-2">
-            {analysis.tokens.map((token, idx) => {
-              const hasKanji = /[\u4E00-\u9FAF]/.test(token.surface);
-              const shouldShowReading = hasKanji && token.reading !== token.surface && token.reading !== 'demo';
-
-              // Extract individual kanji for WaniKani links
-              const kanjiChars = hasKanji ? token.surface.match(/[\u4E00-\u9FAF]/g) || [] : [];
-
-              return (
-                <div
-                  key={idx}
-                  className="group relative inline-flex items-center gap-1 bg-secondary/50 rounded px-2 py-1"
-                >
-                  {/* Hover tooltip for reading */}
-                  {shouldShowReading && (
-                    <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 px-2 py-1 text-xs text-white bg-gray-900 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-10">
-                      {token.reading}
-                    </span>
-                  )}
-                  <span className="text-sm font-medium">{token.surface}</span>
-                  {/* WaniKani link for kanji - uses baseForm for dictionary form */}
-                  {kanjiChars.length > 0 && (
-                    <a
-                      href={`https://www.wanikani.com/vocabulary/${encodeURIComponent(token.baseForm || token.surface)}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="opacity-50 hover:opacity-100 transition-opacity ml-1"
-                      title="View on WaniKani"
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      <ExternalLink className="w-3 h-3 text-muted-foreground hover:text-primary" />
-                    </a>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      )}
-
       {/* Vocabulary list */}
       {analysis.vocabulary.length > 0 && (
         <div className="mb-4">
@@ -387,6 +340,53 @@ export function SentenceCard({ analysis, index = 0 }: SentenceCardProps) {
               )}
             </div>
           </details>
+        </div>
+      )}
+
+      {/* Word tokens with readings - Décomposition at bottom */}
+      {analysis.tokens.length > 0 && (
+        <div className="mb-4">
+          <div className="flex items-center gap-2 mb-2">
+            <Languages className="w-4 h-4 text-muted-foreground" />
+            <h3 className="text-sm font-semibold text-foreground">{t("breakdown")}</h3>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {analysis.tokens.map((token, idx) => {
+              const hasKanji = /[\u4E00-\u9FAF]/.test(token.surface);
+              const shouldShowReading = hasKanji && token.reading !== token.surface && token.reading !== 'demo';
+
+              // Extract individual kanji for WaniKani links
+              const kanjiChars = hasKanji ? token.surface.match(/[\u4E00-\u9FAF]/g) || [] : [];
+
+              return (
+                <div
+                  key={idx}
+                  className="group relative inline-flex items-center gap-1 bg-secondary/50 rounded px-2 py-1"
+                >
+                  {/* Hover tooltip for reading */}
+                  {shouldShowReading && (
+                    <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 px-2 py-1 text-xs text-white bg-gray-900 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-10">
+                      {token.reading}
+                    </span>
+                  )}
+                  <span className="text-sm font-medium">{token.surface}</span>
+                  {/* WaniKani link for kanji - uses baseForm for dictionary form */}
+                  {kanjiChars.length > 0 && (
+                    <a
+                      href={`https://www.wanikani.com/vocabulary/${encodeURIComponent(token.baseForm || token.surface)}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="opacity-50 hover:opacity-100 transition-opacity ml-1"
+                      title="View on WaniKani"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <ExternalLink className="w-3 h-3 text-muted-foreground hover:text-primary" />
+                    </a>
+                  )}
+                </div>
+              );
+            })}
+          </div>
         </div>
       )}
     </motion.div>
