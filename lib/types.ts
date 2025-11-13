@@ -64,6 +64,7 @@ export interface AIExplanation {
   culturalContext?: string;
   studyTips?: string;
   registerNote?: string;
+  simpleTranslation: string;
 }
 
 /**

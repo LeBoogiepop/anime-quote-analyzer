@@ -395,6 +395,16 @@ export function SentenceCard({ analysis, index = 0 }: SentenceCardProps) {
                   </p>
                 </div>
               )}
+
+              {/* Simple Translation - Always at the end */}
+              {aiExplanation.simpleTranslation && (
+                <div className="text-sm bg-blue-50 dark:bg-blue-900/30 p-3 rounded border border-blue-200 dark:border-blue-800">
+                  <span className="font-medium text-blue-700 dark:text-blue-300">💬 Traduction simple :</span>
+                  <p className="text-blue-900 dark:text-blue-100 mt-1 font-medium">
+                    {aiExplanation.simpleTranslation}
+                  </p>
+                </div>
+              )}
             </div>
           </details>
         </div>

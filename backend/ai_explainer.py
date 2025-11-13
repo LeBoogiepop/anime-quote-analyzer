@@ -171,34 +171,45 @@ Données linguistiques :
 {grammar_str}
 {vocab_str}
 
-REGLES IMPORTANTES :
-1. JAMAIS de parenthèses pour les lectures : Écris "ううん" pas "ううん(ううん)", écris "飲める" pas "飲める(のめる)"
-2. La traduction doit être à la FIN du champ studyTips
-3. Les exemples doivent être SIMPLES et DIFFERENTS de la phrase originale (ex: "それは本です" "食べます")
-4. Ton conversationnel comme un prof sympa, pas encyclopédique
+REGLES ABSOLUES :
+1. ZERO PARENTHESE : N'écris JAMAIS de lecture en parenthèses nulle part
+   - Dans word : écris "ううん" PAS "ううん(ううん)"
+   - Dans word : écris "飲める" PAS "飲める(のめる)"
+   - Dans nuance : écris "飲める peut viser..." PAS "飲める(のめる) peut viser..."
+   - Aucune parenthèse nulle part dans ta réponse
 
-Génère un JSON valide avec cette structure exacte :
+2. La traduction est un champ SEPARE à la fin (simpleTranslation)
+
+3. Les exemples doivent être SIMPLES et DIFFERENTS de la phrase originale
+
+4. Ton conversationnel comme un prof sympa
+
+Génère un JSON valide avec cette structure EXACTE :
 {{
   "summary": "Explication naturelle du sens en 1-2 phrases",
   "grammarNotes": [
-    {{"pattern": "forme", "explanation": "Explication claire et pratique", "example": "Exemple simple différent de la phrase"}}
+    {{"pattern": "forme", "explanation": "Explication claire et pratique", "example": "Exemple simple différent"}}
   ],
   "vocabNotes": [
-    {{"word": "mot", "reading": "lecture", "nuance": "Usage et contexte concret"}}
+    {{"word": "mot", "reading": "lecture", "nuance": "Usage et contexte (SANS parenthèses dans le texte)"}}
   ],
   "culturalContext": "Note culturelle si pertinent ou null",
-  "studyTips": "Conseil pour retenir.\\n\\nTraduction simple : [ta traduction de la phrase complète]",
-  "registerNote": "Niveau de langue"
+  "studyTips": "Conseil pour retenir",
+  "registerNote": "Niveau de langue",
+  "simpleTranslation": "Traduction claire de la phrase complète"
 }}
 
-IMPORTANT : Réponds uniquement avec du JSON valide, pas de markdown, pas de texte avant ou après."""
+IMPORTANT :
+- Réponds uniquement avec du JSON valide
+- ZERO parenthèse dans word ou nuance
+- simpleTranslation est un champ séparé à la fin"""
 
     return prompt
 
 
 def _validate_response(response_data: Dict[str, Any]) -> bool:
     """Validate the structure of the AI response."""
-    required_fields = ["summary", "grammarNotes", "vocabNotes", "studyTips", "registerNote"]
+    required_fields = ["summary", "grammarNotes", "vocabNotes", "studyTips", "registerNote", "simpleTranslation"]
 
     for field in required_fields:
         if field not in response_data:
