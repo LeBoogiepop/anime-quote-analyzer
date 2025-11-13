@@ -162,68 +162,132 @@ def _build_prompt(sentence: str, tokens: List[Dict], grammar: List[Dict], vocab:
     tokens_str = _format_tokens_for_prompt(tokens)
     grammar_str = _format_grammar_for_prompt(grammar)
     vocab_str = _format_vocab_for_prompt(vocab)
+    
+    # Detect JLPT level from grammar patterns or vocab (use highest level found)
+    jlpt_level = "N5"  # Default
+    if grammar:
+        levels = [g.get("jlptLevel", "N5") for g in grammar]
+        # N5 < N4 < N3 < N2 < N1, so find the "lowest" number
+        level_order = {"N5": 5, "N4": 4, "N3": 3, "N2": 2, "N1": 1}
+        jlpt_level = min(levels, key=lambda x: level_order.get(x, 5))
+    elif vocab:
+        levels = [v.get("jlptLevel", "N5") for v in vocab]
+        level_order = {"N5": 5, "N4": 4, "N3": 3, "N2": 2, "N1": 1}
+        jlpt_level = min(levels, key=lambda x: level_order.get(x, 5))
+    
+    # Adapt instructions based on JLPT level
+    if jlpt_level in ["N5", "N4"]:
+        level_instructions = """
+ADAPTATION NIVEAU DÉBUTANT ({jlpt_level}) :
+- Explique la PHRASE COMPLÈTE d'abord, puis seulement 2-3 points grammaticaux MAX
+- Ne décompose PAS chaque particule séparément (は, を, が) sauf si vraiment nécessaire
+- Utilise un vocabulaire simple et évite les termes techniques
+- 1-2 phrases par explication, pas plus
+- Focus sur "comment dire X" plutôt que "pourquoi la structure est comme ça"
+"""
+    elif jlpt_level in ["N3"]:
+        level_instructions = """
+ADAPTATION NIVEAU INTERMÉDIAIRE ({jlpt_level}) :
+- Explique la phrase globale puis 3-4 points grammaticaux max
+- Tu peux expliquer les particules importantes si elles apportent une nuance
+- 2-3 phrases par explication
+- Équilibre entre sens et structure
+"""
+    else:  # N2, N1
+        level_instructions = """
+ADAPTATION NIVEAU AVANCÉ ({jlpt_level}) :
+- Tu peux être plus détaillé sur les nuances grammaticales
+- Explique les subtilités et registres de langue
+- 3-4 phrases par explication si nécessaire
+- Focus sur les nuances et usages avancés
+"""
 
-    prompt = f"""Tu es un professeur de japonais sympa qui enseigne à des francophones passionnés d'anime. Tu expliques comme un vrai prof qui parle à un étudiant, PAS comme un dictionnaire.
+    prompt = f"""Tu es un professeur de japonais professionnel qui enseigne à des francophones passionnés d'anime. Tu expliques de manière claire et pédagogique, comme un vrai enseignant, PAS comme un dictionnaire.
 
 Phrase japonaise : "{sentence}"
+Niveau JLPT détecté : {jlpt_level}
 
 Données linguistiques :
 {tokens_str}
 {grammar_str}
 {vocab_str}
 
-MISSION : Explique cette phrase de manière NATURELLE et CONVERSATIONNELLE, comme si tu parlais à un ami qui apprend.
+MISSION : Explique cette phrase de manière PÉDAGOGIQUE et PROFESSIONNELLE. Ne traduis PAS la phrase complète - l'utilisateur a déjà accès à une traduction séparée.
 
 REGLES ABSOLUES :
 1. ZERO PARENTHESE nulle part
    - Écris "私" PAS "私(わたし)"
    - Écris "飲める" PAS "飲める(のめる)"
 
-2. TON NATUREL ET CONVERSATIONNEL
-   - Parle comme un vrai prof à son élève
-   - Commence par le SENS/USAGE, pas par la structure grammaticale sèche
-   - Utilise "tu", "ça", "c'est comme", "ici tu dis que"
-   - Évite le jargon technique quand c'est pas nécessaire
+2. TON PROFESSIONNEL ET PÉDAGOGIQUE
+   - Parle comme un professeur expérimenté qui explique à ses étudiants
+   - Évite de commencer chaque phrase par "Tu" - varie les formulations
+   - Utilise des formulations variées : "Cette structure exprime...", "On utilise...", "Cette particule marque...", "Le verbe indique..."
+   - Évite le jargon technique inutile mais reste précis
+   - Ton clair et pédagogique, pas trop familier
 
-   ❌ Mauvais (sec): "Forme passée négative familière de だ"
-   ✅ Bon (naturel): "Tu dis qu'avant c'était pas comme ça. Le 'ja' rend ça familier entre amis."
+   ❌ Mauvais (trop familier): "Tu dis qu'avant c'était pas comme ça. Le 'ja' rend ça familier entre amis."
+   ✅ Bon (professionnel): "Cette structure exprime une action passée dans un registre familier. La particule 'ja' indique un niveau de langue décontracté, utilisé entre amis."
 
-3. EXPLICATIONS COMPLETES MAIS CONCISES
-   - 2-3 phrases par point grammatical
-   - Phrase 1: Qu'est-ce que ça exprime? (le sens)
-   - Phrase 2: Comment/quand on l'utilise?
+3. NE TRADUIS PAS LA PHRASE COMPLÈTE
+   - L'utilisateur a déjà un bouton de traduction séparé
+   - Va directement aux explications grammaticales et de vocabulaire
+   - Ne commence PAS par "Cette phrase signifie..." ou "Tu dis que..."
+
+4. IDENTIFIE ET MENTIONNE LES FORMES GRAMMATICALES
+   - Si un verbe est à une forme particulière (potentielle, passive, causative, etc.), MENTIONNE-LE explicitement
+   - Format : "Forme potentielle du verbe 飲む" ou "Forme passive de..." ou "Forme causative..."
+   - Ensuite explique ce que cette forme exprime
+   - Exemples de formes à identifier : potentielle (飲める), passive (飲まれる), causative (飲ませる), causatif-passif (飲まされる), etc.
+
+5. EXPLICATIONS COMPLETES MAIS CONCISES
+   - Explique seulement les points grammaticaux IMPORTANTS (pas chaque particule)
+   - 2-3 phrases par point grammatical max
+   - Phrase 1: Identifie la forme grammaticale si présente, puis ce qu'elle exprime (le sens)
+   - Phrase 2: Comment/quand l'utilise-t-on?
    - Phrase 3 (optionnelle): Pourquoi/nuance particulière?
 
-4. EXEMPLES SIMPLES
+6. ÉVITE LES RÉPÉTITIONS
+   - Si tu expliques "～ています" une fois, ne le répète pas ailleurs
+   - Si tu expliques une particule dans un contexte, ne la réexplique pas ailleurs
+   - Regroupe les explications similaires
+
+7. EXEMPLES SIMPLES
    - 3-5 mots maximum
    - PAS tirés de la phrase originale
    - Faciles à retenir
 
+{level_instructions.format(jlpt_level=jlpt_level)}
+
 Génère un JSON valide avec cette structure EXACTE :
 {{
   "grammarNotes": [
-    {{"pattern": "forme", "explanation": "Explication naturelle en 2-3 phrases, commence par le sens/usage", "example": "Exemple simple"}}
+    {{"pattern": "forme", "explanation": "Explication naturelle en 2-3 phrases max, commence par le sens/usage", "example": "Exemple simple"}}
   ],
   "vocabNotes": [
-    {{"word": "mot", "nuance": "Explication conversationnelle de la nuance (1-2 phrases)"}}
+    {{"word": "mot", "nuance": "Explication conversationnelle de la nuance (1-2 phrases max)"}}
   ],
   "culturalContext": "Note culturelle naturelle si pertinent sinon null",
-  "studyTips": "Conseil pratique conversationnel",
-  "registerNote": "Niveau de langue expliqué naturellement"
+  "studyTips": "Conseil pratique conversationnel (1 phrase max)",
+  "registerNote": "Niveau de langue expliqué naturellement (1 phrase max)"
 }}
 
 EXEMPLES DE BON TON :
-- grammarNotes: "Tu dis que tu n'es pas doué dans quelque chose. C'est plus gentil que 'je déteste' - c'est plutôt 'j'ai du mal avec ça'. Ça marche pour la musique, les maths, les gens, tout."
-- vocabNotes: "Quand tu veux dire que quelque chose t'embête ou te gêne. Plus doux que dire que tu détestes carrément."
-- culturalContext: "Au Japon, on préfère dire qu'on est 'pas doué' plutôt que critiquer directement. C'est plus poli."
-- studyTips: "Pense à '苦手' comme 'I'm not good with' en anglais - inconfortable mais pas haine."
-- registerNote: "Utilisé entre amis ou dans des contextes détendus. Trop familier pour un entretien d'embauche."
+- grammarNotes (avec forme identifiée): "Forme potentielle du verbe 飲む. Cette structure exprime la capacité ou la possibilité de boire, et non simplement l'action de boire. On l'utilise pour dire qu'une compétence est acquise ou qu'une condition permet enfin cette action."
+- grammarNotes (sans forme spécifique): "Cette structure exprime une difficulté ou une aversion modérée. Plus doux que 'je déteste', elle indique plutôt une gêne ou un manque d'aisance. S'utilise pour la musique, les mathématiques, les personnes, etc."
+- vocabNotes: "Exprime une gêne ou un inconfort modéré. Plus nuancé qu'une aversion totale, cette expression permet d'exprimer une difficulté sans être trop direct."
+- culturalContext: "Au Japon, on préfère exprimer une difficulté plutôt que de critiquer directement. Cette approche indirecte est considérée comme plus polie."
+- studyTips: "Comparable à 'I'm not good with' en anglais - exprime un inconfort sans hostilité."
+- registerNote: "Utilisé dans des contextes décontractés ou entre amis. Trop familier pour un contexte professionnel formel."
 
 IMPORTANT :
 - Réponds uniquement avec du JSON valide
 - ZERO parenthèse nulle part
-- Ton naturel et pédagogique, pas encyclopédique
-- Explique d'abord le SENS, ensuite la structure si nécessaire"""
+- Ton professionnel et pédagogique, pas encyclopédique
+- NE TRADUIS PAS la phrase complète - va directement aux explications
+- Pour {jlpt_level}: MAX 3-4 points grammaticaux, pas plus
+- Évite de répéter la même explication plusieurs fois
+- Varie les formulations, évite de commencer chaque phrase par "Tu" """
 
     return prompt
 

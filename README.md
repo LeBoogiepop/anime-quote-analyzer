@@ -27,10 +27,10 @@ The goal is to upload anime subtitle files (.srt, .ass) and get instant breakdow
 - Grammar pattern recognition and explanations
 - Vocabulary extraction with French translations
 - AI-powered explanations (optional, via OpenRouter or Gemini)
+- Anki flashcard export via AnkiConnect (select vocabulary, choose deck/model)
 - Responsive UI with drag & drop upload
 
 **What's next:**
-- Anki flashcard export (.apkg format)
 - User accounts and progress tracking
 - Support for .vtt subtitle format
 
@@ -186,6 +186,18 @@ The backend will run on `http://localhost:8000`
 
 **Note:** Both servers need to be running for full functionality. The frontend calls the Python backend for NLP analysis.
 
+### Anki Export Setup
+
+To use the Anki export feature, you need to install AnkiConnect in Anki:
+
+1. Open Anki
+2. Go to **Tools** → **Add-ons**
+3. Click **Get Add-ons...**
+4. Enter code: **2055492159**
+5. Click **OK** and restart Anki
+
+See `ANKI_SETUP.md` for detailed instructions and troubleshooting.
+
 ## Roadmap
 
 **Phase 1: Foundation** ✅
@@ -203,7 +215,7 @@ The backend will run on `http://localhost:8000`
 - [x] AI-powered explanations (optional)
 
 **Phase 3: Features** (current)
-- [ ] Anki export (.apkg format)
+- [x] Anki export via AnkiConnect (with customizable deck/model selection)
 - [ ] Support for .vtt subtitle format
 - [ ] User authentication
 - [ ] Learning progress tracking

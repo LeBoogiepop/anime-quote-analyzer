@@ -15,7 +15,11 @@
 
 ## Features
 
-- [ ] Anki export functionality (.apkg format) - **High priority**
+- [X] Anki export functionality via AnkiConnect - **Completed**
+  - [X] AnkiConnect integration
+  - [X] Customizable deck and model selection
+  - [X] Vocabulary selection before export
+  - [X] Grammar and translation options
 - [ ] Add download button for analyzed sentences (JSON/CSV)
 - [ ] Save analysis results to localStorage
 - [ ] User authentication (Supabase)

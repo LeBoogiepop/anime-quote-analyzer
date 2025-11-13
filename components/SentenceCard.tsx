@@ -4,8 +4,9 @@ import { useState } from "react";
 import { type SentenceAnalysis, type AIExplanation } from "@/lib/types";
 import { JLPTBadge } from "./JLPTBadge";
 import { motion, AnimatePresence } from "framer-motion";
-import { GraduationCap, Languages, ExternalLink, Eye, EyeOff, Loader2, Sparkles } from "lucide-react";
+import { GraduationCap, Languages, ExternalLink, Eye, EyeOff, Loader2, Sparkles, Download } from "lucide-react";
 import { useLanguage } from "@/lib/LanguageContext";
+import { AnkiExportModal, type AnkiExportConfig } from "./AnkiExportModal";
 
 interface SentenceCardProps {
   analysis: SentenceAnalysis;
@@ -24,6 +25,12 @@ export function SentenceCard({ analysis, index = 0 }: SentenceCardProps) {
   const [aiExplanation, setAiExplanation] = useState<AIExplanation | null>(null);
   const [isLoadingAI, setIsLoadingAI] = useState(false);
   const [aiError, setAiError] = useState<string>("");
+
+  // Anki export state
+  const [isExportingAnki, setIsExportingAnki] = useState(false);
+  const [ankiExportSuccess, setAnkiExportSuccess] = useState(false);
+  const [ankiExportError, setAnkiExportError] = useState<string>("");
+  const [showAnkiModal, setShowAnkiModal] = useState(false);
 
   const handleToggleTranslation = async () => {
     // If already showing, just toggle off
@@ -101,43 +108,112 @@ export function SentenceCard({ analysis, index = 0 }: SentenceCardProps) {
     }
   };
 
+  const handleExportToAnki = async (config: AnkiExportConfig) => {
+    setIsExportingAnki(true);
+    setAnkiExportSuccess(false);
+    setAnkiExportError("");
+
+    try {
+      const response = await fetch("/api/anki/export", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          analysis: analysis,
+          ...config,
+        }),
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        setAnkiExportSuccess(true);
+        // Reset success message after 3 seconds
+        setTimeout(() => setAnkiExportSuccess(false), 3000);
+      } else {
+        setAnkiExportError(result.error || t("ankiError"));
+      }
+    } catch (err) {
+      setAnkiExportError(t("ankiNotAvailable"));
+      console.error("Anki export error:", err);
+    } finally {
+      setIsExportingAnki(false);
+    }
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3, delay: index * 0.1 }}
-      className="rounded-lg border bg-card p-6 shadow-sm hover:shadow-md transition-shadow"
+      className="rounded-lg border bg-card p-6 shadow-sm hover:shadow-md transition-shadow relative"
     >
-      {/* Header with Japanese text and JLPT level */}
-      <div className="flex items-start justify-between gap-4 mb-4">
-        <div className="flex-1">
+      {/* Header with Japanese text, JLPT level, buttons and Translation - using grid for alignment */}
+      <div className="grid grid-cols-[1fr_auto] gap-4 mb-4">
+        {/* Left column: Japanese text and Translation */}
+        <div>
           <p className="text-2xl font-medium mb-2 text-foreground">
             {analysis.originalText}
           </p>
+
+          {/* Translation display with animation - aligned with buttons */}
+          <AnimatePresence>
+            {showTranslation && translation && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: "auto" }}
+                exit={{ opacity: 0, height: 0 }}
+                transition={{ duration: 0.2 }}
+                className="overflow-hidden"
+              >
+                <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-3">
+                  <p className="text-sm text-blue-900 dark:text-blue-100 italic">
+                    {translation}
+                  </p>
+                </div>
+              </motion.div>
+            )}
+            {error && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: "auto" }}
+                exit={{ opacity: 0, height: 0 }}
+                transition={{ duration: 0.2 }}
+                className="overflow-hidden"
+              >
+                <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-3">
+                  <p className="text-sm text-red-900 dark:text-red-100">
+                    {error}
+                  </p>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
-        <div className="flex flex-col gap-2">
+
+        {/* Right column: Buttons */}
+        <div className="flex flex-col gap-2 items-end">
           <JLPTBadge level={analysis.jlptLevel} />
           {/* Translation toggle button */}
           <button
             onClick={handleToggleTranslation}
             disabled={isLoading}
             className="inline-flex items-center gap-2 px-3 py-1.5 text-xs font-medium rounded-md border border-input bg-background hover:bg-accent hover:text-accent-foreground transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            title={showTranslation ? "Hide translation" : "Show translation"}
+            title={showTranslation ? t("hideTranslation") : t("showTranslation")}
           >
             {isLoading ? (
               <>
                 <Loader2 className="w-3 h-3 animate-spin" />
-                <span>Loading...</span>
+                <span>{t("loading")}</span>
               </>
             ) : showTranslation ? (
               <>
                 <EyeOff className="w-3 h-3" />
-                <span>Hide</span>
+                <span>{t("hide")}</span>
               </>
             ) : (
               <>
                 <Eye className="w-3 h-3" />
-                <span>Translate</span>
+                <span>{t("translate")}</span>
               </>
             )}
           </button>
@@ -147,61 +223,70 @@ export function SentenceCard({ analysis, index = 0 }: SentenceCardProps) {
             onClick={handleGetAIExplanation}
             disabled={isLoadingAI || !!aiExplanation}
             className="inline-flex items-center gap-2 px-3 py-1.5 text-xs font-medium rounded-md border border-purple-300 bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900/30 dark:to-pink-900/30 hover:from-purple-100 hover:to-pink-100 dark:hover:from-purple-900/40 dark:hover:to-pink-900/40 text-purple-700 dark:text-purple-300 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            title={aiExplanation ? "Explanation loaded" : "Get AI explanation"}
+            title={aiExplanation ? t("explanationLoaded") : t("getExplanation")}
           >
             {isLoadingAI ? (
               <>
                 <Loader2 className="w-3 h-3 animate-spin" />
-                <span>Thinking...</span>
+                <span>{t("thinking")}</span>
               </>
             ) : aiExplanation ? (
               <>
                 <Sparkles className="w-3 h-3" />
-                <span>Ready!</span>
+                <span>{t("ready")}</span>
               </>
             ) : (
               <>
                 <Sparkles className="w-3 h-3" />
-                <span>Explication</span>
+                <span>{t("explanation")}</span>
               </>
             )}
           </button>
+
         </div>
       </div>
 
-      {/* Translation display with animation */}
-      <AnimatePresence>
-        {showTranslation && translation && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.2 }}
-            className="mb-4 overflow-hidden"
-          >
-            <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-3">
-              <p className="text-sm text-blue-900 dark:text-blue-100 italic">
-                {translation}
-              </p>
-            </div>
-          </motion.div>
+      {/* Anki Export button - Bottom right of card */}
+      <button
+        onClick={() => setShowAnkiModal(true)}
+        disabled={isExportingAnki || ankiExportSuccess}
+        className="absolute bottom-4 right-4 inline-flex items-center gap-2 px-3 py-1.5 text-xs font-medium rounded-md border border-blue-300 bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-900/30 dark:to-blue-800/30 hover:from-blue-100 hover:to-blue-200 dark:hover:from-blue-900/40 dark:hover:to-blue-800/40 text-blue-700 dark:text-blue-300 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        title={ankiExportSuccess ? t("ankiExported") : t("exportToAnki")}
+      >
+        {isExportingAnki ? (
+          <>
+            <Loader2 className="w-3 h-3 animate-spin" />
+            <span>{t("exportingToAnki")}</span>
+          </>
+        ) : ankiExportSuccess ? (
+          <>
+            <Download className="w-3 h-3" />
+            <span>{t("ankiExported")}</span>
+          </>
+        ) : (
+          <>
+            <Download className="w-3 h-3" />
+            <span>{t("exportToAnki")}</span>
+          </>
         )}
-        {error && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.2 }}
-            className="mb-4 overflow-hidden"
-          >
-            <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-3">
-              <p className="text-sm text-red-900 dark:text-red-100">
-                {error}
-              </p>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      </button>
+
+      {/* Anki Export Error */}
+      {ankiExportError && (
+        <motion.div
+          initial={{ opacity: 0, height: 0 }}
+          animate={{ opacity: 1, height: "auto" }}
+          exit={{ opacity: 0, height: 0 }}
+          transition={{ duration: 0.2 }}
+          className="mb-4 overflow-hidden"
+        >
+          <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-3">
+            <p className="text-sm text-yellow-900 dark:text-yellow-100">
+              {ankiExportError}
+            </p>
+          </div>
+        </motion.div>
+      )}
 
       {/* Word tokens with readings - Décomposition at full width */}
       {analysis.tokens.length > 0 && (
@@ -389,6 +474,14 @@ export function SentenceCard({ analysis, index = 0 }: SentenceCardProps) {
           </details>
         </div>
       )}
+
+      {/* Anki Export Modal */}
+      <AnkiExportModal
+        analysis={analysis}
+        isOpen={showAnkiModal}
+        onClose={() => setShowAnkiModal(false)}
+        onExport={handleExportToAnki}
+      />
     </motion.div>
   );
 }

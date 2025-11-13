@@ -280,10 +280,9 @@ export default function Home() {
                 grammarPatterns: [
                   {
                     pattern: "～ています",
-                    description:
-                      "Present progressive/continuous form. Used to express ongoing actions or states.",
+                    description: t("demoGrammarDescription"),
                     jlptLevel: "N5",
-                    example: "食べています (I am eating)",
+                    example: t("demoGrammarExample"),
                   },
                 ],
                 vocabulary: [
@@ -291,21 +290,21 @@ export default function Home() {
                     word: "私",
                     baseForm: "私",
                     reading: "わたし",
-                    meaning: "I, me",
+                    meaning: t("demoVocabI"),
                     jlptLevel: "N5",
                   },
                   {
                     word: "日本語",
                     baseForm: "日本語",
                     reading: "にほんご",
-                    meaning: "Japanese language",
+                    meaning: t("demoVocabJapanese"),
                     jlptLevel: "N5",
                   },
                   {
                     word: "勉強する",
                     baseForm: "勉強する",
                     reading: "べんきょうする",
-                    meaning: "to study",
+                    meaning: t("demoVocabStudy"),
                     jlptLevel: "N5",
                   },
                 ],

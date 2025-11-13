@@ -4,6 +4,7 @@ import { useState, useRef, type DragEvent, type ChangeEvent } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Upload, FileText, X, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useLanguage } from "@/lib/LanguageContext";
 
 interface FileUploaderProps {
   onFileUpload: (file: File) => void;
@@ -17,6 +18,7 @@ export function FileUploader({
   isLoading = false,
   acceptedFormats = [".srt", ".ass"],
 }: FileUploaderProps) {
+  const { t } = useLanguage();
   const [isDragging, setIsDragging] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -120,7 +122,7 @@ export function FileUploader({
               className="flex flex-col items-center justify-center gap-4"
             >
               <Loader2 className="w-12 h-12 text-primary animate-spin" />
-              <p className="text-sm text-muted-foreground">Processing file...</p>
+              <p className="text-sm text-muted-foreground">{t("processingFile")}</p>
             </motion.div>
           ) : selectedFile ? (
             <motion.div
@@ -160,13 +162,13 @@ export function FileUploader({
               <Upload className="w-12 h-12 text-muted-foreground" />
               <div>
                 <p className="text-lg font-medium text-foreground">
-                  Drop your subtitle file here
+                  {t("dropFileHere")}
                 </p>
                 <p className="text-sm text-muted-foreground mt-1">
-                  or click to browse
+                  {t("orClickToBrowse")}
                 </p>
                 <p className="text-xs text-muted-foreground mt-2">
-                  Supported formats: {acceptedFormats.join(", ")}
+                  {t("supportedFormats")} {acceptedFormats.join(", ")}
                 </p>
               </div>
             </motion.div>
