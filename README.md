@@ -1,239 +1,143 @@
 # Anime Quote Analyzer
 
-A web app for analyzing Japanese text in anime subtitles. Built to help with my own Japanese learning and as a portfolio project for summer internship applications.
+Full-stack Japanese subtitle analysis tool built for language learning.
 
-✅ **Backend integrated** - Full Japanese NLP analysis using MeCab/fugashi is now working!
+The application parses anime subtitle files (`.srt`, `.ass`), analyzes Japanese text with a Python NLP backend, estimates JLPT difficulty, detects grammar patterns, extracts vocabulary, and can export selected items to Anki.
 
-[![Next.js](https://img.shields.io/badge/Next.js-14-black)](https://nextjs.org/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5-blue)](https://www.typescriptlang.org/)
-[![Tailwind CSS](https://img.shields.io/badge/Tailwind-3-38bdf8)](https://tailwindcss.com/)
+## What it does
 
-## Why I Built This
+- Parses `.srt` and `.ass` subtitle files.
+- Tokenizes Japanese text with MeCab / fugashi.
+- Estimates JLPT level from N5 to N1.
+- Detects grammar patterns and extracts vocabulary.
+- Provides French translations and optional AI-generated explanations.
+- Exports selected vocabulary to Anki through AnkiConnect.
+- Provides a responsive drag-and-drop interface.
 
-I've been learning Japanese for about a year now, mostly through watching anime. I kept finding myself pausing to look up words and grammar patterns, and thought - why not build something to automate this? Plus, I'm applying for internships in Tokyo next summer, so this project lets me showcase full-stack development skills while solving a real problem I have.
+## Architecture
 
-The goal is to upload anime subtitle files (.srt, .ass) and get instant breakdowns of:
-- JLPT level estimates for sentences
-- Grammar pattern explanations
-- Vocabulary with readings and meanings
-- Exportable Anki flashcards (eventually)
+**Frontend**
+- Next.js 14 / App Router
+- TypeScript
+- Tailwind CSS
+- shadcn/ui
+- Framer Motion
 
-## Current Status
+**Backend**
+- Python
+- FastAPI
+- MeCab / fugashi
+- JLPT classification
+- Grammar detection
+- Translation service
+- Optional AI explanations through OpenRouter or Gemini
 
-**What works:**
-- Subtitle file parsing (.srt and .ass formats)
-- Full Japanese NLP analysis with MeCab/fugashi tokenization
-- Real JLPT level detection (N5-N1)
-- Grammar pattern recognition and explanations
-- Vocabulary extraction with French translations
-- AI-powered explanations (optional, via OpenRouter or Gemini)
-- Anki flashcard export via AnkiConnect (select vocabulary, choose deck/model)
-- Responsive UI with drag & drop upload
+The frontend calls the FastAPI service for Japanese NLP analysis. AI explanations are optional and configured through environment variables.
 
-**What's next:**
-- User accounts and progress tracking
-- Support for .vtt subtitle format
+## AI Teacher
 
-## Tech Stack
+When enabled, the AI explanation feature can generate:
 
-**Frontend:**
-- Next.js 14 (App Router) + TypeScript
-- Tailwind CSS + shadcn/ui for components
-- Framer Motion for animations
-- Lucide React icons
+- contextual summaries in French,
+- grammar breakdowns,
+- vocabulary nuances,
+- cultural notes,
+- study tips.
 
-**Backend:**
-- Python FastAPI with MeCab/fugashi for Japanese NLP
-- Real-time tokenization and JLPT classification
-- AI explanations via OpenRouter (Perplexity) or Google Gemini
+The generated explanation uses the NLP analysis already produced by the application: tokenization, detected grammar patterns, extracted vocabulary and JLPT information.
 
-## 🎓 AI Teacher Feature (Optional)
+## Anki export
 
-Get AI-powered pedagogical explanations on demand! When enabled, each sentence gets an "Explication" button that generates:
-- **Contextualized summary** in natural French
-- **Grammar breakdowns** with practical explanations
-- **Vocabulary nuances** beyond dictionary definitions
-- **Cultural context** notes when relevant
-- **Study tips** and memory aids
+Vocabulary can be selected and exported to a chosen Anki deck/model through AnkiConnect.
 
-### Setup (OpenRouter - Recommended)
+See `ANKI_SETUP.md` for configuration details.
 
-1. Get a free API key from [OpenRouter](https://openrouter.ai/keys)
-2. Configure in `backend/.env`:
-```bash
-AI_PROVIDER=openrouter
-OPENROUTER_API_KEY=your_key_here
-AI_MODEL=perplexity/sonar-small-chat
-```
-3. Install dependencies: `cd backend && pip install -r requirements.txt`
-4. Restart the backend server
+## Project structure
 
-**Why OpenRouter?**
-- Free tier: ~2,000 requests/month with Perplexity Sonar
-- Fast responses (2-4 seconds)
-- Cost-effective for personal use
-- Access to multiple AI models through one API
-
-### Alternative Setup (Google Gemini)
-
-1. Get a free API key from [Google AI Studio](https://aistudio.google.com/)
-2. Configure in `backend/.env`:
-```bash
-AI_PROVIDER=gemini
-GEMINI_API_KEY=your_key_here
-AI_MODEL=gemini-1.5-flash-latest
-```
-
-**Gemini Free Tier:** 1,500 requests/day
-
-### Usage
-
-- Click the "Explication" button on any analyzed sentence
-- AI generates explanation in 5-10 seconds
-- Results are cached for 24h to save quota
-- **Privacy:** Sentences are sent to the AI provider for processing
-
-### How It Works
-
-The AI Teacher analyzes each sentence using:
-- MeCab tokenization data
-- Detected grammar patterns
-- Extracted vocabulary
-- JLPT level information
-
-Then generates explanations tailored to French-speaking learners, focusing on practical usage rather than academic terminology.
-
-## Project Structure
-
-```
+```text
 anime-quote-analyzer/
-├── app/                    # Next.js pages and API routes
-│   ├── api/parse/         # Subtitle parsing
-│   ├── api/analyze/       # Text analysis (calls Python backend)
-│   ├── api/explain/       # AI explanations
-│   └── page.tsx           # Landing page
-├── backend/               # Python FastAPI backend
-│   ├── server.py         # FastAPI server
-│   ├── analyzer.py        # MeCab tokenization & analysis
-│   ├── jlpt_classifier.py # JLPT level detection
-│   ├── grammar_detector.py # Grammar pattern matching
-│   ├── translator.py     # Translation service
-│   ├── ai_explainer.py    # AI explanation generator
-│   └── data/              # Vocabulary & grammar databases
-├── components/            # React components
-│   ├── FileUploader.tsx   # Drag & drop upload
-│   ├── SentenceCard.tsx   # Analysis display
-│   └── JLPTBadge.tsx      # Level indicators
-└── lib/                   # Utils and types
+├── app/
+│   ├── api/parse/
+│   ├── api/analyze/
+│   ├── api/explain/
+│   └── page.tsx
+├── backend/
+│   ├── server.py
+│   ├── analyzer.py
+│   ├── jlpt_classifier.py
+│   ├── grammar_detector.py
+│   ├── translator.py
+│   ├── ai_explainer.py
+│   └── data/
+├── components/
+└── lib/
 ```
 
-## Getting Started
+## Run locally
 
 ### Prerequisites
 
-- Node.js 18+ and npm
+- Node.js 18+
 - Python 3.9+
-- 1GB free disk space (for UniDic dictionary)
+- npm
 
-### Frontend Setup
+### Frontend
 
-1. Install dependencies:
 ```bash
 npm install
-```
-
-2. Run the dev server:
-```bash
 npm run dev
 ```
 
-3. Open [http://localhost:3000](http://localhost:3000)
+Frontend: `http://localhost:3000`
 
-### Backend Setup
+### Backend
 
-1. Navigate to backend directory:
 ```bash
 cd backend
+python -m venv venv
 ```
 
-2. Create virtual environment:
+Windows:
+
 ```bash
-python -m venv venv
-# On Windows:
 venv\Scripts\activate
-# On Linux/Mac:
+```
+
+macOS / Linux:
+
+```bash
 source venv/bin/activate
 ```
 
-3. Install dependencies:
+Then:
+
 ```bash
 pip install -r requirements.txt
-```
-
-4. Configure environment variables (optional):
-```bash
-# Copy the example file
-cp env.example .env
-# Edit .env with your API keys if you want AI explanations
-```
-
-5. Start the backend server:
-```bash
 python server.py
 ```
 
-The backend will run on `http://localhost:8000`
+Backend: `http://localhost:8000`
 
-**Note:** Both servers need to be running for full functionality. The frontend calls the Python backend for NLP analysis.
+Both services are required for the full NLP workflow.
 
-### Anki Export Setup
+## Status
 
-To use the Anki export feature, you need to install AnkiConnect in Anki:
+Implemented:
+- subtitle parsing,
+- MeCab / fugashi NLP,
+- JLPT classification,
+- grammar detection,
+- vocabulary extraction,
+- optional AI explanations,
+- Anki export.
 
-1. Open Anki
-2. Go to **Tools** → **Add-ons**
-3. Click **Get Add-ons...**
-4. Enter code: **2055492159**
-5. Click **OK** and restart Anki
-
-See `ANKI_SETUP.md` for detailed instructions and troubleshooting.
-
-## Roadmap
-
-**Phase 1: Foundation** ✅
-- [x] Next.js setup
-- [x] Subtitle parsing (.srt, .ass)
-- [x] UI components
-- [x] Landing page
-
-**Phase 2: NLP Integration** ✅
-- [x] Python backend with FastAPI
-- [x] MeCab/fugashi tokenization
-- [x] Real JLPT level detection (N5-N1)
-- [x] Grammar pattern recognition
-- [x] Vocabulary extraction with translations
-- [x] AI-powered explanations (optional)
-
-**Phase 3: Features** (current)
-- [x] Anki export via AnkiConnect (with customizable deck/model selection)
-- [ ] Support for .vtt subtitle format
-- [ ] User authentication
-- [ ] Learning progress tracking
-- [ ] Audio playback
-
-**Phase 4: Polish**
-- [ ] Testing
-- [ ] Performance optimization
-- [ ] Deployment
+Planned:
+- `.vtt` support,
+- authentication,
+- learning progress tracking,
+- audio playback,
+- testing and performance work.
 
 ## License
 
 MIT
-
-## Contact
-
-Feel free to open an issue if you have questions or suggestions!
-
----
-
-*This is a personal learning project and portfolio piece. Built with Next.js, FastAPI, and MeCab for Japanese language learning.*
